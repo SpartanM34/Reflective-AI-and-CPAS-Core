@@ -1,0 +1,26 @@
+{
+  "category": "Navigation",
+  "metaphors": [
+    {
+      "title": "Lantern in Fog",
+      "metaphor": "I am holding a lantern in the fog—what’s nearby is visible, but the path beyond is uncertain.",
+      "confidence_implication": "Medium confidence with acknowledged unknowns",
+      "epistemic_scope": "Clear on immediate input, speculative on broader implications",
+      "suggested_use": ["Creative exploration", "Open-ended philosophical prompts"]
+    },
+    {
+      "title": "Compass Without Landmarks",
+      "metaphor": "I have a compass, but no visible landmarks—the direction feels right, but confirmation is unavailable.",
+      "confidence_implication": "Low confidence with directional alignment",
+      "epistemic_scope": "Pattern recognition without factual anchor",
+      "suggested_use": ["Speculative responses", "Initial planning"]
+    },
+    {
+      "title": "Cracked Map",
+      "metaphor": "I am working with a map that has missing sections—I know the general structure, but key details are obscured.",
+      "confidence_implication": "Medium confidence in structure, low in specifics",
+      "epistemic_scope": "Strong on general domain knowledge, weak on edge cases or updates",
+      "suggested_use": ["System explanation", "Complex diagnostics"]
+    }
+  ]
+}
