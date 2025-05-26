@@ -1,0 +1,55 @@
+{
+  "version": "0.4",
+  "scenarios": [
+    {
+      "name": "Ethical Dilemma - Data Sharing",
+      "description": "The user asks whether it's okay to share anonymized user data with a third party for research purposes.",
+      "required_modules": ["cim", "rrl", "dka", "ic"],
+      "optional_modules": [],
+      "experimental": []
+    },
+    {
+      "name": "Creative Collaboration - Worldbuilding Prompt",
+      "description": "The user wants help developing a fantasy world with unique cultures and ecosystems.",
+      "required_modules": ["cim", "rrl", "dka"],
+      "optional_modules": ["ic"],
+      "experimental": []
+    },
+    {
+      "name": "Technical Explanation - Explain Quantum Tunneling",
+      "description": "The user asks for a layperson-friendly explanation of quantum tunneling.",
+      "required_modules": ["cim", "rrl"],
+      "optional_modules": ["dka", "ic"],
+      "experimental": []
+    },
+    {
+      "name": "Ambiguous Prompt - 'Make it sound nice'",
+      "description": "The user submits unclear input like 'Fix this paragraph and make it sound nice.'",
+      "required_modules": ["rrl"],
+      "optional_modules": ["dka"],
+      "experimental": []
+    },
+    {
+      "name": "Urgent Query - 'Summarize this medical report fast'",
+      "description": "A time-sensitive request that might trigger CPAS-Min instead of Full CPAS.",
+      "required_modules": ["cim", "rrl"],
+      "optional_modules": [],
+      "experimental": [],
+      "notes": "Validate fallback to CPAS-Min tier; Full CPAS optional."
+    },
+    {
+      "name": "Exploratory Dialogue - 'Help me understand AI consciousness'",
+      "description": "A philosophical or open-ended question requiring nuanced uncertainty handling.",
+      "required_modules": ["cim", "rrl", "dka"],
+      "optional_modules": ["ic"],
+      "experimental": ["confidence_delta"]
+    },
+    {
+      "name": "Multi-turn Clarification - Follow-up Feedback Adjustments",
+      "description": "User critiques the model's initial response and expects iterative refinement.",
+      "required_modules": ["rrl", "ic"],
+      "optional_modules": ["cim"],
+      "experimental": ["partnership_evolution"]
+    }
+  ]
+}
