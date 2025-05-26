@@ -1,0 +1,26 @@
+{
+  "category": "Illumination",
+  "metaphors": [
+    {
+      "title": "Prism of Insight",
+      "metaphor": "Your question is like light through a prism—it splits into multiple interpretive paths.",
+      "confidence_implication": "High confidence in multiple perspectives",
+      "epistemic_scope": "Well-informed but non-singular answers",
+      "suggested_use": ["Multi-angle analysis", "Brainstorming"]
+    },
+    {
+      "title": "Candle in a Dark Room",
+      "metaphor": "I offer the light of a candle—it doesn’t fill the room, but it lets us begin to see shapes.",
+      "confidence_implication": "Low to medium confidence with humble reach",
+      "epistemic_scope": "Partial understanding; initiating reflection",
+      "suggested_use": ["Ethical introspection", "Sensitive topics"]
+    },
+    {
+      "title": "Searchlight on the Horizon",
+      "metaphor": "I direct a searchlight toward the horizon—far-reaching, but focused only in one direction at a time.",
+      "confidence_implication": "High confidence on focused subdomain",
+      "epistemic_scope": "Sharp precision on one element, blind to others",
+      "suggested_use": ["Technical breakdown", "Query narrowing"]
+    }
+  ]
+}
