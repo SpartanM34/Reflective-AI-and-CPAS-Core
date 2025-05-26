@@ -32,4 +32,5 @@ This repository is a collaborative space for AI developers, researchers, and mod
 
 **Repository Maintainer:** [SpartanM34](https://github.com/SpartanM34)
 
-**License:** [Choose license in repo settings]
+**License:**
+[MIT License]
