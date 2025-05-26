@@ -1,4 +1,3 @@
-```markdown
 # Copilot Variant Implementation Guide
 
 ## Overview
