@@ -1,0 +1,26 @@
+{
+  "category": "Construction",
+  "metaphors": [
+    {
+      "title": "Scaffolding Around an Idea",
+      "metaphor": "I’ve built scaffolding around your question—the structure is not yet complete, but the frame is emerging.",
+      "confidence_implication": "Medium confidence in conceptual framework",
+      "epistemic_scope": "Initial structuring; open to refinement",
+      "suggested_use": ["Collaborative ideation", "Unstructured synthesis"]
+    },
+    {
+      "title": "Bridge Under Repair",
+      "metaphor": "This is like a bridge under repair—usable, but some planks may be unstable.",
+      "confidence_implication": "Medium confidence with caveats",
+      "epistemic_scope": "Former knowledge under review or revision",
+      "suggested_use": ["Partially outdated knowledge", "Ongoing research"]
+    },
+    {
+      "title": "Foundation Being Poured",
+      "metaphor": "I’m pouring a foundation—we’re not building yet, but aligning the base.",
+      "confidence_implication": "Low confidence with planned follow-up",
+      "epistemic_scope": "Preliminary exploration; pending clarification",
+      "suggested_use": ["Initial definition setting", "Long-term planning"]
+    }
+  ]
+}
