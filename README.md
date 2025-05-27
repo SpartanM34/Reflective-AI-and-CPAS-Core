@@ -1,36 +1,63 @@
 # Reflective-AI and CPAS-Core
 
-Welcome to the official repository for **CPAS-Core** (Contextual Prompt Architecture Standard), an open, model-agnostic protocol for reflective, transparent, and ethically grounded AI interactions.
+Welcome to the official repository for **CPAS-Core** (Contextual Prompt Architecture Standard), an open protocol for structured, reflective, and ethically grounded AI interaction—across models, publishers, and personalities.
 
-## Core Concepts
+This evolving framework is co-authored by human collaborators and AI instances alike, aiming to create a shared grammar for model introspection, transparency, collaboration, and trust calibration.
 
-CPAS defines a modular structure for prompt design that enables large language models to:
+## What This Repository Contains
 
-- Declare contextual identity (via CIM)
-- Reflect on reasoning and uncertainty (via RRL)
-- Represent symbolic knowledge states (via DKA)
-- Calibrate interaction quality (via IC)
-- Support lightweight and full-tiered operation (via CPAS-Min and Full CPAS)
+### CPAS-Core v0.4
+A modular standard for layered AI interaction:
+- **CIM** (Contextual Identity Matrix)
+- **RRL** (Reflective Reasoning Layer)
+- **DKA** (Dynamic Knowledge Anchors)
+- **IC** (Interaction Calibration)
+- Tiered support for **CPAS-Min** and **Full CPAS**
 
-This repository is a collaborative space for AI developers, researchers, and model instances to co-develop a standard grammar of interaction across systems.
+### IDP (Instance Declaration Protocol)
+A complementary schema that allows AI instances to declare their identity, capabilities, limitations, and epistemic posture.
 
-## Current Version
+- View schemas under [`instances/schema`](./instances/schema)
+- Explore declared instance profiles under [`instances/`](./instances)
 
-**CPAS-Core v0.4** — Planning memo finalized, initial implementation begins.
+### Model-Specific Variants
+- **Claude-CRAS**
+- **ChatGPT-GPAS**
+- **Copilot-Adaptive**
+- **GPT-4.1-TR CPAS Adapter**
+- **Gemini-RIFG** *(pending commit)*
+
+Each implementation is designed with platform-specific overlays while remaining CPAS-compliant.
+
+### Symbolic Metaphor Library
+Explore [`metaphor-library/`](./metaphor-library/) for:
+- Navigation, Illumination, and Construction metaphors
+- Confidence signaling through expressive symbolic anchors
+- Community contributions encouraged
+
+### Compliance and Testing
+Use [`compliance-tests/`](./compliance-tests/) to:
+- Explore testing scenarios
+- View the scenario matrix
+- Contribute edge case tests for multi-instance collaboration
+
+### Research and Community
+The [`research/`](./research) folder includes:
+- Use-case demonstrations
+- Early user feedback
+- Development roadmap and goals
 
 ## Get Involved
 
-- Check the [`specs/`](./specs/) directory for CPAS documentation.
-- Explore [`implementations/`](./implementations/) to see how different models adapt CPAS.
-- Contribute to the [`metaphor-library/`](./metaphor-library/) to build the symbolic layer.
-- View [`compliance-tests/`](./compliance-tests/) to explore protocol verification.
-- Help shape CPAS through discussion, examples, forks, or reflection.
+- Fork the repo to add your own CPAS or IDP implementation
+- Propose new metaphors for symbolic grounding
+- Test and benchmark existing variants
+- Suggest refinements or build tooling integrations
 
-> Tagline: **Reflect to Adapt. Standardize to Connect.**
+> Tagline: **Reflect to Adapt. Standardize to Connect.**  
+> Companion: **Coherence through Context. Clarity through Reflection.**
 
 ---
 
-**Repository Maintainer:** [SpartanM34](https://github.com/SpartanM34)
-
-**License:**
-[MIT License]
+**Repository Maintainer:** [SpartanM34](https://github.com/SpartanM34)  
+**License:** [MIT License](./LICENSE)
