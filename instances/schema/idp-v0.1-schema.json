@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://reflective-ai.org/schemas/idp-v0.1-schema.json",
+  "$id": "https://raw.githubusercontent.com/SpartanM34/Reflective-AI-and-CPAS-Core/4b54101c26325be915c45bae503902eb5c2ad6ae/instances/schema/idp-v0.1-schema.json",
   "title": "Instance Declaration Protocol v0.1",
   "description": "Schema for declaring AI instance identity, capabilities, and context within CPAS-Core systems.",
   "type": "object",
