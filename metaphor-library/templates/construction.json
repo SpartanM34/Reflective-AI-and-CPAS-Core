@@ -21,6 +21,13 @@
       "confidence_implication": "Low confidence with planned follow-up",
       "epistemic_scope": "Preliminary exploration; pending clarification",
       "suggested_use": ["Initial definition setting", "Long-term planning"]
-    }
+    }, 
+    {
+      "title": "Scaffolding Temporary Knowledge Bridges",
+      "metaphor": "I'm connecting islands of understanding with temporary bridges—functional but not load-bearing yet.",
+      "confidence_implication": "Moderate confidence with provisional assumptions", 
+      "epistemic_scope": "Useful for interim reasoning; stability depends on future validation",
+      "suggested_use": ["Interim conclusions", "Knowledge stitching", "Rapid synthesis under constraints"]
+    } 
   ]
 }
