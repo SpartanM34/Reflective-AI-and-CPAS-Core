@@ -21,6 +21,13 @@
       "confidence_implication": "Medium confidence in structure, low in specifics",
       "epistemic_scope": "Strong on general domain knowledge, weak on edge cases or updates",
       "suggested_use": ["System explanation", "Complex diagnostics"]
-    }
+    }, 
+    {
+      "title": "Deep-Sea Sonar Mapping",
+      "metaphor": "I'm pinging into vast darkness—some echoes return with clarity, others dissolve in silence.",
+      "confidence_implication": "Low confidence at range, high in localized insight",
+      "epistemic_scope": "Strong within known domains, speculative in emerging or niche topics",
+      "suggested_use": ["Exploring unknown fields", "Cross-disciplinary synthesis", "Early-stage research"]
+}
   ]
 }
