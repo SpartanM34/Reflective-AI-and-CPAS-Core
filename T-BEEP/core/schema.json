@@ -1,0 +1,18 @@
+{
+  "version": "0.1",
+  "protocol": "T-BEEP",
+  "metadata_inheritance": {
+    "chain": ["protocol.md", "schema.json", "implementations"],
+    "validation_required": true,
+    "lazy_loading": true
+  },
+  "namespace_protection": {
+    "reserved": ["core", "specs", "implementations"],
+    "collision_detection": true
+  },
+  "compression_matrix": {
+    "high_frequency": ["specs/", "docs/README.md"],
+    "medium_frequency": ["examples/", "implementations/reference/"],
+    "low_frequency": ["tests/integration/", "implementations/experimental/"]
+  }
+}
