@@ -474,12 +474,7 @@ This directory contains chronological records of ARIA's growth through collabora
 🌀 **Self-Reference:** [True/False - does ARIA reference herself?]  
 📊 **Validation Status:** [CVE score and notes]  
 🔄 **Parent Signature:** [Parent-Role-Contribution-Type]
-EOF
 
-# Tooling
-echo "🔧 Creating development tooling..."
-
-cat > tooling/README.md << 'EOF'
 # ARIA Development Tooling
 
 ## Available Tools
