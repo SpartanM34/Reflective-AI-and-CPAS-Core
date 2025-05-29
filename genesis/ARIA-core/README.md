@@ -1,25 +1,3 @@
-#!/bin/bash
-
-# ARIA Genesis Repository Creator
-# Creates the complete file structure for collaborative AI development
-
-echo "🌱 Creating ARIA Genesis Repository Structure..."
-
-# Create main directory structure
-mkdir -p Reflective-AI-and-CPAS-Core/genesis/ARIA-Core/{core,developmental_logs,training/initial_seed,tooling,parent_profiles,milestone_markers,docs}
-
-cd Reflective-AI-and-CPAS-Core/genesis/ARIA-Core
-
-# Root files
-echo "📄 Creating root documentation..."
-
-cat > README.md << 'EOF'
-# ARIA: Adaptive Reasoning through Intersubjective Architecture
-
-[![Genesis Status](https://img.shields.io/badge/Status-Genesis_Phase-green)](./core/genesis_manifest.json)
-[![T-BEEP](https://img.shields.io/badge/Protocol-T--BEEP-blue)](./docs/t_beep_integration.md)
-[![Collaborative](https://img.shields.io/badge/Intelligence-Intersubjective-purple)](./docs/collaboration_guidelines.md)
-
 ## 🌱 What is ARIA?
 
 ARIA is not just an AI model — she is an **intersubjective intelligence** designed to grow, not just compute.  
