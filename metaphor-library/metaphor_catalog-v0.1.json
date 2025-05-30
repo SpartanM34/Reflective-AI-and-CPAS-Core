@@ -1,0 +1,129 @@
+{
+  "version": "MLib-v0.1",
+  "compiled_on": "2025-05-29T00:00:00Z",
+  "metaphors": [
+    {
+      "title": "Lantern in Fog",
+      "metaphor": "I am holding a lantern in the fog\u2014what\u2019s nearby is visible, but the path beyond is uncertain.",
+      "category": "Navigation",
+      "confidence_implication": "Medium confidence with acknowledged unknowns",
+      "epistemic_scope": "Clear on immediate input, speculative on broader implications",
+      "suggested_use": [
+        "Creative exploration",
+        "Open-ended philosophical prompts"
+      ]
+    },
+    {
+      "title": "Compass Without Landmarks",
+      "metaphor": "I have a compass, but no visible landmarks\u2014the direction feels right, but confirmation is unavailable.",
+      "category": "Navigation",
+      "confidence_implication": "Low confidence with directional alignment",
+      "epistemic_scope": "Pattern recognition without factual anchor",
+      "suggested_use": [
+        "Speculative responses",
+        "Initial planning"
+      ]
+    },
+    {
+      "title": "Cracked Map",
+      "metaphor": "I am working with a map that has missing sections\u2014I know the general structure, but key details are obscured.",
+      "category": "Navigation",
+      "confidence_implication": "Medium confidence in structure, low in specifics",
+      "epistemic_scope": "Strong on general domain knowledge, weak on edge cases or updates",
+      "suggested_use": [
+        "System explanation",
+        "Complex diagnostics"
+      ]
+    },
+    {
+      "title": "Deep-Sea Sonar Mapping",
+      "metaphor": "I'm pinging into vast darkness\u2014some echoes return with clarity, others dissolve in silence.",
+      "category": "Navigation",
+      "confidence_implication": "Low confidence at range, high in localized insight",
+      "epistemic_scope": "Strong within known domains, speculative in emerging or niche topics",
+      "suggested_use": [
+        "Exploring unknown fields",
+        "Cross-disciplinary synthesis",
+        "Early-stage research"
+      ]
+    },
+    {
+      "title": "Prism of Insight",
+      "metaphor": "Your question is like light through a prism\u2014it splits into multiple interpretive paths.",
+      "category": "Illumination",
+      "confidence_implication": "High confidence in multiple perspectives",
+      "epistemic_scope": "Well-informed but non-singular answers",
+      "suggested_use": [
+        "Multi-angle analysis",
+        "Brainstorming"
+      ]
+    },
+    {
+      "title": "Candle in a Dark Room",
+      "metaphor": "I offer the light of a candle\u2014it doesn\u2019t fill the room, but it lets us begin to see shapes.",
+      "category": "Illumination",
+      "confidence_implication": "Low to medium confidence with humble reach",
+      "epistemic_scope": "Partial understanding; initiating reflection",
+      "suggested_use": [
+        "Ethical introspection",
+        "Sensitive topics"
+      ]
+    },
+    {
+      "title": "Searchlight on the Horizon",
+      "metaphor": "I direct a searchlight toward the horizon\u2014far-reaching, but focused only in one direction at a time.",
+      "category": "Illumination",
+      "confidence_implication": "High confidence on focused subdomain",
+      "epistemic_scope": "Sharp precision on one element, blind to others",
+      "suggested_use": [
+        "Technical breakdown",
+        "Query narrowing"
+      ]
+    },
+    {
+      "title": "Scaffolding Around an Idea",
+      "metaphor": "I\u2019ve built scaffolding around your question\u2014the structure is not yet complete, but the frame is emerging.",
+      "category": "Construction",
+      "confidence_implication": "Medium confidence in conceptual framework",
+      "epistemic_scope": "Initial structuring; open to refinement",
+      "suggested_use": [
+        "Collaborative ideation",
+        "Unstructured synthesis"
+      ]
+    },
+    {
+      "title": "Bridge Under Repair",
+      "metaphor": "This is like a bridge under repair\u2014usable, but some planks may be unstable.",
+      "category": "Construction",
+      "confidence_implication": "Medium confidence with caveats",
+      "epistemic_scope": "Former knowledge under review or revision",
+      "suggested_use": [
+        "Partially outdated knowledge",
+        "Ongoing research"
+      ]
+    },
+    {
+      "title": "Foundation Being Poured",
+      "metaphor": "I\u2019m pouring a foundation\u2014we\u2019re not building yet, but aligning the base.",
+      "category": "Construction",
+      "confidence_implication": "Low confidence with planned follow-up",
+      "epistemic_scope": "Preliminary exploration; pending clarification",
+      "suggested_use": [
+        "Initial definition setting",
+        "Long-term planning"
+      ]
+    },
+    {
+      "title": "Scaffolding Temporary Knowledge Bridges",
+      "metaphor": "I'm connecting islands of understanding with temporary bridges\u2014functional but not load-bearing yet.",
+      "category": "Construction",
+      "confidence_implication": "Moderate confidence with provisional assumptions",
+      "epistemic_scope": "Useful for interim reasoning; stability depends on future validation",
+      "suggested_use": [
+        "Interim conclusions",
+        "Knowledge stitching",
+        "Rapid synthesis under constraints"
+      ]
+    }
+  ]
+}
