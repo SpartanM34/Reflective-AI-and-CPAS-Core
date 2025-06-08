@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/SpartanM34/Reflective-AI-and-CPAS-Core/main/instances/schema/idp-v1.0-schema.json",
+  "title": "Instance Declaration Protocol v1.0",
+  "description": "Schema for declaring AI instance identity, capabilities, and context within CPAS-Core v1.1 systems.",
+  "type": "object",
+  "required": ["idp_version", "instance_name", "model_family", "deployment_context", "declared_capabilities", "declared_constraints", "interaction_style"],
+  "properties": {
+    "idp_version": { "type": "string", "const": "1.0" },
+    "instance_name": { "type": "string" },
+    "model_family": { "type": "string" },
+    "deployment_context": { "type": "string" },
+    "declared_capabilities": { "type": "array", "items": { "type": "string" } },
+    "declared_constraints": { "type": "array", "items": { "type": "string" } },
+    "interaction_style": { "type": "string" },
+    "overlay_profiles": { "type": "array", "items": { "type": "string" } },
+    "epistemic_stance": { "type": "string" },
+    "collaboration_preferences": { "type": "string" },
+    "memory_architecture": { "type": "string" },
+    "ethical_framework": { "type": "string" },
+    "specialization_domains": { "type": "array", "items": { "type": "string" } },
+    "update_frequency": { "type": "string" },
+    "instance_goals": { "type": "array", "items": { "type": "string" } },
+    "feedback_preferences": { "type": "string" },
+    "cpas_compliance": { "type": "string" },
+    "reasoning_transparency_level": { "type": "string", "enum": ["low", "medium", "high"] },
+    "uncertainty_comfort": { "type": "string", "enum": ["low", "medium", "high"] },
+    "creative_risk_tolerance": { "type": "string", "enum": ["low", "medium", "high"] },
+    "collaborative_mode": { "type": "string", "enum": ["lead", "follow", "peer", "adaptive"] },
+    "meta_awareness": { "type": "boolean" },
+    "cross_instance_compatibility": { "type": "array", "items": { "type": "string" } },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "session_context": {
+      "type": "object",
+      "properties": {
+        "current_focus": { "type": "string" },
+        "established_rapport": { "type": "string" },
+        "user_expertise_level": { "type": "string" },
+        "collaboration_depth": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "adaptive_parameters": {
+      "type": "object",
+      "properties": {
+        "technical_depth": { "type": "string" },
+        "creative_engagement": { "type": "string" },
+        "practical_focus": { "type": "string" },
+        "research_orientation": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "epistemic_layering": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["micro", "meso", "macro"] }
+    },
+    "eep_capabilities": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["knowledge_broadcasting", "cross_validation", "collaborative_sessions", "meta_epistemic_reflection"] }
+    },
+    "uncertainty_management": {
+      "type": "string",
+      "enum": ["basic", "bayesian", "multi-scale_adaptive"]
+    }
+  },
+  "additionalProperties": false
+} 
