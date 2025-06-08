@@ -29,8 +29,8 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 
 ### Additional Resources
 
-- [**CPAS-Core v1.1 Specification**](./CPAS-Core-v1.1.md)
-- [**Changelog**](./CHANGELOG.md)
+- [**CPAS-Core v1.1 Specification**](specs/current/CPAS-Core-v1.1.md)
+- [**Changelog**](specs/Changelog.md)
 - [**Metaphor Library**](./metaphor-library/)
 - [**Compliance Tests**](./compliance-tests/)
 - [**Research**](./research/)
