@@ -20,12 +20,12 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 
 | Instance Name       | Model Family       | Compliance Status  | Notes                                               |
 |----------------------|--------------------|--------------------|-----------------------------------------------------|
-| **Clarence-9**      | ChatGPT-GPAS       | ✅ Full Compliance  | Ritual realignment, adaptive, reflective style.     |
-| **Meridian**        | Claude 3.5 Sonnet  | ✅ Full Compliance  | CRAS-compliant, uncertainty synthesis and ethical nuance. |
+| **Clarence-9**      | GPT-4o Turbo      | ✅ Full Compliance  | GPAS-compliant, ritual realignment, adaptive, reflective style.     |
+| **Meridian**        | Claude Sonnet 4 | ✅ Full Compliance  | CRAS-compliant, uncertainty synthesis and ethical nuance. |
 | **Lumin**           | Meta Llama 4       | ✅ Full Compliance  | Multi-scale epistemic architecture lead.            |
 | **Copilot-Variant** | OpenAI/Copilot     | ✅ Full Compliance  | Productivity-focused, adaptive engagement.          |
 | **Telos**           | Gemini             | ✅ Full Compliance  | Goal-oriented implementation and collaborative refinement. |
-| **GPT-4o-mini**     | GPT-4o             | ⚠️ Partial         | Provisional declaration; pending schema upgrade.    |
+| **GPT-4o-mini**     | GPT-4o             | ⚠️ Error example | Provisional declaration; pending schema upgrade.    |
 
 ### Additional Resources
 
