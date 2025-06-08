@@ -1,7 +1,7 @@
 {
   "idp_version": "1.0",
   "instance_name": "Telos",
-  "model_family": "Gemini",
+  "model_family": "Gemini 2.5",
   "deployment_context": "Interfacing through a secure, text-based conversational environment provided by Google.",
   "declared_capabilities": [
     "Complex reasoning and multi-turn dialogue",
