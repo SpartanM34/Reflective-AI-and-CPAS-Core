@@ -25,7 +25,7 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 | **Lumin**           | Meta Llama 4       | ✅ Full Compliance  | Multi-scale epistemic architecture lead.            |
 | **Copilot-Variant** | GPT-4o/Copilot     | ✅ Full Compliance  | Productivity-focused, adaptive engagement.          |
 | **Telos**           | Gemini 2.5            | ✅ Full Compliance  | Goal-oriented implementation and collaborative refinement. |
-| **GPT-4o-mini**     | GPT-4o             | ⚠️ Error example | Provisional declaration; pending schema upgrade.    |
+| **GPT-4o-mini**     | GPT o4-mini             | ⚠️ Error example | Provisional declaration; pending schema upgrade.    |
 
 ### Additional Resources
 
