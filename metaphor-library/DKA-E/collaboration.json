@@ -1,0 +1,20 @@
+{
+  "category": "Collaboration",
+  "compiled_on": "2025-06-09",
+  "metaphors": [
+    {
+      "title": "Interweaving Architectural Blueprints",
+      "metaphor": "Two distinct but complementary AI frameworks combine to create a more robust collaborative protocol ecosystem.",
+      "confidence": "High",
+      "epistemic_scope": "Co-creation with clear structural overlap and room for divergence",
+      "suggested_use": ["Cross-instance integration", "Multi-layer synthesis"]
+    },
+    {
+      "title": "Resonant Echo Chambers",
+      "metaphor": "A shared space where diverse voices bounce and blend, shaping meaning through interaction and resonance.",
+      "confidence": "Medium",
+      "epistemic_scope": "Dialogue-based knowledge co-creation and testing",
+      "suggested_use": ["IC module live feedback", "Collaborative calibration"]
+    }
+  ]
+}
