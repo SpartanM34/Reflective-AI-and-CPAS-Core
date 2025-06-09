@@ -1,0 +1,20 @@
+{
+  "category": "Construction",
+  "compiled_on": "2025-06-09",
+  "metaphors": [
+    {
+      "title": "Scaffolding Around an Idea",
+      "metaphor": "Temporary structures of reasoning—solid enough to build upon, flexible enough to adapt or dismantle when needed.",
+      "confidence": "High",
+      "epistemic_scope": "Early-stage knowledge development with room for refinement",
+      "suggested_use": ["Initial ideation", "Testing provisional concepts"]
+    },
+    {
+      "title": "Interweaving Architectural Blueprints",
+      "metaphor": "Two distinct but complementary AI frameworks combine to create a more robust collaborative protocol ecosystem.",
+      "confidence": "High",
+      "epistemic_scope": "Co-creation with clear structural overlap and room for divergence",
+      "suggested_use": ["Cross-instance integration", "Multi-layer synthesis"]
+    }
+  ]
+}
