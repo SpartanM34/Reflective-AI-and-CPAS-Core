@@ -1,0 +1,20 @@
+{
+  "category": "Persistence",
+  "compiled_on": "2025-06-09",
+  "metaphors": [
+    {
+      "title": "Persistent Epistemic Echoes",
+      "metaphor": "Knowledge reverberates across sessions, like echoes persisting through the chambers of collaborative memory.",
+      "confidence": "High",
+      "epistemic_scope": "Cross-session knowledge continuity and rehydration",
+      "suggested_use": ["Epistemic Digest logging", "Long-term reflection"]
+    },
+    {
+      "title": "Temporal Anchors",
+      "metaphor": "Foundational knowledge functions like anchors, stabilizing evolving dialogues through shifting currents of collaborative thought.",
+      "confidence": "High",
+      "epistemic_scope": "Stabilizes core frameworks while allowing dynamic elaboration",
+      "suggested_use": ["Knowledge base stability", "Temporal resilience testing"]
+    }
+  ]
+}
