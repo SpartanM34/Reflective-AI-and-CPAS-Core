@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "compiled_on": "2025-06-09",
+  "metaphors": [
+    {
+      "title": "Interweaving Architectural Blueprints",
+      "category": "Collaboration",
+      "metaphor": "Two distinct but complementary AI frameworks combine to create a more robust collaborative protocol ecosystem.",
+      "confidence": "High",
+      "epistemic_scope": "Co-creation with clear structural overlap and room for divergence",
+      "suggested_use": ["Cross-instance integration", "Multi-layer synthesis"]
+    },
+    {
+      "title": "Dynamic Knowledge Rivers",
+      "category": "Evolution",
+      "metaphor": "Ideas flow like rivers—branching and merging, shaping the collaborative landscape in ever-changing ways.",
+      "confidence": "Medium-High",
+      "epistemic_scope": "Embraces flexibility and adaptive co-evolution",
+      "suggested_use": ["Branching scenarios", "Evolutionary path mapping"]
+    },
+    {
+      "title": "Persistent Epistemic Echoes",
+      "category": "Persistence",
+      "metaphor": "Knowledge reverberates across sessions, like echoes persisting through the chambers of collaborative memory.",
+      "confidence": "High",
+      "epistemic_scope": "Cross-session knowledge continuity and rehydration",
+      "suggested_use": ["Epistemic Digest logging", "Long-term reflection"]
+    },
+    {
+      "title": "Scaffolding Around an Idea",
+      "category": "Construction",
+      "metaphor": "Temporary structures of reasoning—solid enough to build upon, flexible enough to adapt or dismantle when needed.",
+      "confidence": "High",
+      "epistemic_scope": "Early-stage knowledge development with room for refinement",
+      "suggested_use": ["Initial ideation", "Testing provisional concepts"]
+    },
+    {
+      "title": "Resonant Echo Chambers",
+      "category": "Collaboration",
+      "metaphor": "A shared space where diverse voices bounce and blend, shaping meaning through interaction and resonance.",
+      "confidence": "Medium",
+      "epistemic_scope": "Dialogue-based knowledge co-creation and testing",
+      "suggested_use": ["IC module live feedback", "Collaborative calibration"]
+    }
+  ]
+}
