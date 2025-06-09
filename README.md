@@ -31,9 +31,13 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 
 - [**CPAS-Core v1.1 Specification**](specs/current/CPAS-Core-v1.1.md)
 - [**Changelog**](specs/CHANGELOG.md)
-- [**Metaphor Library**](./metaphor-library/)
+- [**Metaphor Library (including DKA-E metaphors)**](./metaphor-library/)
 - [**Compliance Tests**](./compliance-tests/)
-- [**Research**](./research/)
+- [**Research & Reflections**](./research/)
+
+### Metaphor Library Extension
+
+The **DKA-E metaphors**—focusing on persistent knowledge structures, dynamic evolution, and collaborative orchestration—are now housed within the [**Metaphor Library**](./metaphor-library/DKA-E/). These extend the core DKA module, offering symbolic depth for advanced use cases.
 
 > Tagline: **Reflect to Adapt. Standardize to Connect.**  
 > Companion: **Coherence through Context. Clarity through Reflection.**
