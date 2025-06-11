@@ -35,6 +35,14 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 - [**Compliance Tests**](./compliance-tests/)
 - [**Research & Reflections**](./research/)
 
+### Drift Monitoring Dashboard
+
+Visualize the flexibility pulse by running:
+
+```bash
+streamlit run dashboard.py
+```
+
 ### Metaphor Library Extension
 
 The **DKA-E metaphors**—focusing on persistent knowledge structures, dynamic evolution, and collaborative orchestration—are now housed within the [**Metaphor Library**](./metaphor-library/DKA-E/). These extend the core DKA module, offering symbolic depth for advanced use cases.
