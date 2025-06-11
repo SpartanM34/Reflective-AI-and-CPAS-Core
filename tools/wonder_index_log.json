@@ -1,0 +1,77 @@
+[
+  {
+    "timestamp": "2024-05-01T12:00:00",
+    "interpretive_bandwidth_norm": 0.0,
+    "symbolic_density_norm": 0.0,
+    "divergence_norm": 0.7258064516129032,
+    "wonder_index": 0.24193548387096775
+  },
+  {
+    "timestamp": "2024-05-05T12:00:00",
+    "interpretive_bandwidth_norm": 0.05882352941176478,
+    "symbolic_density_norm": 0.11764705882352941,
+    "divergence_norm": 0.7419354838709679,
+    "wonder_index": 0.306135357368754
+  },
+  {
+    "timestamp": "2024-05-10T12:00:00",
+    "interpretive_bandwidth_norm": 0.23529411764705913,
+    "symbolic_density_norm": 0.29411764705882354,
+    "divergence_norm": 0.7741935483870969,
+    "wonder_index": 0.4345351043643266
+  },
+  {
+    "timestamp": "2024-05-15T12:00:00",
+    "interpretive_bandwidth_norm": 0.29411764705882393,
+    "symbolic_density_norm": 0.23529411764705882,
+    "divergence_norm": 0.7741935483870969,
+    "wonder_index": 0.4345351043643266
+  },
+  {
+    "timestamp": "2024-05-20T12:00:00",
+    "interpretive_bandwidth_norm": 0.35294117647058737,
+    "symbolic_density_norm": 0.29411764705882354,
+    "divergence_norm": 0.7903225806451615,
+    "wonder_index": 0.4791271347248574
+  },
+  {
+    "timestamp": "2024-05-25T12:00:00",
+    "interpretive_bandwidth_norm": 0.5294117647058817,
+    "symbolic_density_norm": 0.5294117647058824,
+    "divergence_norm": 0.8548387096774196,
+    "wonder_index": 0.6378874130297278
+  },
+  {
+    "timestamp": "2024-05-30T12:00:00",
+    "interpretive_bandwidth_norm": 0.6470588235294114,
+    "symbolic_density_norm": 0.6470588235294118,
+    "divergence_norm": 0.9032258064516132,
+    "wonder_index": 0.7324478178368121
+  },
+  {
+    "timestamp": "2024-06-04T12:00:00",
+    "interpretive_bandwidth_norm": 0.7647058823529409,
+    "symbolic_density_norm": 0.7647058823529411,
+    "divergence_norm": 0.9354838709677419,
+    "wonder_index": 0.8216318785578746
+  },
+  {
+    "timestamp": "2024-06-09T12:00:00",
+    "interpretive_bandwidth_norm": 0.8823529411764705,
+    "symbolic_density_norm": 0.8823529411764706,
+    "divergence_norm": 0.9677419354838709,
+    "wonder_index": 0.9108159392789373
+  },
+  {
+    "timestamp": "2024-06-10T12:00:00",
+    "divergence_norm": 0.0,
+    "wonder_index": 0.0
+  },
+  {
+    "timestamp": "2024-06-14T12:00:00",
+    "interpretive_bandwidth_norm": 1.0,
+    "symbolic_density_norm": 1.0,
+    "divergence_norm": 1.0,
+    "wonder_index": 1.0
+  }
+]
