@@ -14,13 +14,21 @@ timestamped live metrics:
 It performs sliding window analysis over 7-day and 30-day intervals to detect
 changes in interpretive flexibility. A "Flexibility Pulse" score represents the
 short-term trend relative to the longer baseline. Results are saved to
-``tools/drift_tracker_log.json`` and an optional plot may be displayed.
+``tools/drift_tracker_log.json`` and an optional plot may be displayed. Each
+entry records the 7- and 30-day rolling averages for all metrics and the
+resulting ``flexibility_pulse``.
+
+Run this script after the monitoring log has been updated (e.g. via
+``monitor_dkae.py``). 7-day and 30-day rolling averages are computed with
+``pandas`` and the Flexibility Pulse is plotted if ``--plot`` is passed.
 """
 
 import argparse
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
+
+import pandas as pd
 
 try:
   import matplotlib.pyplot as plt
@@ -42,35 +50,34 @@ def load_log(path: Path):
   return data
 
 
-def average(entries):
-  """Compute average metrics for a list of entries."""
-  if not entries:
-    return {m: 0 for m in METRICS}
-  result = {m: 0.0 for m in METRICS}
-  for e in entries:
-    for m in METRICS:
-      result[m] += e.get(m, 0)
-  count = len(entries)
-  return {m: result[m] / count for m in METRICS}
-
-
 def analyze(entries):
-  """Return trend data with 7-day, 30-day averages and flexibility pulse."""
+  """Return trend data with 7-day/30-day averages and flexibility pulse."""
+  df = pd.DataFrame(entries)
+  df.sort_values("timestamp", inplace=True)
+  df.set_index("timestamp", inplace=True)
+
+  rolling7 = df.rolling("7D", min_periods=1).mean()
+  rolling30 = df.rolling("30D", min_periods=1).mean()
+
+  result_df = pd.DataFrame(index=df.index)
+  for metric in METRICS:
+    result_df[f"{metric}_7d"] = rolling7[metric]
+    result_df[f"{metric}_30d"] = rolling30[metric]
+
+  diffs = [result_df[f"{m}_7d"] - result_df[f"{m}_30d"] for m in METRICS]
+  result_df["flexibility_pulse"] = sum(diffs) / len(METRICS)
+
   results = []
-  for entry in entries:
-    t = entry["timestamp"]
-    win7 = [e for e in entries if t - timedelta(days=7) <= e["timestamp"] <= t]
-    win30 = [e for e in entries if t - timedelta(days=30) <= e["timestamp"] <= t]
-    avg7 = average(win7)
-    avg30 = average(win30)
-
-    pulse = sum((avg7[m] - avg30[m]) for m in METRICS) / len(METRICS)
-
+  for ts, row in result_df.iterrows():
     results.append({
-        "timestamp": t.isoformat(),
-        "avg_7_day": avg7,
-        "avg_30_day": avg30,
-        "flexibility_pulse": pulse
+        "timestamp": ts.isoformat(),
+        "interpretive_bandwidth_7d": row["interpretive_bandwidth_7d"],
+        "interpretive_bandwidth_30d": row["interpretive_bandwidth_30d"],
+        "symbolic_density_7d": row["symbolic_density_7d"],
+        "symbolic_density_30d": row["symbolic_density_30d"],
+        "divergence_space_7d": row["divergence_space_7d"],
+        "divergence_space_30d": row["divergence_space_30d"],
+        "flexibility_pulse": row["flexibility_pulse"],
     })
   return results
 
@@ -114,6 +121,7 @@ def main():
   entries = load_log(log_path)
   results = analyze(entries)
   save_results(results, Path(args.output))
+  print("Analysis complete.")
   print(f"Drift data written to {args.output}")
 
   if args.plot:
