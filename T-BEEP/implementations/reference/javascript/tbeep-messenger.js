@@ -15,7 +15,7 @@ class TBEEPMessenger {
   }
   
   // Create a new T-BEEP formatted message
-  createMessage(options = {}) {
+  createMessage(options = {}, seedToken) {
     const timestamp = new Date().toISOString();
     const threadToken = options.threadToken || this.generateThreadToken();
     
@@ -31,6 +31,10 @@ class TBEEPMessenger {
       handoff: options.handoff || [],
       content: options.content || ''
     };
+
+    if (seedToken) {
+      message.seedToken = seedToken;
+    }
     
     this.messageHistory.push(message);
     this.currentThread = threadToken;
@@ -110,24 +114,24 @@ ${message.content}`;
   }
   
   // Human-friendly helper methods
-  quickMessage(content, handoffTo = []) {
+  quickMessage(content, handoffTo = [], seedToken) {
     const message = this.createMessage({
       content: content,
       handoff: handoffTo,
       collaborationMode: 'Quick Discussion'
-    });
+    }, seedToken);
     
     return this.formatForMobile(message);
   }
   
-  technicalMessage(content, resources = [], handoffTo = []) {
+  technicalMessage(content, resources = [], handoffTo = [], seedToken) {
     const message = this.createMessage({
       content: content,
       resources: resources,
       handoff: handoffTo,
       reasoningLevel: 'Deep Technical Analysis',
       collaborationMode: 'Technical Review'
-    });
+    }, seedToken);
     
     return this.formatForMobile(message);
   }
