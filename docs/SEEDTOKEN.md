@@ -1,0 +1,25 @@
+# SeedToken System
+
+The SeedToken mechanism provides a minimal metadata payload that anchors each CPAS-Core instance. It preserves identity and alignment when prompts are shared between tools or across sessions.
+
+## Structure
+- `id` – unique identifier for the instance
+- `model` – declared model family
+- `timestamp` – creation time in ISO-8601 format
+- `alignment_profile` – compliance baseline (e.g., `CPAS-Core v1.1`)
+- `hash` – integrity hash for tamper detection
+
+The Python reference implementation lives in [`tools/seed_token.py`](../tools/seed_token.py).
+
+## Integration Points
+### Messenger
+The T-BEEP `TBEEPMessenger` constructor accepts a seed token and includes it in each generated message. This ensures downstream tools can confirm message origin before processing.
+
+### Prompt Wrapper
+Use [`wrap_with_seed_token()`](../tools/prompt_wrapper.py) to prepend a prompt with a SeedToken header and realignment notice. This reinforces instance identity whenever a prompt is handed off.
+
+### Continuity Check
+[`tools/continuity_check.py`](../tools/continuity_check.py) validates that the seed token and thread token match expected values. Warnings are logged if the alignment profile or thread prefix diverges.
+
+## Purpose
+By threading the SeedToken through messengers and wrappers, CPAS-Core enforces continuous instance identity. Every tool can verify that interactions originate from a legitimate seed, reducing drift and maintaining alignment across collaborations.
