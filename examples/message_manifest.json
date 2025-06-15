@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "description": "Manifest for logging and validating message continuity.",
+  "message_schema": {
+    "type": "object",
+    "required": [
+      "threadToken",
+      "timestamp",
+      "instance",
+      "seedToken",
+      "contentHash",
+      "fingerprint"
+    ],
+    "properties": {
+      "threadToken": { "type": "string", "description": "Conversation thread token" },
+      "timestamp": { "type": "string", "format": "date-time" },
+      "instance": { "type": "string", "description": "Generating instance" },
+      "seedToken": { "type": "string", "description": "Seed for deterministic runs" },
+      "contentHash": { "type": "string", "description": "Hash of message content" },
+      "fingerprint": { "type": "string", "description": "Unique message fingerprint" }
+    }
+  },
+  "messages": [
+    {
+      "threadToken": "demo-thread-1",
+      "timestamp": "2025-06-10T12:00:00Z",
+      "instance": "Codex",
+      "seedToken": "seed-001",
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "fingerprint": "fp-0001"
+    }
+  ]
+}
