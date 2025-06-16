@@ -1,12 +1,13 @@
-"""Interactive Epistemic Metrics Dashboard.
+"""Unified Epistemic Metrics Dashboard.
 
 Usage:
     streamlit run tools/dashboard.py
 
-This Streamlit app visualizes baseline and live metrics from
-``baseline_metrics.json`` and ``monitor_log.json`` to track interpretive
-flexibility. It also allows collaborative updates to qualitative
-"Wonder Signals".
+This Streamlit app consolidates multiple monitoring views into a single
+interface. It visualizes baseline metrics, Flexibility Pulse trends,
+Wonder Index data and logged Emergence Events. Realignment indicators are
+derived from the latest drift metrics. A text area allows collaborative
+updates to qualitative "Wonder Signals".
 """
 
 from __future__ import annotations
@@ -17,13 +18,28 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+try:  # optional for nicer event plots
+    import altair as alt
+except Exception:  # pragma: no cover - altair may not be installed
+    alt = None
+
 
 BASE_DIR = Path(__file__).resolve().parent
 BASELINE_FILE = BASE_DIR / "baseline_metrics.json"
 LOG_FILE = BASE_DIR / "monitor_log.json"
+DRIFT_FILE = BASE_DIR / "drift_tracker_log.json"
+WONDER_INDEX_FILE = BASE_DIR / "wonder_index_log.json"
+EMERGENCE_FILE = BASE_DIR / "emergence_log.json"
 WONDER_FILE = BASE_DIR / "wonder_signals.txt"
 
 st.set_page_config(page_title="Epistemic Metrics Dashboard")
+
+# Thresholds for realignment triggers
+DRIFT_THRESHOLDS = {
+    "symbolic_density": 0.4,
+    "interpretive_bandwidth": 0.6,
+    "divergence_score": 0.5,
+}
 
 
 def load_json(path: Path) -> dict:
@@ -40,8 +56,34 @@ def latest_entry(data: dict) -> dict:
     return data[ts]
 
 
+def latest_drift_metrics() -> dict:
+    """Return the most recent drift metrics from ``DRIFT_FILE``."""
+    data = load_json(DRIFT_FILE)
+    if isinstance(data, list) and data:
+        last = data[-1]
+        avg = last.get("avg_7_day", {})
+        return {
+            "interpretive_bandwidth": float(avg.get("interpretive_bandwidth", 0)),
+            "symbolic_density": float(avg.get("symbolic_density", 0)),
+            "divergence_score": float(avg.get("divergence_space", 0)),
+        }
+    return {}
+
+
+def should_realign(metrics: dict) -> bool:
+    """Return True if any metric falls below its threshold."""
+    for key, threshold in DRIFT_THRESHOLDS.items():
+        val = metrics.get(key)
+        if val is not None and val < threshold:
+            return True
+    return False
+
+
 baseline_data = load_json(BASELINE_FILE)
 log_data = load_json(LOG_FILE)
+wonder_data = load_json(WONDER_INDEX_FILE)
+emergence_data = load_json(EMERGENCE_FILE)
+drift_data = load_json(DRIFT_FILE)
 
 baseline_metrics = latest_entry(baseline_data)
 log_df = pd.DataFrame(log_data).T
@@ -51,6 +93,24 @@ if not log_df.empty:
     current_metrics = log_df.iloc[-1].to_dict()
 else:
     current_metrics = {}
+
+# Flexibility Pulse from drift tracker
+pulse_df = pd.DataFrame(drift_data)
+if not pulse_df.empty and "timestamp" in pulse_df.columns:
+    pulse_df["timestamp"] = pd.to_datetime(pulse_df["timestamp"])
+    pulse_df.set_index("timestamp", inplace=True)
+
+# Wonder Index log
+wonder_df = pd.DataFrame(wonder_data)
+if not wonder_df.empty and "timestamp" in wonder_df.columns:
+    wonder_df["timestamp"] = pd.to_datetime(wonder_df["timestamp"])
+    wonder_df.set_index("timestamp", inplace=True)
+
+# Emergence Events
+emergence_df = pd.DataFrame(emergence_data)
+if not emergence_df.empty and "timestamp" in emergence_df.columns:
+    emergence_df["timestamp"] = pd.to_datetime(emergence_df["timestamp"])
+    emergence_df.sort_values("timestamp", inplace=True)
 
 st.title("Epistemic Metrics Dashboard")
 
@@ -83,9 +143,47 @@ for metric in [
 if alerts:
     st.error("Rollback trigger detected for: " + ", ".join(alerts))
 
+# Realignment indicator using drift metrics
+drift_metrics = latest_drift_metrics()
+st.header("Realignment Indicator")
+if not drift_metrics:
+    st.info("No drift tracker data available.")
+else:
+    if should_realign(drift_metrics):
+        st.warning("Recent metrics exceed realignment thresholds.")
+    else:
+        st.success("Metrics within acceptable range.")
+    st.json(drift_metrics)
+
 if not log_df.empty:
     st.header("Metric Trends")
     st.line_chart(log_df)
+
+if not pulse_df.empty:
+    st.header("Flexibility Pulse")
+    st.line_chart(pulse_df[["flexibility_pulse"]])
+
+if not wonder_df.empty:
+    st.header("Wonder Index")
+    st.line_chart(wonder_df[["wonder_index"]])
+
+if not emergence_df.empty:
+    st.header("Emergence Events")
+    if alt:
+        chart = (
+            alt.Chart(emergence_df)
+            .mark_circle(color="orange", size=80)
+            .encode(
+                x="timestamp:T",
+                y=alt.value(0),
+                tooltip=["timestamp:T", "description:N"],
+            )
+            .properties(height=120)
+        )
+        st.altair_chart(chart, use_container_width=True)
+    else:
+        st.scatter_chart(emergence_df.set_index("timestamp")[[]])
+    st.dataframe(emergence_df[["timestamp", "description"]])
 
 st.header("Wonder Signals")
 existing_text = WONDER_FILE.read_text(encoding="utf-8") if WONDER_FILE.exists() else ""
