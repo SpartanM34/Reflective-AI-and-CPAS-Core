@@ -125,6 +125,9 @@ wonder_df = pd.DataFrame(wonder_data)
 if not wonder_df.empty and "timestamp" in wonder_df.columns:
     wonder_df["timestamp"] = pd.to_datetime(wonder_df["timestamp"])
     wonder_df.set_index("timestamp", inplace=True)
+    wonder_latest = float(wonder_df["wonder_index"].iloc[-1])
+else:
+    wonder_latest = None
 
 # Emergence Events
 emergence_df = pd.DataFrame(emergence_data)
@@ -175,6 +178,9 @@ with right:
                 metric.replace("_", " ").title(), f"{cur_val:.3f}", f"{delta:+.1f}%"
             )
 
+    if wonder_latest is not None:
+        st.metric("Wonder Index", f"{wonder_latest:.3f}")
+
     alerts = []
     for metric in [
         "interpretive_bandwidth",
@@ -203,18 +209,18 @@ with right:
 
     if not log_df.empty:
         st.header("Metric Trends")
-        st.line_chart(log_df)
+        st.line_chart(log_df, use_container_width=True)
 
     if not pulse_df.empty:
         st.header("Flexibility Pulse")
-        st.line_chart(pulse_df[["flexibility_pulse"]])
+        st.line_chart(pulse_df[["flexibility_pulse"]], use_container_width=True)
 
     if not wonder_df.empty:
         st.header("Wonder Index")
-        st.line_chart(wonder_df[["wonder_index"]])
+        st.line_chart(wonder_df[["wonder_index"]], use_container_width=True)
 
     if not emergence_df.empty:
-        st.header("Emergence Events")
+        st.header("Emergence Clusters")
         if alt:
             chart = (
                 alt.Chart(emergence_df)
@@ -228,7 +234,9 @@ with right:
             )
             st.altair_chart(chart, use_container_width=True)
         else:
-            st.scatter_chart(emergence_df.set_index("timestamp")[[]])
+            st.scatter_chart(
+                emergence_df.set_index("timestamp")[[]], use_container_width=True
+            )
         st.dataframe(emergence_df[["timestamp", "description"]])
 
     st.header("Wonder Signals")
