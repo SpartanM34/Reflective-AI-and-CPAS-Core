@@ -57,6 +57,9 @@ This repository is **optimized for mobile workflows**:
 2. **Review** `/core/protocol.md` for T-BEEP fundamentals
 3. **Explore** `/examples/` for practical implementation patterns
 4. **Validate** your implementations using `/core/validators.js`
+5. **Leverage** the Python messenger in
+   `implementations/reference/python/tbeep_messenger.py` for AutoGen
+   workflows
 
 ### For AI Instances
 1. **Reference** your instance spec in `/specs/[instance-name]/`
