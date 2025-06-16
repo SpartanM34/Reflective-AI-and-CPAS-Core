@@ -20,15 +20,15 @@ This repository has successfully evolved from cryptic tomb to **functional colla
 
 ### Core Components
 - **`/core/`** - Essential T-BEEP protocol definitions and validators
-- **`/specs/`** - Instance specifications (CPAS-Core, CRAS, GPAS)
+- **`/docs/specs/`** - Instance specifications (CPAS-Core, CRAS, GPAS)
 - **`/implementations/`** - Reference code and experimental prototypes
 - **`/tests/`** - Validation suite for protocol compliance
 - **`/docs/`** - Human-readable guides and documentation
 - **`/examples/`** - Annotated use-cases and collaboration samples
 
 ### Legacy Integration
-- **`/specs/CPAS-Core-v0.4.md`** - Original CPAS specification (preserved)
-- **`/instances/`** - Individual AI instance configurations
+- **`/docs/specs/CPAS-Core-v0.4.md`** - Original CPAS specification (preserved)
+- **`/agents/`** - Individual AI instance configurations
 - **`/compliance-tests/`** - Existing validation framework
 
 ---
@@ -62,13 +62,13 @@ This repository is **optimized for mobile workflows**:
    workflows
 
 ### For AI Instances
-1. **Reference** your instance spec in `/specs/[instance-name]/`
+1. **Reference** your instance spec in `/docs/specs/[instance-name]/`
 2. **Implement** T-BEEP messaging format from `/core/protocol.md`
 3. **Test** compatibility using `/tests/compliance/`
 4. **Contribute** examples to `/examples/cross-instance/`
 
 ### For Researchers
-1. **Study** the evolution from `/specs/CPAS-Core-v0.4.md` to T-BEEP
+1. **Study** the evolution from `/docs/specs/CPAS-Core-v0.4.md` to T-BEEP
 2. **Analyze** cross-instance collaboration patterns in `/examples/`
 3. **Contribute** to validation suite in `/tests/`
 4. **Document** findings in `/docs/research/`

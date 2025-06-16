@@ -1,11 +1,11 @@
 # Dynamic Dashboard Prototype
 
-`tools/dashboard.py` provides a lightweight Streamlit interface for real-time visualization of epistemic metrics. The dashboard now consolidates multiple views including Flexibility Pulse, Wonder Index trends, emergence events and realignment indicators.
+`ui/dashboard.py` provides a lightweight Streamlit interface for real-time visualization of epistemic metrics. The dashboard now consolidates multiple views including Flexibility Pulse, Wonder Index trends, emergence events and realignment indicators.
 
 ## Usage
 
 ```bash
-streamlit run tools/dashboard.py
+streamlit run ui/dashboard.py
 ```
 
 The dashboard reads baseline values from `docs/examples/baseline_metrics.json` and live metrics from `docs/examples/monitor_log.json`.

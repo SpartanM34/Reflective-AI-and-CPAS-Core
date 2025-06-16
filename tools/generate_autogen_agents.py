@@ -15,8 +15,8 @@ from tools.continuity_check import continuity_check
 import logging
 
 ROOT = Path(__file__).resolve().parents[1]
-JSON_DIR = ROOT / "instances"
-PY_DIR = JSON_DIR / "python"
+JSON_DIR = ROOT / "agents" / "json"
+PY_DIR = ROOT / "agents" / "python"
 
 
 def create_system_message(idp: dict) -> str:
