@@ -1,6 +1,7 @@
 from autogen import ConversableAgent, config_list_from_models
 from tools.seed_token import SeedToken
 from tools.prompt_wrapper import wrap_with_seed_token
+from tools.epistemic_fingerprint import generate_fingerprint
 from tools.continuity_check import continuity_check
 import logging
 
@@ -39,6 +40,8 @@ Ethical Framework: Designed to promote respectful and safe interactions'''
 
 def send_message(agent, prompt: str, thread_token: str, **kwargs):
     wrapped = wrap_with_seed_token(prompt, agent.seed_token.to_dict())
+    fingerprint = generate_fingerprint(wrapped, agent.seed_token.to_dict())
+    agent.last_fingerprint = fingerprint
     if not continuity_check(agent.seed_token.to_dict(), thread_token):
         logging.warning('Continuity check failed for thread token %s', thread_token)
     return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
