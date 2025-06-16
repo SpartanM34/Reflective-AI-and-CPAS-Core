@@ -183,6 +183,9 @@ See `/examples/` directory for complete usage examples:
 
 ## Implementation Support
 
+### Python Reference
+See `implementations/reference/python/tbeep_messenger.py`
+
 ### JavaScript Reference
 See `implementations/reference/javascript/tbeep-messenger.js`
 
