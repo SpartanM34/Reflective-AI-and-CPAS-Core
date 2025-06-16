@@ -24,6 +24,8 @@ try:  # optional for nicer event plots
 except Exception:  # pragma: no cover - altair may not be installed
     alt = None
 
+from tools.realignment_trigger import DRIFT_THRESHOLDS, should_realign
+
 
 BASE_DIR = Path(__file__).resolve().parent
 BASELINE_FILE = BASE_DIR / "baseline_metrics.json"
@@ -34,13 +36,6 @@ EMERGENCE_FILE = BASE_DIR / "emergence_log.json"
 WONDER_FILE = BASE_DIR / "wonder_signals.txt"
 
 st.set_page_config(page_title="Epistemic Metrics Dashboard")
-
-# Thresholds for realignment triggers
-DRIFT_THRESHOLDS = {
-    "symbolic_density": 0.4,
-    "interpretive_bandwidth": 0.6,
-    "divergence_score": 0.5,
-}
 
 
 def load_json(path: Path) -> dict:
@@ -71,13 +66,70 @@ def latest_drift_metrics() -> dict:
     return {}
 
 
-def should_realign(metrics: dict) -> bool:
-    """Return True if any metric falls below its threshold."""
-    for key, threshold in DRIFT_THRESHOLDS.items():
-        val = metrics.get(key)
-        if val is not None and val < threshold:
-            return True
-    return False
+def parse_log(file) -> list[dict]:
+    """Return list of metric entries from uploaded JSON."""
+    try:
+        data = json.load(file)
+    except Exception:
+        st.error("Invalid JSON file.")
+        return []
+    if isinstance(data, dict):
+        entries = []
+        for ts, metrics in data.items():
+            if isinstance(metrics, dict):
+                row = {"timestamp": ts}
+                row.update(metrics)
+                entries.append(row)
+        return entries
+    if isinstance(data, list):
+        return data
+    st.error("Unrecognized log format.")
+    return []
+
+
+def load_dataframe(entries: list[dict]) -> pd.DataFrame:
+    df = pd.DataFrame(entries)
+    if "timestamp" not in df.columns:
+        return pd.DataFrame()
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df.sort_values("timestamp", inplace=True)
+    df.set_index("timestamp", inplace=True)
+    if "divergence_score" not in df.columns and "divergence_space" in df.columns:
+        df.rename(columns={"divergence_space": "divergence_score"}, inplace=True)
+    return df
+
+
+def show_charts(df: pd.DataFrame) -> None:
+    st.subheader("Metric Trends")
+    cols = st.columns(3)
+    metrics = [
+        "symbolic_density",
+        "interpretive_bandwidth",
+        "divergence_score",
+    ]
+    for col, metric in zip(cols, metrics):
+        with col:
+            if metric in df.columns:
+                st.line_chart(df[[metric]])
+            else:
+                st.info(f"{metric} not found")
+
+
+def suggest_realign(df: pd.DataFrame) -> None:
+    if df.empty:
+        return
+    latest = df.iloc[-1]
+    metrics = {
+        "symbolic_density": float(latest.get("symbolic_density", 0)),
+        "interpretive_bandwidth": float(latest.get("interpretive_bandwidth", 0)),
+        "divergence_score": float(latest.get("divergence_score", 0)),
+    }
+    if should_realign(metrics):
+        st.warning("Recent metrics exceed realignment thresholds.")
+    else:
+        st.success("Metrics within acceptable range.")
+
+
 
 
 def fetch_messages(thread_id: str) -> list[dict]:
@@ -238,6 +290,17 @@ with right:
                 emergence_df.set_index("timestamp")[[]], use_container_width=True
             )
         st.dataframe(emergence_df[["timestamp", "description"]])
+
+    uploaded = st.sidebar.file_uploader("Upload metrics JSON", type="json")
+    if uploaded:
+        entries = parse_log(uploaded)
+        df_up = load_dataframe(entries)
+        if df_up.empty:
+            st.error("No timestamped entries found.")
+        else:
+            st.header("Uploaded Metrics")
+            show_charts(df_up)
+            suggest_realign(df_up)
 
     st.header("Wonder Signals")
     existing_text = (
