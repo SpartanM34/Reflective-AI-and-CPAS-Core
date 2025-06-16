@@ -14,7 +14,7 @@ This document is a concise, human-readable reference for the active agents colla
 
 ## Notes on Interpretive Flexibility
 
-- **Baseline Metrics**: Stored in `tools/baseline_metrics.json` and referenced by the monitoring scripts.
+- **Baseline Metrics**: Stored in `docs/examples/baseline_metrics.json` and referenced by the monitoring scripts.
 - **Dynamic Dashboards**: Implemented via `tools/dashboard.py` for real-time visibility into epistemic health.
 - **Rollback Triggers**: Defined in `docs/tech-specs/monitoring_protocol.md` and `docs/tech-specs/stress_test_protocol.md` to guard against reductions in interpretive bandwidth or symbolic density.
 

@@ -1,6 +1,8 @@
 phase1-env/
 phase2-env/
-tools/drift_tracker_log.json
+
+tools/*_log.json
+docs/examples/*.json
 
 phase3-env/
 

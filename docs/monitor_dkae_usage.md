@@ -9,7 +9,7 @@ It computes the epistemic metrics defined in [monitoring_protocol.md](tech-specs
 python tools/monitor_dkae.py
 ```
 
-The script logs results to `tools/monitor_log.json`. The first run also writes a baseline to `tools/monitor_baseline.json`.
+The script logs results to `docs/examples/monitor_log.json`. The first run also writes a baseline to `tools/monitor_baseline.json`.
 
 ## Git Hook Integration
 
