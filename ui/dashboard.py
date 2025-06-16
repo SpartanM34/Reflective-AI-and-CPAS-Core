@@ -1,7 +1,7 @@
 """Unified Epistemic Metrics Dashboard.
 
 Usage:
-    streamlit run tools/dashboard.py
+    streamlit run ui/dashboard.py
 
 This Streamlit app consolidates multiple monitoring views into a single
 interface. It visualizes baseline metrics, Flexibility Pulse trends,
@@ -311,5 +311,5 @@ with right:
         WONDER_FILE.write_text(text, encoding="utf-8")
         st.success("Wonder Signals saved.")
 
-    st.sidebar.markdown("**Usage**: `streamlit run tools/dashboard.py`")
+    st.sidebar.markdown("**Usage**: `streamlit run ui/dashboard.py`")
 

@@ -41,7 +41,7 @@ Implementation Plan
 
 2️⃣ Dashboard Integration
 
-Extend /dashboard.py to display Wonder Index trends and emergence highlights.
+Extend ui/dashboard.py to display Wonder Index trends and emergence highlights.
 
 
 3️⃣ Cross-Instance Validation
@@ -104,7 +104,7 @@ Logs emergent moments that reinforce interpretive wonder.
 
 ✅ Real-Time Dashboard
 
-dashboard.py
+ui/dashboard.py
 
 Visualizes Flexibility Pulse, Wonder Index trends, and emergence events in an interactive dashboard.
 

@@ -1,5 +1,5 @@
 import json
-from tbeep_api import app, MESSAGE_STORE
+from api.tbeep_api import app, MESSAGE_STORE
 
 
 def test_post_and_get_message():

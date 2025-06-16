@@ -25,4 +25,4 @@
 - Progressive disclosure of technical depth
 
 ## Reference Configuration
-Source: `instances/anthropic-claude4/claude-sonnet-cras.json`
+Source: `agents/json/anthropic-claude4/claude-sonnet-cras.json`

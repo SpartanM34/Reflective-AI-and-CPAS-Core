@@ -29,18 +29,18 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 
 ### Additional Resources
 
-- [**CPAS-Core v1.1 Specification**](specs/current/CPAS-Core-v1.1.md)
-- [**Changelog**](specs/CHANGELOG.md)
+- [**CPAS-Core v1.1 Specification**](docs/specs/current/CPAS-Core-v1.1.md)
+- [**Changelog**](docs/specs/CHANGELOG.md)
 - [**Metaphor Library (including DKA-E metaphors)**](./metaphor-library/)
 - [**Compliance Tests**](./compliance-tests/)
-- [**Research & Reflections**](./research/)
+- [**Research & Reflections**](./docs/research/)
 
 ### Drift Monitoring Dashboard
 
 Visualize the flexibility pulse by running:
 
 ```bash
-streamlit run tools/dashboard.py
+streamlit run ui/dashboard.py
 ```
 
 The dashboard now includes a scrolling message feed and a right-hand metrics panel
@@ -48,11 +48,11 @@ summarizing baseline drift and the wonder index across all active instances.
 
 ### T-BEEP API Example
 
-An experimental Flask service in `tbeep_api.py` accepts and stores T-BEEP
+An experimental Flask service in `api/tbeep_api.py` accepts and stores T-BEEP
 messages. Start the API with:
 
 ```bash
-python tbeep_api.py
+python api/tbeep_api.py
 ```
 
 Messages can then be POSTed to `/api/v1/messages` and fetched by thread ID via

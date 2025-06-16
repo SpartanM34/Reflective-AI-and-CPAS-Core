@@ -1,7 +1,7 @@
 import logging
 import types
 
-from instances.python import Lumin
+from agents.python import Lumin
 
 
 class DummyAgent:
