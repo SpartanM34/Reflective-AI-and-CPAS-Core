@@ -40,8 +40,11 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 Visualize the flexibility pulse by running:
 
 ```bash
-streamlit run dashboard.py
+streamlit run tools/dashboard.py
 ```
+
+The dashboard now includes a scrolling message feed and a right-hand metrics panel
+summarizing baseline drift and the wonder index across all active instances.
 
 ### T-BEEP API Example
 
