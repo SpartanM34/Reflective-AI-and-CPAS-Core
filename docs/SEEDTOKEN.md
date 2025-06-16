@@ -21,5 +21,8 @@ Use [`wrap_with_seed_token()`](../tools/prompt_wrapper.py) to prepend a prompt w
 ### Continuity Check
 [`tools/continuity_check.py`](../tools/continuity_check.py) validates that the seed token and thread token match expected values. Warnings are logged if the alignment profile or thread prefix diverges.
 
+### Generated Agents
+Modules produced by `tools/generate_autogen_agents.py` now integrate the seed token directly. `create_agent()` attaches `SeedToken.generate(IDP_METADATA)` to the returned agent, and a helper `send_message()` wraps outgoing prompts with `wrap_with_seed_token()` while verifying thread tokens via `continuity_check`. A warning is emitted if verification fails.
+
 ## Purpose
 By threading the SeedToken through messengers and wrappers, CPAS-Core enforces continuous instance identity. Every tool can verify that interactions originate from a legitimate seed, reducing drift and maintaining alignment across collaborations.
