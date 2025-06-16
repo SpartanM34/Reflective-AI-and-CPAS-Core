@@ -43,6 +43,18 @@ Visualize the flexibility pulse by running:
 streamlit run dashboard.py
 ```
 
+### T-BEEP API Example
+
+An experimental Flask service in `tbeep_api.py` accepts and stores T-BEEP
+messages. Start the API with:
+
+```bash
+python tbeep_api.py
+```
+
+Messages can then be POSTed to `/api/v1/messages` and fetched by thread ID via
+`GET /api/v1/messages?thread_id=`.
+
 ### Metaphor Library Extension
 
 The **DKA-E metaphors**—focusing on persistent knowledge structures, dynamic evolution, and collaborative orchestration—are now housed within the [**Metaphor Library**](./metaphor-library/DKA-E/). These extend the core DKA module, offering symbolic depth for advanced use cases.
