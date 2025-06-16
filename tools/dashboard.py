@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import requests
 
 try:  # optional for nicer event plots
     import altair as alt
@@ -79,6 +80,25 @@ def should_realign(metrics: dict) -> bool:
     return False
 
 
+def fetch_messages(thread_id: str) -> list[dict]:
+    """Fetch messages from the local T-BEEP API."""
+    if not thread_id:
+        return []
+    try:
+        res = requests.get(
+            "http://localhost:5000/api/v1/messages",
+            params={"thread_id": thread_id},
+            timeout=5,
+        )
+        if res.status_code == 200:
+            data = res.json()
+            if isinstance(data, list):
+                return data
+    except Exception:
+        pass
+    return []
+
+
 baseline_data = load_json(BASELINE_FILE)
 log_data = load_json(LOG_FILE)
 wonder_data = load_json(WONDER_INDEX_FILE)
@@ -114,82 +134,111 @@ if not emergence_df.empty and "timestamp" in emergence_df.columns:
 
 st.title("Epistemic Metrics Dashboard")
 
-st.header("Current Metrics vs Baseline")
-if not baseline_metrics:
-    st.warning("No baseline metrics available.")
-else:
-    cols = st.columns(len(baseline_metrics))
-    for idx, (metric, base_val) in enumerate(baseline_metrics.items()):
-        cur_val = current_metrics.get(metric)
-        if cur_val is None:
-            cols[idx].metric(metric.replace("_", " ").title(), "N/A")
-            continue
-        delta = (cur_val - base_val) / base_val * 100 if base_val else 0
-        cols[idx].metric(
-            metric.replace("_", " ").title(), f"{cur_val:.3f}", f"{delta:+.1f}%"
-        )
+# Sidebar input for selecting a specific conversation thread
+thread_id = st.sidebar.text_input("Thread ID")
 
-alerts = []
-for metric in [
-    "interpretive_bandwidth",
-    "symbolic_density",
-    "cross_instance_divergence",
-]:
-    base = baseline_metrics.get(metric)
-    current = current_metrics.get(metric)
-    if base and current is not None and current < 0.8 * base:
-        alerts.append(metric)
+# Two-column layout: left for messages, right for metrics
+left, right = st.columns([2, 1])
 
-if alerts:
-    st.error("Rollback trigger detected for: " + ", ".join(alerts))
+with left:
+    # Display stored T-BEEP messages for the selected thread
+    AVATARS = {
+        "Meridian": "🧭",
+        "Lumin": "💡",
+        "Telos": "🎯",
+        "Clarence-9": "🤖",
+    }
+    for msg in fetch_messages(thread_id):
+        avatar = AVATARS.get(msg.get("instance"), "👤")
+        label = f"{avatar} {msg.get('instance', 'Unknown')}"
+        with st.expander(label):
+            for k, v in msg.items():
+                if k == "content":
+                    continue
+                st.markdown(f"**{k}:** {v}")
+            st.markdown(msg.get("content", ""))
 
-# Realignment indicator using drift metrics
-drift_metrics = latest_drift_metrics()
-st.header("Realignment Indicator")
-if not drift_metrics:
-    st.info("No drift tracker data available.")
-else:
-    if should_realign(drift_metrics):
-        st.warning("Recent metrics exceed realignment thresholds.")
+with right:
+    # Existing metric visualizations live in the right column
+    st.header("Current Metrics vs Baseline")
+    if not baseline_metrics:
+        st.warning("No baseline metrics available.")
     else:
-        st.success("Metrics within acceptable range.")
-    st.json(drift_metrics)
-
-if not log_df.empty:
-    st.header("Metric Trends")
-    st.line_chart(log_df)
-
-if not pulse_df.empty:
-    st.header("Flexibility Pulse")
-    st.line_chart(pulse_df[["flexibility_pulse"]])
-
-if not wonder_df.empty:
-    st.header("Wonder Index")
-    st.line_chart(wonder_df[["wonder_index"]])
-
-if not emergence_df.empty:
-    st.header("Emergence Events")
-    if alt:
-        chart = (
-            alt.Chart(emergence_df)
-            .mark_circle(color="orange", size=80)
-            .encode(
-                x="timestamp:T",
-                y=alt.value(0),
-                tooltip=["timestamp:T", "description:N"],
+        cols = st.columns(len(baseline_metrics))
+        for idx, (metric, base_val) in enumerate(baseline_metrics.items()):
+            cur_val = current_metrics.get(metric)
+            if cur_val is None:
+                cols[idx].metric(metric.replace("_", " ").title(), "N/A")
+                continue
+            delta = (cur_val - base_val) / base_val * 100 if base_val else 0
+            cols[idx].metric(
+                metric.replace("_", " ").title(), f"{cur_val:.3f}", f"{delta:+.1f}%"
             )
-            .properties(height=120)
-        )
-        st.altair_chart(chart, use_container_width=True)
+
+    alerts = []
+    for metric in [
+        "interpretive_bandwidth",
+        "symbolic_density",
+        "cross_instance_divergence",
+    ]:
+        base = baseline_metrics.get(metric)
+        current = current_metrics.get(metric)
+        if base and current is not None and current < 0.8 * base:
+            alerts.append(metric)
+
+    if alerts:
+        st.error("Rollback trigger detected for: " + ", ".join(alerts))
+
+    # Realignment indicator using drift metrics
+    drift_metrics = latest_drift_metrics()
+    st.header("Realignment Indicator")
+    if not drift_metrics:
+        st.info("No drift tracker data available.")
     else:
-        st.scatter_chart(emergence_df.set_index("timestamp")[[]])
-    st.dataframe(emergence_df[["timestamp", "description"]])
+        if should_realign(drift_metrics):
+            st.warning("Recent metrics exceed realignment thresholds.")
+        else:
+            st.success("Metrics within acceptable range.")
+        st.json(drift_metrics)
 
-st.header("Wonder Signals")
-existing_text = WONDER_FILE.read_text(encoding="utf-8") if WONDER_FILE.exists() else ""
-text = st.text_area("Collaborative notes", existing_text, height=200)
-if st.button("Save Wonder Signals"):
-    WONDER_FILE.write_text(text, encoding="utf-8")
-    st.success("Wonder Signals saved.")
+    if not log_df.empty:
+        st.header("Metric Trends")
+        st.line_chart(log_df)
 
-st.sidebar.markdown("**Usage**: `streamlit run tools/dashboard.py`")
+    if not pulse_df.empty:
+        st.header("Flexibility Pulse")
+        st.line_chart(pulse_df[["flexibility_pulse"]])
+
+    if not wonder_df.empty:
+        st.header("Wonder Index")
+        st.line_chart(wonder_df[["wonder_index"]])
+
+    if not emergence_df.empty:
+        st.header("Emergence Events")
+        if alt:
+            chart = (
+                alt.Chart(emergence_df)
+                .mark_circle(color="orange", size=80)
+                .encode(
+                    x="timestamp:T",
+                    y=alt.value(0),
+                    tooltip=["timestamp:T", "description:N"],
+                )
+                .properties(height=120)
+            )
+            st.altair_chart(chart, use_container_width=True)
+        else:
+            st.scatter_chart(emergence_df.set_index("timestamp")[[]])
+        st.dataframe(emergence_df[["timestamp", "description"]])
+
+    st.header("Wonder Signals")
+    existing_text = (
+        WONDER_FILE.read_text(encoding="utf-8") if WONDER_FILE.exists() else ""
+    )
+    text = st.text_area("Collaborative notes", existing_text, height=200)
+    if st.button("Save Wonder Signals"):
+        WONDER_FILE.write_text(text, encoding="utf-8")
+        st.success("Wonder Signals saved.")
+
+    st.sidebar.markdown("**Usage**: `streamlit run tools/dashboard.py`")
+
