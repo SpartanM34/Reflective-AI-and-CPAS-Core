@@ -4,6 +4,11 @@ from textwrap import indent
 
 from autogen import ConversableAgent, config_list_from_models
 
+from tools.seed_token import SeedToken
+from tools.prompt_wrapper import wrap_with_seed_token
+from tools.continuity_check import continuity_check
+import logging
+
 ROOT = Path(__file__).resolve().parents[1]
 JSON_DIR = ROOT / "instances"
 PY_DIR = JSON_DIR / "python"
@@ -34,8 +39,12 @@ def generate_agent_module(json_path: Path) -> str:
     idp = json.loads(json_path.read_text())
     module_lines = [
         "from autogen import ConversableAgent, config_list_from_models",
+        "from tools.seed_token import SeedToken",
+        "from tools.prompt_wrapper import wrap_with_seed_token",
+        "from tools.continuity_check import continuity_check",
+        "import logging",
         "",
-        f"IDP_METADATA = {json.dumps(idp, indent=2)}",
+        f"IDP_METADATA = {repr(idp)}",
         "",
         "\nconfig_list = config_list_from_models([IDP_METADATA['model_family']])",
         "",
@@ -49,7 +58,15 @@ def generate_agent_module(json_path: Path) -> str:
         "        description=IDP_METADATA.get('interaction_style'),",
         "    )",
         "    agent.idp_metadata = IDP_METADATA",
+        "    seed_token = SeedToken.generate(IDP_METADATA)",
+        "    agent.seed_token = seed_token",
         "    return agent",
+        "",
+        "def send_message(agent, prompt: str, thread_token: str, **kwargs):",
+        "    wrapped = wrap_with_seed_token(prompt, agent.seed_token.to_dict())",
+        "    if not continuity_check(agent.seed_token.to_dict(), thread_token):",
+        "        logging.warning('Continuity check failed for thread token %s', thread_token)",
+        "    return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)",
         "",
     ]
     return "\n".join(module_lines)
