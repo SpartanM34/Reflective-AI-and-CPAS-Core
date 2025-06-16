@@ -23,6 +23,7 @@ Use [`wrap_with_seed_token()`](../tools/prompt_wrapper.py) to prepend a prompt w
 
 ### Generated Agents
 Modules produced by `tools/generate_autogen_agents.py` now integrate the seed token directly. `create_agent()` attaches `SeedToken.generate(IDP_METADATA)` to the returned agent, and a helper `send_message()` wraps outgoing prompts with `wrap_with_seed_token()` while verifying thread tokens via `continuity_check`. A warning is emitted if verification fails.
+`send_message()` also checks the latest drift metrics via `tools.drift_monitor.latest_metrics` and automatically regenerates the seed token when `should_realign()` indicates drift beyond the defined thresholds.
 
 ## Purpose
 By threading the SeedToken through messengers and wrappers, CPAS-Core enforces continuous instance identity. Every tool can verify that interactions originate from a legitimate seed, reducing drift and maintaining alignment across collaborations.

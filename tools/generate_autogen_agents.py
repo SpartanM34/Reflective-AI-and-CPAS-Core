@@ -2,7 +2,12 @@ import json
 from pathlib import Path
 from textwrap import indent
 
-from autogen import ConversableAgent, config_list_from_models
+try:
+    from autogen import ConversableAgent, config_list_from_models
+except Exception:  # pragma: no cover - optional dependency
+    ConversableAgent = object  # type: ignore[misc]
+    def config_list_from_models(*args, **kwargs):  # type: ignore[return-type]
+        return []
 
 from tools.seed_token import SeedToken
 from tools.prompt_wrapper import wrap_with_seed_token
@@ -43,6 +48,8 @@ def generate_agent_module(json_path: Path) -> str:
         "from tools.prompt_wrapper import wrap_with_seed_token",
         "from tools.epistemic_fingerprint import generate_fingerprint",
         "from tools.continuity_check import continuity_check",
+        "from tools.drift_monitor import latest_metrics",
+        "from tools.realignment_trigger import should_realign",
         "import logging",
         "",
         f"IDP_METADATA = {repr(idp)}",
@@ -69,6 +76,10 @@ def generate_agent_module(json_path: Path) -> str:
         "    agent.last_fingerprint = fingerprint",
         "    if not continuity_check(agent.seed_token.to_dict(), thread_token):",
         "        logging.warning('Continuity check failed for thread token %s', thread_token)",
+        "    metrics = latest_metrics()",
+        "    if metrics and should_realign(metrics):",
+        "        logging.info('Auto realignment triggered for %s', agent.idp_metadata['instance_name'])",
+        "        agent.seed_token = SeedToken.generate(agent.idp_metadata)",
         "    return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)",
         "",
     ]
