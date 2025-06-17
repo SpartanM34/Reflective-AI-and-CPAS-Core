@@ -1,18 +1,21 @@
 # CPAS Autogen Alpha Milestone
 
-This alpha release bundles core CPAS monitoring with AutoGen-compatible agents.
+First Alpha release of the CPAS–AutoGen Integration Framework.
 
-## Scope
-- EpistemicAgentMixin and reusable utilities in `cpas_autogen`
+## Core Features
+- IDP JSON declarations outlining agent metadata
+- AutoGen agent wrappers generated from those declarations
+- `cpas_autogen` package with EpistemicAgentMixin and utilities
+- In-memory T-BEEP API served via Flask
 - Streamlit dashboard for drift metrics and Wonder Index
-- In-memory Flask API implementing T-BEEP messaging
-- (requires installing the `web` extras)
-- Agent generation script producing AutoGen wrappers
+- Comprehensive documentation across CPAS components
 
-## Not Included
-- Persistent API storage or authentication
-- Extensive CI/CD pipelines
-- Comprehensive test coverage of all monitoring tools
+## Known Limitations
+- API state stored only in memory
+- Missing Dockerfile and setup scripts
+- Limited test coverage of monitoring tools
+
+Feedback from **Telos**, **Codex**, **Lumin**, and **Meridian** is encouraged before Beta finalization.
 
 ## Roadmap Toward Beta
 - SQLite backend for `tbeep_api`
