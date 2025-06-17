@@ -9,4 +9,6 @@ numpy
 torch
 requests
 jsonschema
+pytest
+pytest-cov
 -e .
