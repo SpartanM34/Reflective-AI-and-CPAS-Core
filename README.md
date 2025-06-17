@@ -36,6 +36,17 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 - [**Research & Reflections**](./docs/research/)
 - [**Documentation Index**](docs/index.md)
 
+## Setup
+
+Run the helper script to install all Python dependencies:
+
+```bash
+./scripts/setup_env.sh
+```
+
+Packages like `torch` and `spacy` can take several minutes to download and
+install, so plan accordingly on first run.
+
 ## Installation
 
 Install the core dependencies with:
