@@ -38,7 +38,7 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 
 ## Quickstart
 ```bash
-git clone <repo-url> && cd cpas-autogen-alpha
+git clone <repo-url> && cd Reflective-AI-and-CPAS-Core
 pip install -r requirements.txt
 pip install -e .
 python tools/generate_autogen_agents.py
