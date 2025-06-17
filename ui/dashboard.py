@@ -24,7 +24,10 @@ try:  # optional for nicer event plots
 except Exception:  # pragma: no cover - altair may not be installed
     alt = None
 
-from tools.realignment_trigger import DRIFT_THRESHOLDS, should_realign
+from cpas_autogen.realignment_trigger import (
+    DRIFT_THRESHOLDS,
+    should_realign,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
