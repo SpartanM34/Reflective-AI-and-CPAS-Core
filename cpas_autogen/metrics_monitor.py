@@ -41,7 +41,7 @@ def diff_report(current: Dict[str, float]) -> Dict[str, Dict[str, float]]:
         report[key] = {
             "baseline": base_val,
             "current": cur_val,
-            "delta": cur_val - base_val,
+            "delta": round(cur_val - base_val, 3),
         }
     report["similarity"] = similarity_score(
         {k: round(v, 3) for k, v in baseline.items()},
