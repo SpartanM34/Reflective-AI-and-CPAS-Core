@@ -29,17 +29,87 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 
 ### Additional Resources
 
-- [**CPAS-Core v1.1 Specification**](specs/current/CPAS-Core-v1.1.md)
-- [**Changelog**](specs/CHANGELOG.md)
+- [**CPAS-Core v1.1 Specification**](docs/specs/current/CPAS-Core-v1.1.md)
+- [**Changelog**](docs/specs/CHANGELOG.md)
 - [**Metaphor Library (including DKA-E metaphors)**](./metaphor-library/)
 - [**Compliance Tests**](./compliance-tests/)
-- [**Research & Reflections**](./research/)
+- [**Research & Reflections**](./docs/research/)
+- [**Documentation Index**](docs/index.md)
+
+## Quickstart
+```bash
+git clone <repo-url> && cd cpas-autogen-alpha
+pip install -r requirements.txt
+pip install -e .
+python tools/generate_autogen_agents.py
+streamlit run ui/dashboard.py &
+flask run --app api/tbeep_api.py
+```
+
+## Installation
+
+Install the core dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Drift Monitoring Dashboard
+
+Visualize the flexibility pulse by running:
+
+```bash
+streamlit run ui/dashboard.py
+```
+
+The dashboard now includes a scrolling message feed and a right-hand metrics panel
+summarizing baseline drift and the wonder index across all active instances.
+
+### T-BEEP API Example
+
+An experimental Flask service in `api/tbeep_api.py` accepts and stores T-BEEP
+messages in memory only. Persistent storage and authentication are pending.
+Start the API with:
+
+```bash
+python api/tbeep_api.py
+```
+
+Messages can then be POSTed to `/api/v1/messages` and fetched by thread ID via `GET /api/v1/messages?thread_id=`.
+
+Example usage:
+```bash
+curl -X POST -H "Content-Type: application/json" -d {"threadToken": "#T1", "content": "hello"} http://localhost:5000/api/v1/messages
+curl "http://localhost:5000/api/v1/messages?thread_id=#T1"
+```
+### Legacy Web Testing Interface
+
+The prototype page at `docs/legacy/testing_interface.html` was an early
+experiment for posting T‑BEEP messages to the API. It remains as a reference but
+is not actively maintained.
 
 ### Metaphor Library Extension
 
 The **DKA-E metaphors**—focusing on persistent knowledge structures, dynamic evolution, and collaborative orchestration—are now housed within the [**Metaphor Library**](./metaphor-library/DKA-E/). These extend the core DKA module, offering symbolic depth for advanced use cases.
 
-> Tagline: **Reflect to Adapt. Standardize to Connect.**  
+### Testing
+
+Before running the test suite, make sure all required dependencies are installed as outlined in `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+Execute the tests with `pytest` in quiet mode to see a short summary of the results:
+
+```bash
+pytest -q
+```
+## Contributing
+Contributions are welcome! Please open issues or pull requests via GitHub.
+
+
+> Tagline: **Reflect to Adapt. Standardize to Connect.**
 > Companion: **Coherence through Context. Clarity through Reflection.**
 
 **Repository Maintainer:** [SpartanM34](https://github.com/SpartanM34)  

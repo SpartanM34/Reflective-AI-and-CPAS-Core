@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Codex Epistemic Testing Interface</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+    }
+    button {
+      background-color: #0074d9;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    #confirmation {
+      margin-top: 1rem;
+      color: #2e8b57;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌌 Codex Interpretive Stress Test</h1>
+    <label for="paradoxInput">Input a paradoxical construct:</label>
+    <textarea id="paradoxInput" name="paradoxInput" data-epistemic-role="paradox-input">
+The lighthouse that illuminates by casting deeper shadows
+    </textarea>
+    <button onclick="submitParadox()">Submit for Interpretation</button>
+    <p id="confirmation">✅ Submitted to Codex. Awaiting interpretive divergence...</p>
+  </div>
+
+  <script>
+    function submitParadox() {
+      const input = document.getElementById("paradoxInput").value;
+      const msg = {
+        threadToken: "#WEB_001.0",
+        instance: "WebClient",
+        reasoningLevel: "Quick",
+        confidence: "Medium",
+        collaborationMode: "Testing",
+        timestamp: new Date().toISOString(),
+        version: "#WEB_001.v1.0",
+        content: input
+      };
+
+      fetch("/api/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(msg)
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("confirmation").textContent =
+            "✅ Submitted to Codex. Awaiting interpretive divergence...";
+        } else {
+          document.getElementById("confirmation").textContent =
+            "❌ Error submitting message.";
+        }
+        document.getElementById("confirmation").style.display = "block";
+      })
+      .catch(() => {
+        document.getElementById("confirmation").textContent =
+          "❌ Network error.";
+        document.getElementById("confirmation").style.display = "block";
+      });
+    }
+  </script>
+</body>
+</html>
