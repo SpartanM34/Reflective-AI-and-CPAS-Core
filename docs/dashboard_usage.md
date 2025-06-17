@@ -1,6 +1,7 @@
 # Dynamic Dashboard Prototype
 
 `ui/dashboard.py` provides a lightweight Streamlit interface for real-time visualization of epistemic metrics. The dashboard now consolidates multiple views including Flexibility Pulse, Wonder Index trends, emergence events and realignment indicators.
+Install the `web` extras to enable this optional component.
 
 ## Usage
 

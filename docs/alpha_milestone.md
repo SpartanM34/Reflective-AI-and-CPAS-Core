@@ -6,6 +6,7 @@ This alpha release bundles core CPAS monitoring with AutoGen-compatible agents.
 - EpistemicAgentMixin and reusable utilities in `cpas_autogen`
 - Streamlit dashboard for drift metrics and Wonder Index
 - In-memory Flask API implementing T-BEEP messaging
+- (requires installing the `web` extras)
 - Agent generation script producing AutoGen wrappers
 
 ## Not Included

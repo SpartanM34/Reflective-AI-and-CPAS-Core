@@ -6,8 +6,6 @@ setup(
     packages=find_packages(include=["cpas_autogen", "cpas_autogen.*"]),
     description="CPAS AutoGen utilities",
     install_requires=[
-        "Flask",
-        "streamlit",
         "pandas",
         "matplotlib",
         "sentence-transformers",
@@ -18,4 +16,7 @@ setup(
         "requests",
         "jsonschema",
     ],
+    extras_require={
+        "web": ["Flask", "streamlit"],
+    },
 )
