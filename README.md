@@ -66,6 +66,12 @@ python api/tbeep_api.py
 Messages can then be POSTed to `/api/v1/messages` and fetched by thread ID via
 `GET /api/v1/messages?thread_id=`.
 
+### Web Testing Interface
+
+The simple page at `ui/testing_interface/testing_framework.html` posts a
+T‑BEEP message to the running API when you click **Submit for Interpretation**.
+Open the file in your browser after starting the API to send a test message.
+
 ### Metaphor Library Extension
 
 The **DKA-E metaphors**—focusing on persistent knowledge structures, dynamic evolution, and collaborative orchestration—are now housed within the [**Metaphor Library**](./metaphor-library/DKA-E/). These extend the core DKA module, offering symbolic depth for advanced use cases.
