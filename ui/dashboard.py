@@ -162,9 +162,14 @@ emergence_data = load_json(EMERGENCE_FILE)
 drift_data = load_json(DRIFT_FILE)
 
 baseline_metrics = latest_entry(baseline_data)
-log_df = pd.DataFrame(log_data).T
-if not log_df.empty:
-    log_df.index = pd.to_datetime(log_df.index)
+# ``log_data`` is a list of dicts with a ``timestamp`` field. Creating
+# the DataFrame with default orientation keeps each log entry as a row
+# which allows proper datetime parsing.
+log_df = pd.DataFrame(log_data)
+if not log_df.empty and "timestamp" in log_df.columns:
+    # parse and index by timestamp so time-based sorting works
+    log_df["timestamp"] = pd.to_datetime(log_df["timestamp"])
+    log_df.set_index("timestamp", inplace=True)
     log_df.sort_index(inplace=True)
     current_metrics = log_df.iloc[-1].to_dict()
 else:
