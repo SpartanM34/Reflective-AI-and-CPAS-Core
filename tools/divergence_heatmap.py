@@ -12,7 +12,7 @@ extension) is used as the instance label.
 
 The script computes the average cosine distance between interpretations of each
 pair of instances using ``sentence-transformers``. Results are printed as a
-matrix, visualized as a heatmap, and logged to ``tools/divergence_log.json`` for
+matrix, visualized as a heatmap, and logged to ``docs/examples/divergence_log.json`` for
 further analysis.
 """
 
@@ -102,7 +102,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate cross-instance divergence heatmap")
     parser.add_argument("files", nargs="+", help="JSON interpretation files")
     parser.add_argument("--model", default="all-MiniLM-L6-v2", help="SentenceTransformer model")
-    parser.add_argument("--log", default="tools/divergence_log.json", help="Path to divergence log")
+    parser.add_argument("--log", default="docs/examples/divergence_log.json", help="Path to divergence log")
     parser.add_argument("--no-plot", action="store_true", help="Skip heatmap display")
     args = parser.parse_args()
 

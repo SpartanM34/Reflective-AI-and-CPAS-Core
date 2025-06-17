@@ -2,7 +2,7 @@ phase1-env/
 phase2-env/
 
 tools/*_log.json
-docs/examples/*.json
+docs/examples/*_log.json
 
 phase3-env/
 

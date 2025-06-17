@@ -14,7 +14,7 @@ instance label.
 The script detects new interpretive clusters that do not appear in the
 baseline library, using sentence embeddings and agglomerative clustering.
 Metaphors with divergent yet convergent interpretations across instances
-are logged to ``tools/emergence_log.json`` with semantic distance metrics.
+are logged to ``docs/examples/emergence_log.json`` with semantic distance metrics.
 Optionally a heatmap visualises emergent interpretive intersections.
 """
 
@@ -182,7 +182,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Track emergent interpretive signals")
     parser.add_argument("files", nargs="+", help="Instance interpretation logs")
     parser.add_argument("--baseline", help="Baseline library JSON")
-    parser.add_argument("--output", default="tools/emergence_log.json", help="Output log path")
+    parser.add_argument("--output", default="docs/examples/emergence_log.json", help="Output log path")
     parser.add_argument("--model", default="all-MiniLM-L6-v2", help="SentenceTransformer model")
     parser.add_argument("--plot", action="store_true", help="Display heatmap summary")
     args = parser.parse_args()

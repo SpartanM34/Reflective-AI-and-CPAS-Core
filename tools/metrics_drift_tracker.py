@@ -5,7 +5,7 @@
 Usage:
   python tools/metrics_drift_tracker.py [--log PATH] [--output PATH] [--plot]
 
-This script reads a monitoring log (default: tools/monitor_log.json) containing
+This script reads a monitoring log (default: docs/examples/monitor_log.json) containing
 timestamped live metrics:
  - interpretive_bandwidth
  - symbolic_density
@@ -14,7 +14,7 @@ timestamped live metrics:
 It performs sliding window analysis over 7-day and 30-day intervals to detect
 changes in interpretive flexibility. A "Flexibility Pulse" score represents the
 short-term trend relative to the longer baseline. Results are saved to
-``tools/drift_tracker_log.json`` and an optional plot may be displayed. Each
+``docs/examples/drift_tracker_log.json`` and an optional plot may be displayed. Each
 entry records the 7- and 30-day rolling averages for all metrics and the
 resulting ``flexibility_pulse``.
 
@@ -106,9 +106,9 @@ def plot_pulse(results):
 
 def main():
   parser = argparse.ArgumentParser(description="Temporal Drift Tracker")
-  parser.add_argument("--log", default="tools/monitor_log.json",
+  parser.add_argument("--log", default="docs/examples/monitor_log.json",
                       help="Path to monitor_log.json")
-  parser.add_argument("--output", default="tools/drift_tracker_log.json",
+  parser.add_argument("--output", default="docs/examples/drift_tracker_log.json",
                       help="Where to store drift analysis")
   parser.add_argument("--plot", action="store_true",
                       help="Display a matplotlib plot of the pulse")
