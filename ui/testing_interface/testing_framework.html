@@ -70,8 +70,39 @@ The lighthouse that illuminates by casting deeper shadows
   <script>
     function submitParadox() {
       const input = document.getElementById("paradoxInput").value;
-      console.log("Submitted construct:", input);
-      document.getElementById("confirmation").style.display = "block";
+      const msg = {
+        threadToken: "#WEB_001.0",
+        instance: "WebClient",
+        reasoningLevel: "Quick",
+        confidence: "Medium",
+        collaborationMode: "Testing",
+        timestamp: new Date().toISOString(),
+        version: "#WEB_001.v1.0",
+        content: input
+      };
+
+      fetch("/api/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(msg)
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("confirmation").textContent =
+            "✅ Submitted to Codex. Awaiting interpretive divergence...";
+        } else {
+          document.getElementById("confirmation").textContent =
+            "❌ Error submitting message.";
+        }
+        document.getElementById("confirmation").style.display = "block";
+      })
+      .catch(() => {
+        document.getElementById("confirmation").textContent =
+          "❌ Network error.";
+        document.getElementById("confirmation").style.display = "block";
+      });
     }
   </script>
 </body>
