@@ -94,13 +94,13 @@ The **DKA-E metaphors**—focusing on persistent knowledge structures, dynamic e
 
 ### Testing
 
-Before running the test suite, make sure all required dependencies are installed as outlined in `requirements.txt`:
+Install the test dependencies (including `pytest` and `pytest-cov`) along with the core requirements:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Execute the tests with `pytest` in quiet mode to see a short summary of the results:
+Then run the suite using `pytest` in quiet mode:
 
 ```bash
 pytest -q
