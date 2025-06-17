@@ -40,7 +40,7 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 ```bash
 git clone <repo-url> && cd Reflective-AI-and-CPAS-Core
 pip install -r requirements.txt
-pip install -e .
+pip install -e ".[web]"
 python tools/generate_autogen_agents.py
 streamlit run ui/dashboard.py &
 flask run --app api/tbeep_api.py
@@ -52,11 +52,18 @@ Install the core dependencies with:
 
 ```bash
 pip install -r requirements.txt
+pip install -e .
+```
+
+Install optional dashboard and API features with:
+
+```bash
+pip install -e ".[web]"
 ```
 
 ### Drift Monitoring Dashboard
 
-Visualize the flexibility pulse by running:
+Visualize the flexibility pulse (requires the `web` extras) by running:
 
 ```bash
 streamlit run ui/dashboard.py
@@ -68,8 +75,8 @@ summarizing baseline drift and the wonder index across all active instances.
 ### T-BEEP API Example
 
 An experimental Flask service in `api/tbeep_api.py` accepts and stores T-BEEP
-messages in memory only. Persistent storage and authentication are pending.
-Start the API with:
+messages in memory only. Persistent storage and authentication are pending. This
+feature also requires the `web` extras. Start the API with:
 
 ```bash
 python api/tbeep_api.py
