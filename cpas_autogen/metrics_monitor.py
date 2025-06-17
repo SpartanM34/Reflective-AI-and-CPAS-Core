@@ -9,10 +9,7 @@ from pathlib import Path
 from typing import Dict
 
 from .instance_diff_engine import similarity_score
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
-EXAMPLES_DIR = REPO_ROOT / "docs" / "examples"
-BASELINE_FILE = EXAMPLES_DIR / "baseline_metrics.json"
+from .config import EXAMPLES_DIR, BASELINE_FILE
 
 # Default interval for periodic checks (in minutes)
 DEFAULT_INTERVAL = timedelta(minutes=30)
