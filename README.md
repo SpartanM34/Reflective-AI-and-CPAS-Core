@@ -43,7 +43,7 @@ cd Reflective-AI-and-CPAS-Core
 pip install -r requirements.txt
 pip install -e ".[web]"
 python tools/generate_autogen_agents.py
-streamlit run ui/dashboard.py &
+streamlit run ui/dashboard.py
 flask run --app api/tbeep_api.py
 ```
 
