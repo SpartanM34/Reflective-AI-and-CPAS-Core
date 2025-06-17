@@ -9,8 +9,10 @@ from sentence_transformers import SentenceTransformer, util
 from sklearn.cluster import AgglomerativeClustering
 
 BASE_DIR = Path('metaphor-library/DKA-E')
-BASELINE_FILE = Path('tools/monitor_baseline.json')
-LOG_FILE = Path('docs/examples/monitor_log.json')
+from cpas_autogen.config import MONITOR_BASELINE, MONITOR_LOG
+
+BASELINE_FILE = MONITOR_BASELINE
+LOG_FILE = MONITOR_LOG
 PAIRED_DIR = Path('paired-outputs')
 MODEL_NAME = 'all-MiniLM-L6-v2'
 

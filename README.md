@@ -34,6 +34,7 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 - [**Metaphor Library (including DKA-E metaphors)**](./metaphor-library/)
 - [**Compliance Tests**](./compliance-tests/)
 - [**Research & Reflections**](./docs/research/)
+- [**Documentation Index**](docs/index.md)
 
 ## Installation
 
@@ -57,7 +58,8 @@ summarizing baseline drift and the wonder index across all active instances.
 ### T-BEEP API Example
 
 An experimental Flask service in `api/tbeep_api.py` accepts and stores T-BEEP
-messages. Start the API with:
+messages in memory only. Persistent storage and authentication are pending.
+Start the API with:
 
 ```bash
 python api/tbeep_api.py
@@ -66,11 +68,11 @@ python api/tbeep_api.py
 Messages can then be POSTed to `/api/v1/messages` and fetched by thread ID via
 `GET /api/v1/messages?thread_id=`.
 
-### Web Testing Interface
+### Legacy Web Testing Interface
 
-The simple page at `ui/testing_interface/testing_framework.html` posts a
-T‑BEEP message to the running API when you click **Submit for Interpretation**.
-Open the file in your browser after starting the API to send a test message.
+The prototype page at `docs/legacy/testing_interface.html` was an early
+experiment for posting T‑BEEP messages to the API. It remains as a reference but
+is not actively maintained.
 
 ### Metaphor Library Extension
 
