@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Dict
 
-DRIFT_LOG = Path("tools/drift_tracker_log.json")
+DRIFT_LOG = Path("docs/examples/drift_tracker_log.json")
 
 
 def latest_metrics() -> Dict[str, float]:

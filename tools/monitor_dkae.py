@@ -10,7 +10,7 @@ from sklearn.cluster import AgglomerativeClustering
 
 BASE_DIR = Path('metaphor-library/DKA-E')
 BASELINE_FILE = Path('tools/monitor_baseline.json')
-LOG_FILE = Path('tools/monitor_log.json')
+LOG_FILE = Path('docs/examples/monitor_log.json')
 PAIRED_DIR = Path('paired-outputs')
 MODEL_NAME = 'all-MiniLM-L6-v2'
 

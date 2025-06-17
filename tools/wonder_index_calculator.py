@@ -157,10 +157,10 @@ def plot_index(results: List[dict]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Compute Wonder Index")
-    parser.add_argument("--drift", default="tools/drift_tracker_log.json")
-    parser.add_argument("--div", default="tools/divergence_log.json")
-    parser.add_argument("--signals", default="tools/wonder_signals.json")
-    parser.add_argument("--output", default="tools/wonder_index_log.json")
+    parser.add_argument("--drift", default="docs/examples/drift_tracker_log.json")
+    parser.add_argument("--div", default="docs/examples/divergence_log.json")
+    parser.add_argument("--signals", default="docs/examples/wonder_signals.json")
+    parser.add_argument("--output", default="docs/examples/wonder_index_log.json")
     parser.add_argument("--plot", action="store_true")
     args = parser.parse_args()
 

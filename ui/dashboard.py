@@ -27,7 +27,8 @@ except Exception:  # pragma: no cover - altair may not be installed
 from tools.realignment_trigger import DRIFT_THRESHOLDS, should_realign
 
 
-BASE_DIR = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
+BASE_DIR = REPO_ROOT / "docs" / "examples"
 BASELINE_FILE = BASE_DIR / "baseline_metrics.json"
 LOG_FILE = BASE_DIR / "monitor_log.json"
 DRIFT_FILE = BASE_DIR / "drift_tracker_log.json"
