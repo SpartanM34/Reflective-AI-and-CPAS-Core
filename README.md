@@ -54,6 +54,8 @@ Install the core dependencies with:
 ```bash
 pip install -r requirements.txt
 ```
+For full agent regeneration functionality, also install the optional
+[`autogen`](https://github.com/microsoft/autogen) package.
 
 ### Drift Monitoring Dashboard
 
@@ -81,13 +83,27 @@ Messages can then be POSTed to `/api/v1/messages` and fetched by thread ID via
 
 ### Legacy Web Testing Interface
 
-The prototype page at `docs/legacy/testing_interface.html` was an early
-experiment for posting T‑BEEP messages to the API. It remains as a reference but
-is not actively maintained.
+The prototype page previously located at `docs/testing_interface.html` now lives
+in [`docs/legacy/testing_interface.html`](docs/legacy/testing_interface.html).
+It was an early experiment for posting T‑BEEP messages to the API and remains a
+reference, though it is not actively maintained.
 
 ### Metaphor Library Extension
 
 The **DKA-E metaphors**—focusing on persistent knowledge structures, dynamic evolution, and collaborative orchestration—are now housed within the [**Metaphor Library**](./metaphor-library/DKA-E/). These extend the core DKA module, offering symbolic depth for advanced use cases.
+
+### Agent Regeneration
+
+Regenerate the autogen-compatible agent modules whenever the JSON definitions in
+`agents/json/` are updated:
+
+```bash
+python tools/generate_autogen_agents.py
+```
+
+If the optional [`autogen`](https://github.com/microsoft/autogen) package is not
+installed, the script falls back to stub classes and the generated modules will
+have reduced capabilities.
 
 ### Testing
 
