@@ -44,7 +44,11 @@ pip install -r requirements.txt
 pip install -e ".[web]"
 python tools/generate_autogen_agents.py
 streamlit run ui/dashboard.py
-flask run --app api/tbeep_api.py
+# For Flask >=2.2 you can use ``--app``; older versions require setting
+# the ``FLASK_APP`` environment variable first. On PowerShell:
+#     $env:FLASK_APP = "api/tbeep_api.py"
+# then run:
+flask run
 ```
 
 ## Installation
@@ -80,7 +84,11 @@ messages in memory only. Persistent storage and authentication are pending. This
 feature also requires the `web` extras. Start the API with:
 
 ```bash
+# Either run the module directly
 python api/tbeep_api.py
+# or, with Flask's CLI (PowerShell syntax shown):
+# $env:FLASK_APP = "api/tbeep_api.py"
+# flask run
 ```
 
 Messages can then be POSTed to `/api/v1/messages` and fetched by thread ID via `GET /api/v1/messages?thread_id=`.
