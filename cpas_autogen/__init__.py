@@ -17,4 +17,4 @@ __all__ = [
     'latest_metrics',
     'EpistemicAgentMixin',
 ]
-__version__ = '0.1.0'
+__version__ = '0.1.1'
