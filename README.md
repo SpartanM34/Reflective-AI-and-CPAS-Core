@@ -76,7 +76,21 @@ Open the file in your browser after starting the API to send a test message.
 
 The **DKA-E metaphors**—focusing on persistent knowledge structures, dynamic evolution, and collaborative orchestration—are now housed within the [**Metaphor Library**](./metaphor-library/DKA-E/). These extend the core DKA module, offering symbolic depth for advanced use cases.
 
-> Tagline: **Reflect to Adapt. Standardize to Connect.**  
+### Testing
+
+Before running the test suite, make sure all required dependencies are installed as outlined in `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+Execute the tests with `pytest` in quiet mode to see a short summary of the results:
+
+```bash
+pytest -q
+```
+
+> Tagline: **Reflect to Adapt. Standardize to Connect.**
 > Companion: **Coherence through Context. Clarity through Reflection.**
 
 **Repository Maintainer:** [SpartanM34](https://github.com/SpartanM34)  
