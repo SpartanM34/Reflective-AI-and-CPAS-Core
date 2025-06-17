@@ -35,6 +35,14 @@ A modular standard for layered AI interaction, cross-instance collaboration, and
 - [**Compliance Tests**](./compliance-tests/)
 - [**Research & Reflections**](./docs/research/)
 
+## Installation
+
+Install the core dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
+
 ### Drift Monitoring Dashboard
 
 Visualize the flexibility pulse by running:

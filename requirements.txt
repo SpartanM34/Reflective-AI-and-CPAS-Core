@@ -1,0 +1,10 @@
+Flask
+streamlit
+pandas
+matplotlib
+sentence-transformers
+spacy
+scikit-learn
+numpy
+torch
+requests
