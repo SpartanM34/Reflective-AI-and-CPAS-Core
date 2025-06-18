@@ -1,10 +1,12 @@
 import json
 from pathlib import Path
 from datetime import datetime
+import random
 
 import spacy
-import torch
-from sentence_transformers import util
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 def load_metaphor_texts(base_dir: Path) -> list[str]:
@@ -36,25 +38,84 @@ def symbolic_density(texts: list[str], nlp) -> float:
 
 
 def divergence_space(texts: list[str], nlp) -> float:
+    """Return the mean pairwise distance between texts using TF-IDF vectors."""
     if len(texts) < 2:
         return 0.0
-    vecs = torch.tensor([nlp(t).vector for t in texts])
-    sim = util.cos_sim(vecs, vecs).cpu().numpy()
+    tfidf = TfidfVectorizer().fit_transform(texts).toarray()
+    sim = cosine_similarity(tfidf)
     triu = np.triu_indices_from(sim, k=1)
     distances = 1 - sim[triu]
-    return float(distances.mean())
+    return float(np.mean(distances))
+
+
+def reliability_score(metric_func, texts: list[str], nlp, iterations: int = 5) -> float:
+    """Estimate split-half reliability for ``metric_func``."""
+    if len(texts) < 2:
+        return 0.0
+    scores_a, scores_b = [], []
+    for _ in range(iterations):
+        random.shuffle(texts)
+        mid = len(texts) // 2
+        first, second = texts[:mid], texts[mid:]
+        if not first or not second:
+            continue
+        scores_a.append(metric_func(first, nlp))
+        scores_b.append(metric_func(second, nlp))
+    if len(scores_a) < 2:
+        return 0.0
+    val = np.corrcoef(scores_a, scores_b)[0, 1]
+    if np.isnan(val):
+        return 0.0
+    return float(val)
+
+
+def metric_correlations(texts: list[str], nlp, iterations: int = 5) -> dict[str, float]:
+    """Return pairwise correlations between metric values across random subsets."""
+    metrics = [lexical_diversity, symbolic_density, divergence_space]
+    vals = []
+    for _ in range(iterations):
+        subset = random.sample(texts, k=max(2, len(texts) - 1))
+        vals.append([m(subset, nlp) for m in metrics])
+    arr = np.array(vals)
+    corr = np.corrcoef(arr, rowvar=False)
+    names = ["lexical_diversity", "symbolic_density", "divergence_space"]
+    result = {}
+    for i in range(len(names)):
+        for j in range(i + 1, len(names)):
+            val = corr[i, j]
+            if np.isnan(val):
+                val = 0.0
+            result[f"{names[i]}_{names[j]}"] = float(val)
+    return result
+
+
+def validation_statistics(texts: list[str], nlp, iterations: int = 5) -> dict:
+    """Compute reliability and correlation statistics for the metrics."""
+    reliability = {
+        "lexical_diversity": reliability_score(lexical_diversity, texts, nlp, iterations),
+        "symbolic_density": reliability_score(symbolic_density, texts, nlp, iterations),
+        "divergence_space": reliability_score(divergence_space, texts, nlp, iterations),
+    }
+    return {
+        "reliability": reliability,
+        "correlations": metric_correlations(texts, nlp, iterations),
+    }
 
 
 def main():
     base = Path('metaphor-library/DKA-E')
     texts = load_metaphor_texts(base)
-    nlp = spacy.load('en_core_web_sm')
+    try:
+        nlp = spacy.load('en_core_web_sm')
+    except Exception:
+        nlp = spacy.blank('en')
 
     metrics = {
         'lexical_diversity': lexical_diversity(texts, nlp),
         'symbolic_density': symbolic_density(texts, nlp),
         'divergence_space': divergence_space(texts, nlp),
     }
+    validation = validation_statistics(texts, nlp)
 
     examples_dir = Path(__file__).resolve().parents[1] / 'docs' / 'examples'
     examples_dir.mkdir(parents=True, exist_ok=True)
@@ -63,11 +124,13 @@ def main():
     if out_file.exists():
         with open(out_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
-    data[datetime.utcnow().isoformat()] = metrics
+    data[datetime.utcnow().isoformat()] = {
+        **metrics,
+        'validation': validation,
+    }
     with open(out_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
 
 
 if __name__ == '__main__':
-    import numpy as np
     main()
