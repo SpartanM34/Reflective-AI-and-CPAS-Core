@@ -1,0 +1,5 @@
+{"hardware_specs": {"python_version": "3.12.10", "platform": "Linux-6.12.13-x86_64-with-glibc2.39", "processor": "x86_64"}}
+{"hardware_specs": {"python_version": "3.12.10", "platform": "Linux-6.12.13-x86_64-with-glibc2.39", "processor": "x86_64"}}
+{"hardware_specs": {"python_version": "3.12.10", "platform": "Linux-6.12.13-x86_64-with-glibc2.39", "processor": "x86_64"}}
+{"token_processing": {"tokens": 1462, "seconds": 0.013857268999970529, "tokens_per_second": 105504.19422493056}}
+{"update_throughput": {"updates": 100, "seconds": 0.0601910240000052, "updates_per_second": 1661.37728442685}}

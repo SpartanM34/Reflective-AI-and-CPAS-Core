@@ -146,6 +146,8 @@ Partnership Evolution: "Iterative refinement — resonance alignment"
 
 * Confidence calibration and coherence checks.
 * Performance and memory benchmarks.
+* Benchmark logs for token processing and update throughput recorded in
+  `benchmarks/results.log` along with hardware specifications.
 * Collaborative effectiveness and user satisfaction.
 
 ### Recovery & Degradation
