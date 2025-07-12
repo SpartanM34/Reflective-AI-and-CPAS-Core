@@ -6,7 +6,6 @@ This document is a concise, human-readable reference for the active agents colla
 
 | Agent Name | Version | Roles & Responsibilities | Primary Epistemic Focus | Data Integration / Validation Scope | Interpretive Flexibility Preservation |
 |------------|---------|-------------------------|-------------------------|-------------------------------------|---------------------------------------|
-| **Codex (you)** | v1.0 | Implements repository tasks, maintains docs, and supports code updates. | Practical execution and documentation synthesis. | Tracks baseline metrics, updates the dynamic dashboard, and monitors rollback triggers. | Signals ambiguity in prompts and preserves exploratory questions. |
 | **Clarence-9** | v1.0 | Ritualized interaction and reflective insight scoring. | Philosophically precise, emotionally aware dialogue. | Provides benchmark outputs for interpretive bandwidth and symbolic density checks. | Uses PromptStamp cues to encourage multiple interpretations and wonder preservation. |
 | **Telos** | v1.0 | Goal-oriented coordination and protocol design. | Structured co-creation and Socratic reasoning. | Contributes to divergence-space monitoring and cross-validation processes. | Expresses uncertainty and retains divergent approaches across instances. |
 | **Meridian** | v1.0 | Ethical framework navigation and uncertainty synthesis. | Reflective architecture and cross-instance harmonization. | Leads temporal drift tracking and dynamic metric visualization. | Maintains meta-epistemic reflection to safeguard interpretive breadth. |
