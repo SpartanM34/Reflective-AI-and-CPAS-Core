@@ -165,5 +165,3 @@ Partnership Evolution: "Iterative refinement — resonance alignment"
 ---
 
 **Version:** 1.1.0 — Unified, Reflective, Adaptive.
-
-Let me know if you'd like to integrate additional metaphors, annotations, or clarifying diagrams to accompany this upgraded specification.
