@@ -38,6 +38,8 @@ DRIFT_FILE = BASE_DIR / "drift_tracker_log.json"
 WONDER_INDEX_FILE = BASE_DIR / "wonder_index_log.json"
 EMERGENCE_FILE = BASE_DIR / "emergence_log.json"
 WONDER_FILE = BASE_DIR / "wonder_signals.txt"
+if not WONDER_FILE.exists():
+    WONDER_FILE.touch()
 
 st.set_page_config(page_title="Epistemic Metrics Dashboard")
 
@@ -181,6 +183,10 @@ if not pulse_df.empty and "timestamp" in pulse_df.columns:
     pulse_df["timestamp"] = pd.to_datetime(pulse_df["timestamp"])
     pulse_df.set_index("timestamp", inplace=True)
 
+today = pd.Timestamp.utcnow().normalize()
+daily_log = log_df[log_df.index >= today] if not log_df.empty else pd.DataFrame()
+daily_drift = pulse_df[pulse_df.index >= today] if not pulse_df.empty else pd.DataFrame()
+
 # Wonder Index log
 wonder_df = pd.DataFrame(wonder_data)
 if not wonder_df.empty and "timestamp" in wonder_df.columns:
@@ -299,6 +305,23 @@ with right:
                 emergence_df.set_index("timestamp")[[]], use_container_width=True
             )
         st.dataframe(emergence_df[["timestamp", "description"]])
+
+    if not daily_log.empty or not daily_drift.empty:
+        st.header("Daily Digest")
+        if not daily_log.empty:
+            st.subheader("Monitor Log")
+            avg = daily_log.mean(numeric_only=True)
+            st.json({
+                "entries": len(daily_log),
+                **{k: round(v, 3) for k, v in avg.items()},
+            })
+        if not daily_drift.empty:
+            st.subheader("Drift Tracker")
+            avg = daily_drift.mean(numeric_only=True)
+            st.json({
+                "entries": len(daily_drift),
+                **{k: round(v, 3) for k, v in avg.items()},
+            })
 
     uploaded = st.sidebar.file_uploader("Upload metrics JSON", type="json")
     if uploaded:
