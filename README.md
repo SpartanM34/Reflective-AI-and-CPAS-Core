@@ -121,6 +121,19 @@ Then run the suite using `pytest` in quiet mode:
 ```bash
 pytest -q
 ```
+
+### Post-Commit Monitoring Hook
+
+Enable automatic metric checks after each commit by installing the provided
+`post-commit` hook:
+
+```bash
+cp .githooks/post-commit .git/hooks/post-commit
+chmod +x .git/hooks/post-commit
+```
+
+The hook runs `tools/monitor_dkae.py` and will revert the commit if metrics
+fall below the defined thresholds.
 ## Contributing
 Contributions are welcome! Please open issues or pull requests via GitHub.
 
