@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from textwrap import indent
 
 try:
     from autogen import ConversableAgent, config_list_from_models
@@ -17,6 +16,7 @@ import logging
 ROOT = Path(__file__).resolve().parents[1]
 JSON_DIR = ROOT / "agents" / "json"
 PY_DIR = ROOT / "agents" / "python"
+TEMPLATE_PATH = ROOT / "agents" / "templates" / "ethical_layer.txt"
 
 
 def create_system_message(idp: dict) -> str:
@@ -42,6 +42,10 @@ def create_system_message(idp: dict) -> str:
 
 def generate_agent_module(json_path: Path) -> str:
     idp = json.loads(json_path.read_text())
+    extra = ""
+    if idp.get("ethical_framework") and TEMPLATE_PATH.exists():
+        extra = "\n" + TEMPLATE_PATH.read_text()
+    system_msg = create_system_message(idp) + extra
     module_lines = [
         "from autogen import ConversableAgent, config_list_from_models",
         "from cpas_autogen.seed_token import SeedToken",
@@ -59,7 +63,7 @@ def generate_agent_module(json_path: Path) -> str:
         "",
         "def create_agent():",
         "    \"\"\"Return a ConversableAgent configured from IDP metadata.\"\"\"",
-        "    system_message = '''" + create_system_message(idp) + "'''",
+        "    system_message = '''" + system_msg + "'''",
         "    agent = ConversableAgent(",
         "        name=IDP_METADATA['instance_name'],",
         "        system_message=system_message,",
