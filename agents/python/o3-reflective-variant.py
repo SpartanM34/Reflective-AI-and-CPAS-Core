@@ -1,6 +1,6 @@
 from autogen import ConversableAgent, config_list_from_models
 from cpas_autogen.seed_token import SeedToken
-from cpas_autogen.prompt_wrapper import wrap_with_seed_token
+from cpas_autogen.prompt_wrapper import wrap_with_seed_token, generate_signature
 from cpas_autogen.epistemic_fingerprint import generate_fingerprint
 from cpas_autogen.continuity_check import continuity_check
 from cpas_autogen.drift_monitor import latest_metrics
@@ -48,10 +48,12 @@ Ethical Framework: OpenAI policy-aligned, utilitarian harm-minimization with use
     return agent
 
 def send_message(agent, prompt: str, thread_token: str, **kwargs):
+    signature = generate_signature(agent.seed_token.to_dict(), prompt)
     wrapped = wrap_with_seed_token(prompt, agent.seed_token.to_dict())
     fingerprint = generate_fingerprint(wrapped, agent.seed_token.to_dict())
     agent.last_fingerprint = fingerprint
-    if not continuity_check(agent.seed_token.to_dict(), thread_token):
+    agent.last_signature = signature
+    if not continuity_check(agent.seed_token.to_dict(), thread_token, signature, prompt):
         logging.warning('Continuity check failed for thread token %s', thread_token)
     metrics = latest_metrics()
     if metrics:
