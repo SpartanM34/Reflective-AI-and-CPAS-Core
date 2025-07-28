@@ -4,6 +4,8 @@ from pathlib import Path
 from datetime import datetime
 import subprocess
 
+from tools.update_baselines import main as update_baselines_main
+
 import spacy
 from sentence_transformers import SentenceTransformer, util
 from sklearn.cluster import AgglomerativeClustering
@@ -125,6 +127,10 @@ def main() -> None:
             rollback('Cross-Instance Divergence Loss')
 
     log_results(metrics)
+    try:
+        update_baselines_main()
+    except Exception as exc:
+        logging.error('Failed to update baselines: %s', exc)
 
 
 if __name__ == '__main__':
