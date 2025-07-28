@@ -36,3 +36,15 @@ The objective of this protocol is to validate the functionality and robustness o
 * **Success Criteria**:
     * The script detects a statistically significant decrease in the semantic distance between our outputs. **(Y/N)**
     * The automated rollback is triggered. **(Y/N)**
+
+## 3. Deployment
+
+Stress-testing requires activating the adversarial agent profiles. These
+agents reside in ``agents.adversarial`` and are intentionally excluded from
+standard workflows. To enable them:
+
+1. Set the environment variable ``STRESS_TEST=1``.
+2. Run the usual startup scripts or tests. Importing ``Echo-7`` or ``Fray-5``
+   without this variable set will raise ``AttributeError``.
+3. After the stress tests conclude, unset ``STRESS_TEST`` to return to normal
+   operation.
