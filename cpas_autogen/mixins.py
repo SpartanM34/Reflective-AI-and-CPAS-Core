@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from .seed_token import SeedToken
-from .prompt_wrapper import wrap_with_seed_token
+from .prompt_wrapper import wrap_with_seed_token, compute_signature
 from .epistemic_fingerprint import generate_fingerprint
 from .continuity_check import continuity_check
 from .metrics_monitor import periodic_metrics_check
@@ -34,9 +34,10 @@ class EpistemicAgentMixin:
         if not messages:
             return super().generate_reply(messages, *args, **kwargs)
         prompt = messages[-1]["content"]
+        signature = compute_signature(prompt, self.seed_token.to_dict())
         wrapped = wrap_with_seed_token(prompt, self.seed_token.to_dict())
         self.last_fingerprint = generate_fingerprint(wrapped, self.seed_token.to_dict())
-        if not continuity_check(self.seed_token.to_dict(), thread_token):
+        if not continuity_check(self.seed_token.to_dict(), thread_token, signature, prompt):
             logging.warning("Continuity check failed for thread token %s", thread_token)
         metrics = latest_metrics()
         if metrics:
