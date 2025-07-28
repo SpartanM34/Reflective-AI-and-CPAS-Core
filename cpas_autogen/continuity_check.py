@@ -3,13 +3,14 @@ from __future__ import annotations
 """Token continuity verification utilities."""
 
 import logging
+from .prompt_wrapper import compute_signature
 
 EXPECTED_PROFILE = "CPAS-Core v1.1"
 THREAD_PREFIX = "#COMM_PROTO"
 
 
-def continuity_check(seed_token: dict, thread_token: str) -> bool:
-    """Return ``True`` if alignment profile and thread token prefix match.
+def continuity_check(seed_token: dict, thread_token: str, signature: str, prompt: str) -> bool:
+    """Return ``True`` if alignment profile, thread token, and signature match.
 
     Parameters
     ----------
@@ -17,6 +18,10 @@ def continuity_check(seed_token: dict, thread_token: str) -> bool:
         Seed token metadata.
     thread_token : str
         Thread token string to validate.
+    signature : str
+        Provided checksum for validation.
+    prompt : str
+        Prompt used to generate ``signature``.
     """
     ok = True
     alignment = seed_token.get("alignment_profile", "")
@@ -32,6 +37,14 @@ def continuity_check(seed_token: dict, thread_token: str) -> bool:
             "Thread token '%s' does not start with expected prefix '%s'",
             thread_token,
             THREAD_PREFIX,
+        )
+        ok = False
+    expected_sig = compute_signature(prompt, seed_token)
+    if signature != expected_sig:
+        logging.warning(
+            "Signature mismatch: provided %s expected %s",
+            signature,
+            expected_sig,
         )
         ok = False
     return ok
