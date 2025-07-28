@@ -6,6 +6,11 @@ from .realignment_trigger import should_realign
 from .metrics_monitor import periodic_metrics_check
 from .drift_monitor import latest_metrics
 from .mixins import EpistemicAgentMixin
+from .eep_utils import (
+    broadcast_state,
+    request_validation,
+    start_collab_session,
+)
 
 __all__ = [
     'SeedToken',
@@ -16,5 +21,8 @@ __all__ = [
     'periodic_metrics_check',
     'latest_metrics',
     'EpistemicAgentMixin',
+    'broadcast_state',
+    'request_validation',
+    'start_collab_session',
 ]
 __version__ = '0.1.0'
