@@ -17,6 +17,7 @@ from .dka_persistence import (
     retrieve_digests,
     rehydrate_context,
 )
+from .message_logger import log_message
 
 __all__ = [
     'SeedToken',
@@ -35,5 +36,6 @@ __all__ = [
     'store_digest',
     'retrieve_digests',
     'rehydrate_context',
+    'log_message',
 ]
 __version__ = '0.1.0'
