@@ -34,3 +34,14 @@ The hook will revert the last commit automatically if a rollback trigger is acti
 `cpas_autogen/thresholds.json`. Edit that file to change the values for
 `symbolic_density`, `interpretive_bandwidth`, or `divergence_score`. The new
 thresholds will be applied the next time the monitor runs.
+## Digest Generation
+
+When a session ends or a major epistemic shift occurs, a digest of the current DKA state can be generated using `cpas_autogen.dka_persistence.generate_digest`. The resulting dictionary contains metadata such as `digest_id`, timestamps and the participating instances.
+
+## Storage Paths
+
+By default digests are stored under `docs/examples/dka_digests/` as JSON files. The exact location is defined by the `DIGEST_DIR` constant in `cpas_autogen/dka_persistence.py`. Each file name matches the `digest_id` with a `.json` extension and includes a `hash` field for integrity checking.
+
+## Retrieval
+
+Historical digests can be loaded with `cpas_autogen.dka_persistence.retrieve_digests`. Pass a context dictionary like `{"instances": ["Lumin"]}` to filter digests by participating instances. The function returns a list of digests sorted by creation time, newest first, which can then be rehydrated using `rehydrate_context`.

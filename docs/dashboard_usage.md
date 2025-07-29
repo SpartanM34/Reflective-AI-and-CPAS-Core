@@ -11,7 +11,9 @@ streamlit run ui/dashboard.py
 
 The dashboard reads baseline values from `docs/examples/baseline_metrics.json` and live metrics from `docs/examples/monitor_log.json`.
 It also displays data from `docs/examples/drift_tracker_log.json`, `docs/examples/wonder_index_log.json` and `docs/examples/emergence_log.json`.
-Additional line charts visualize trends from these logs. Sample data files can be downloaded directly from the repository:
+Wonder Index values are plotted alongside their normalized components, while emergence clusters are shown on a timeline.
+A *Daily Digest* section summarizes the current day's monitor log and drift tracker entries, giving a quick snapshot of recent activity.
+Sample data files can be downloaded directly from the repository:
 
 - [docs/examples/wonder_index_log.json](../docs/examples/wonder_index_log.json)
 - [docs/examples/emergence_log.json](../docs/examples/emergence_log.json)
