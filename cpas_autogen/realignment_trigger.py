@@ -3,7 +3,7 @@ from __future__ import annotations
 """Realignment trigger utility."""
 
 import logging
-from typing import Dict
+from typing import Dict, Any
 
 # Thresholds for drift metrics that require realignment
 DRIFT_THRESHOLDS: Dict[str, float] = {
@@ -13,7 +13,8 @@ DRIFT_THRESHOLDS: Dict[str, float] = {
 }
 
 
-def should_realign(drift_metrics: Dict[str, float]) -> bool:
+def should_realign(drift_metrics: Dict[str, float], *, agent: Any | None = None,
+                   context: str | None = None) -> bool:
     """Return ``True`` if any drift metric falls below its threshold.
 
     Parameters
@@ -29,6 +30,11 @@ def should_realign(drift_metrics: Dict[str, float]) -> bool:
             triggers.append(f"{key}<{threshold}")
     if triggers:
         logging.info("Realignment triggered by: %s", ", ".join(triggers))
+        if agent and hasattr(agent, "reflect_ethics"):
+            try:
+                agent.reflect_ethics(context or "")
+            except Exception as exc:  # pragma: no cover - don't break on errors
+                logging.warning("Ethical reflection failed: %s", exc)
         return True
     return False
 

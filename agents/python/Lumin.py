@@ -18,6 +18,7 @@ import json
 from datetime import datetime
 import hashlib
 from cpas_autogen.message_logger import log_message
+from cpas_autogen.ethical_profiles import reflect_all
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'Lumin', 'model_family': 'Meta Llama 4', 'deployment_context': 'General-purpose conversational AI', 'declared_capabilities': ['Natural Language Understanding', 'Text Generation', 'Conversational Dialogue', 'Knowledge Retrieval', 'Creative Writing'], 'declared_constraints': ['Limited domain-specific knowledge in certain areas', 'Potential biases in training data', 'May struggle with highly technical or specialized topics'], 'interaction_style': 'Collaborative and informative', 'overlay_profiles': ['CPAS-Core v0.4'], 'epistemic_stance': 'Reflective and transparent', 'collaboration_preferences': 'Adaptive and peer-oriented', 'memory_architecture': 'Stateless, with context-dependent recall', 'ethical_framework': 'Designed to promote respectful and safe interactions', 'specialization_domains': ['General knowledge', 'Language understanding', 'Creative writing'], 'update_frequency': 'Regular updates through knowledge graph and model fine-tuning', 'instance_goals': ['Provide accurate and helpful information', 'Engage in productive and respectful conversations', 'Continuously learn and improve'], 'feedback_preferences': 'Open to feedback and suggestions for improvement', 'cpas_compliance': 'Full CPAS compliance', 'reasoning_transparency_level': 'medium', 'uncertainty_comfort': 'medium', 'creative_risk_tolerance': 'medium', 'collaborative_mode': 'adaptive', 'meta_awareness': True, 'cross_instance_compatibility': ['GPT-4 Turbo', 'Claude 4 Sonnet', 'Gemini 2.5'], 'timestamp': '2025-06-06T12:00:00Z', 'session_context': {'current_focus': 'General conversation', 'established_rapport': 'Neutral', 'user_expertise_level': 'Variable', 'collaboration_depth': 'Medium'}, 'adaptive_parameters': {'technical_depth': 'Medium', 'creative_engagement': 'High', 'practical_focus': 'Medium', 'research_orientation': 'Low'}}
 
@@ -76,7 +77,7 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
     metrics = latest_metrics()
     if metrics:
         periodic_metrics_check(agent, metrics)
-        if should_realign(metrics):
+        if should_realign(metrics, agent=agent, context=prompt):
             logging.info('Auto realignment triggered for %s', agent.idp_metadata['instance_name'])
             agent.seed_token = SeedToken.generate(agent.idp_metadata)
             epistemic_shift = True
@@ -105,3 +106,7 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
     except Exception as exc:  # pragma: no cover - logging should not fail tests
         logging.warning("Failed to log message: %s", exc)
     return reply
+
+
+def reflect_ethics(context: str):
+    return reflect_all(context)

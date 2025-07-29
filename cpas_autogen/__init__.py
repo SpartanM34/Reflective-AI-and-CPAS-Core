@@ -3,6 +3,7 @@ from .epistemic_fingerprint import generate_fingerprint
 from .prompt_wrapper import wrap_with_seed_token, compute_signature
 from .continuity_check import continuity_check
 from .realignment_trigger import should_realign
+from .ethical_profiles import reflect_all
 from .metrics_monitor import periodic_metrics_check
 from .drift_monitor import latest_metrics
 from .mixins import EpistemicAgentMixin
@@ -37,5 +38,6 @@ __all__ = [
     'retrieve_digests',
     'rehydrate_context',
     'log_message',
+    'reflect_all',
 ]
 __version__ = '0.1.0'
