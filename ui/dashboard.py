@@ -121,6 +121,43 @@ def show_charts(df: pd.DataFrame) -> None:
                 st.info(f"{metric} not found")
 
 
+def show_wonder_index(df: pd.DataFrame) -> None:
+    """Display Wonder Index and its components."""
+    st.header("Wonder Index Trend")
+    cols = [
+        c
+        for c in [
+            "interpretive_bandwidth_norm",
+            "symbolic_density_norm",
+            "divergence_norm",
+            "wonder_index",
+        ]
+        if c in df.columns
+    ]
+    if cols:
+        st.line_chart(df[cols], use_container_width=True)
+
+
+def show_emergence_timeline(df: pd.DataFrame) -> None:
+    """Visualize logged emergence clusters."""
+    st.header("Emergence Clusters")
+    if alt:
+        chart = (
+            alt.Chart(df)
+            .mark_circle(color="orange", size=80)
+            .encode(
+                x="timestamp:T",
+                y=alt.value(0),
+                tooltip=["timestamp:T", "description:N"],
+            )
+            .properties(height=120)
+        )
+        st.altair_chart(chart, use_container_width=True)
+    else:
+        st.scatter_chart(df.set_index("timestamp")[[]], use_container_width=True)
+    st.dataframe(df[["timestamp", "description"]])
+
+
 def suggest_realign(df: pd.DataFrame) -> None:
     if df.empty:
         return
@@ -283,28 +320,10 @@ with right:
         st.line_chart(pulse_df[["flexibility_pulse"]], use_container_width=True)
 
     if not wonder_df.empty:
-        st.header("Wonder Index")
-        st.line_chart(wonder_df[["wonder_index"]], use_container_width=True)
+        show_wonder_index(wonder_df)
 
     if not emergence_df.empty:
-        st.header("Emergence Clusters")
-        if alt:
-            chart = (
-                alt.Chart(emergence_df)
-                .mark_circle(color="orange", size=80)
-                .encode(
-                    x="timestamp:T",
-                    y=alt.value(0),
-                    tooltip=["timestamp:T", "description:N"],
-                )
-                .properties(height=120)
-            )
-            st.altair_chart(chart, use_container_width=True)
-        else:
-            st.scatter_chart(
-                emergence_df.set_index("timestamp")[[]], use_container_width=True
-            )
-        st.dataframe(emergence_df[["timestamp", "description"]])
+        show_emergence_timeline(emergence_df)
 
     if not daily_log.empty or not daily_drift.empty:
         st.header("Daily Digest")
