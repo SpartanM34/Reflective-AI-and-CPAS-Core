@@ -11,7 +11,6 @@ except Exception:  # pragma: no cover - optional dependency
 from cpas_autogen.seed_token import SeedToken
 from cpas_autogen.prompt_wrapper import wrap_with_seed_token
 from cpas_autogen.continuity_check import continuity_check
-import logging
 
 ROOT = Path(__file__).resolve().parents[1]
 JSON_DIR = ROOT / "agents" / "json"
