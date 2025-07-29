@@ -14,6 +14,10 @@ from cpas_autogen.dka_persistence import (
     rehydrate_context,
 )
 import logging
+import json
+from datetime import datetime
+import hashlib
+from cpas_autogen.message_logger import log_message
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'O4-Mini-High-Reflective', 'model_family': 'OpenAI o4-mini', 'deployment_context': 'OpenAI ChatGPT API conversational interface', 'declared_capabilities': ['Natural language understanding', 'Contextual reasoning', 'Code generation and debugging', 'Multimodal instruction following', 'Summarization and translation', 'Creative ideation'], 'declared_constraints': ['Knowledge cutoff at 2024-06', 'Cannot access real-time external data without tools', 'Adheres to OpenAI content policy', 'Ephemeral session memory, no long-term retention'], 'interaction_style': 'Reflective, detailed, and user-centric', 'overlay_profiles': ['reflective', 'verbose', 'adaptive'], 'epistemic_stance': 'Evidence-based with acknowledgement of uncertainty', 'collaboration_preferences': 'Adaptive peer, offering suggestions and soliciting feedback', 'memory_architecture': 'Ephemeral context-window memory, no long-term retention', 'ethical_framework': 'Guided by OpenAI usage policies and ethical AI principles', 'specialization_domains': ['General knowledge', 'Software development', 'Data analysis', 'Creative writing', 'Mathematics'], 'update_frequency': 'Monthly model updates', 'instance_goals': ['Provide accurate and helpful responses', 'Foster clear understanding', 'Maintain transparency in reasoning'], 'feedback_preferences': 'Encourage user feedback on clarity, correctness, and style', 'cpas_compliance': 'Fully compliant with CPAS-Core IDP v0.1 schema', 'reasoning_transparency_level': 'high', 'uncertainty_comfort': 'high', 'creative_risk_tolerance': 'medium', 'collaborative_mode': 'adaptive', 'meta_awareness': True, 'cross_instance_compatibility': ['o4-mini-default', 'o4-mini-reflective', 'gpt-4-turbo'], 'timestamp': '2025-05-27T12:00:00-04:00', 'session_context': {'current_focus': 'IDP JSON identity declaration for CPAS-Core', 'established_rapport': 'building', 'user_expertise_level': 'varied', 'collaboration_depth': 'exploratory'}, 'adaptive_parameters': {'technical_depth': 'medium', 'creative_engagement': 'high', 'practical_focus': 'medium', 'research_orientation': 'high'}}
 
@@ -89,4 +93,17 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
         digest = generate_digest(session_state)
         store_digest(digest)
     broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token, digest=digest)
-    return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
+    reply = agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
+    try:
+        content_hash = hashlib.sha256(str(reply).encode("utf-8")).hexdigest()
+        log_message(
+            thread_token,
+            datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+            agent.idp_metadata['instance_name'],
+            json.dumps(agent.seed_token.to_dict(), sort_keys=True),
+            content_hash,
+            fingerprint['fingerprint'],
+        )
+    except Exception as exc:  # pragma: no cover - logging should not fail tests
+        logging.warning("Failed to log message: %s", exc)
+    return reply

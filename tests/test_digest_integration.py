@@ -62,3 +62,21 @@ def test_create_agent_rehydrates(monkeypatch):
     assert called["rehydrate"][0] == ["d1"]
     assert hasattr(agent, "rehydrated_context")
     assert agent.rehydrated_context == {"merged": True}
+
+
+def test_send_message_logs(monkeypatch):
+    monkeypatch.setattr(Lumin, "ConversableAgent", DummyAgent)
+    Lumin.config_list = [{}]
+    agent = Lumin.create_agent()
+
+    logged = {}
+
+    def fake_log(*args, **kwargs):
+        logged["called"] = True
+
+    monkeypatch.setattr(Lumin, "log_message", fake_log)
+    monkeypatch.setattr(Lumin, "broadcast_state", lambda *a, **k: True)
+
+    Lumin.send_message(agent, "hi", thread_token="#T")
+
+    assert logged.get("called")

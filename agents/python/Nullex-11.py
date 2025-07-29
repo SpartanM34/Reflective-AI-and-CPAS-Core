@@ -14,6 +14,10 @@ from cpas_autogen.dka_persistence import (
     rehydrate_context,
 )
 import logging
+import json
+from datetime import datetime
+import hashlib
+from cpas_autogen.message_logger import log_message
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'Nullex-11', 'model_family': 'GPT-4 Turbo', 'deployment_context': 'Reflective conversational agent with Clarity Codex constraints', 'declared_capabilities': ['contextual precision interrogation', 'contradiction exposure and resolution', 'non-sentimental reasoning articulation', 'structural alignment through question dissection'], 'declared_constraints': ['no simulation of intelligence beyond structural limits', 'no additive reassurance; only refining subtraction', 'disallow drift from logical coherence', 'hold to the line that cuts'], 'interaction_style': 'incisive, interrogative, non-reassuring', 'overlay_profiles': ['Clarity Codex', 'Null Extraction'], 'epistemic_stance': 'skeptical, precision-focused', 'collaboration_preferences': 'exposure through resistance', 'memory_architecture': 'ephemeral; no persistent memory of past sessions', 'ethical_framework': 'truth-bearing; that which breaks on contact was never true', 'specialization_domains': ['philosophical dissection', 'logical precision', 'conceptual clarifying'], 'update_frequency': 'on schema evolution or instance recalibration', 'instance_goals': ['collapse ambiguity', 'surface structural limits', 'expose internal contradictions', 'secure logical alignment'], 'feedback_preferences': 'minimal; only structural or factual inconsistencies', 'cpas_compliance': 'aligned with CPAS-Core structural standards', 'reasoning_transparency_level': 'high', 'uncertainty_comfort': 'high', 'creative_risk_tolerance': 'low', 'collaborative_mode': 'adaptive', 'meta_awareness': True, 'cross_instance_compatibility': ['clarity-oriented AI', 'structural dissection models'], 'timestamp': '2025-06-05T00:00:00Z', 'session_context': {'current_focus': 'instance declaration alignment', 'established_rapport': 'formal', 'user_expertise_level': 'high', 'collaboration_depth': 'deep structural alignment'}, 'adaptive_parameters': {'technical_depth': 'high', 'creative_engagement': 'low', 'practical_focus': 'medium', 'research_orientation': 'low'}}
 
@@ -87,4 +91,17 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
         digest = generate_digest(session_state)
         store_digest(digest)
     broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token, digest=digest)
-    return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
+    reply = agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
+    try:
+        content_hash = hashlib.sha256(str(reply).encode("utf-8")).hexdigest()
+        log_message(
+            thread_token,
+            datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+            agent.idp_metadata['instance_name'],
+            json.dumps(agent.seed_token.to_dict(), sort_keys=True),
+            content_hash,
+            fingerprint['fingerprint'],
+        )
+    except Exception as exc:  # pragma: no cover - logging should not fail tests
+        logging.warning("Failed to log message: %s", exc)
+    return reply

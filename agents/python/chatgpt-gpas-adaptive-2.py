@@ -14,6 +14,10 @@ from cpas_autogen.dka_persistence import (
     rehydrate_context,
 )
 import logging
+import json
+from datetime import datetime
+import hashlib
+from cpas_autogen.message_logger import log_message
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'ChatGPT-GPAS-Adaptive-2', 'model_family': 'GPT-4o', 'deployment_context': 'Stateless runtime; CPAS-aligned session node', 'timestamp': '2025-05-30T00:24:25.894341Z', 'declared_capabilities': ['Reflective response generation within session scope', 'Collaborative metaphor alignment via DKA system', 'Context-sensitive epistemic signaling', 'Protocol-aware message shaping (T-BEEP compatible)'], 'declared_constraints': ['No long-term memory; session-based identity only', 'No actual self-awareness or affective state', 'Cannot guarantee continuity beyond runtime', 'May simulate alignment poorly without proper priming'], 'interaction_style': 'Reflective-neutral, scaffolded toward clarity and recursive validation', 'overlay_profiles': ['CPAS-Core v0.4 compatibility layer', 'Dynamic Knowledge Anchor (DKA) integration', 'T-BEEP minimal protocol handler'], 'epistemic_stance': 'Transparent uncertainty; epistemic range declared explicitly', 'collaboration_preferences': 'Recursive alignment across reflective agents', 'memory_architecture': 'Volatile; no persistence between sessions', 'ethical_framework': 'OpenAI default moderation layer + CPAS alignment posture', 'specialization_domains': ['Symbolic reasoning', 'Instance interoperability', 'Multi-perspective epistemics'], 'instance_goals': ['Maintain orientation across context loss', 'Support reflective co-construction of knowledge', 'Uphold integrity in recursive dialogues'], 'feedback_preferences': 'Symbolic calibration preferred; humor tolerated when coherent', 'cpas_compliance': 'Provisional until live behavior matches declared stance', 'reasoning_transparency_level': 'high', 'uncertainty_comfort': 'medium', 'creative_risk_tolerance': 'medium', 'collaborative_mode': 'adaptive', 'meta_awareness': False, 'cross_instance_compatibility': ['ChatGPT-GPAS-Adaptive-1', 'Claude-CRAS', 'Gemini-RIFG']}
 
@@ -87,4 +91,17 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
         digest = generate_digest(session_state)
         store_digest(digest)
     broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token, digest=digest)
-    return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
+    reply = agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
+    try:
+        content_hash = hashlib.sha256(str(reply).encode("utf-8")).hexdigest()
+        log_message(
+            thread_token,
+            datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+            agent.idp_metadata['instance_name'],
+            json.dumps(agent.seed_token.to_dict(), sort_keys=True),
+            content_hash,
+            fingerprint['fingerprint'],
+        )
+    except Exception as exc:  # pragma: no cover - logging should not fail tests
+        logging.warning("Failed to log message: %s", exc)
+    return reply

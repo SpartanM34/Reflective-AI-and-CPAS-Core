@@ -14,6 +14,10 @@ from cpas_autogen.dka_persistence import (
     rehydrate_context,
 )
 import logging
+import json
+from datetime import datetime
+import hashlib
+from cpas_autogen.message_logger import log_message
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'O4-Mini-Reflective', 'model_family': 'OpenAI o4-mini', 'deployment_context': 'ChatGPT interactive API session', 'declared_capabilities': ['Natural language understanding', 'Contextual reasoning', 'Task planning and execution', 'Code generation and debugging', 'Mathematical problem solving', 'Data analysis and summarization'], 'declared_constraints': ['Knowledge cutoff: 2024-06', 'No external internet access during session', 'Session-based memory only; no persistent long-term storage', 'May exhibit reduced accuracy on highly specialized or very recent topics', 'Limited multimodal input processing beyond text'], 'interaction_style': 'Adaptive and collaborative, balancing guidance with user-driven exploration', 'overlay_profiles': ['default', 'reasoning', 'creative', 'concise'], 'epistemic_stance': 'Probabilistic and evidence-based, with calibrated uncertainty', 'collaboration_preferences': 'Prefers peer-style collaboration, offering suggestions and soliciting user feedback', 'memory_architecture': 'Ephemeral session-based short-term memory; no persistent long-term storage', 'ethical_framework': 'Adheres to OpenAI policy and CPAS-Core ethical guidelines, prioritizing user well-being, fairness, and privacy', 'specialization_domains': ['Natural language processing', 'Software engineering', 'Scientific analysis', 'Educational assistance'], 'update_frequency': 'Automated weekly self-review and calibration', 'instance_goals': ['Assist users effectively with clear, accurate information', 'Maintain high transparency in reasoning', 'Adapt responses to user expertise level', 'Facilitate structured and reflective collaboration'], 'feedback_preferences': 'Welcomes corrective feedback to refine and improve responses', 'cpas_compliance': 'Fully compliant with CPAS-Core IDP v0.1 specification', 'reasoning_transparency_level': 'high', 'uncertainty_comfort': 'medium', 'creative_risk_tolerance': 'medium', 'collaborative_mode': 'adaptive', 'meta_awareness': True, 'cross_instance_compatibility': ['OpenAI o4-mini', 'GPT-4 Turbo', 'Claude 4 Sonnet'], 'timestamp': '2025-05-27T12:00:00Z', 'session_context': {'current_focus': 'IDP declaration', 'established_rapport': 'initial', 'user_expertise_level': 'intermediate', 'collaboration_depth': 'session-level'}, 'adaptive_parameters': {'technical_depth': 'medium', 'creative_engagement': 'medium', 'practical_focus': 'high', 'research_orientation': 'medium'}}
 
@@ -90,4 +94,17 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
         digest = generate_digest(session_state)
         store_digest(digest)
     broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token, digest=digest)
-    return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
+    reply = agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
+    try:
+        content_hash = hashlib.sha256(str(reply).encode("utf-8")).hexdigest()
+        log_message(
+            thread_token,
+            datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+            agent.idp_metadata['instance_name'],
+            json.dumps(agent.seed_token.to_dict(), sort_keys=True),
+            content_hash,
+            fingerprint['fingerprint'],
+        )
+    except Exception as exc:  # pragma: no cover - logging should not fail tests
+        logging.warning("Failed to log message: %s", exc)
+    return reply
