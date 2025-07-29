@@ -17,13 +17,14 @@ The T-BEEP `TBEEPMessenger` constructor accepts a seed token and includes it in 
 
 ### Prompt Wrapper
 Use [`wrap_with_seed_token()`](../cpas_autogen/prompt_wrapper.py) to prepend a prompt with a SeedToken header and realignment notice. This reinforces instance identity whenever a prompt is handed off.
+The wrapper also embeds a **Signature** field that is computed from the prompt and seed token using `compute_signature()`. This checksum lets tools verify that a prompt was not altered after wrapping.
 
 ### Continuity Check
-[`cpas_autogen/continuity_check.py`](../cpas_autogen/continuity_check.py) validates that the seed token and thread token match expected values. Warnings are logged if the alignment profile or thread prefix diverges.
+[`cpas_autogen/continuity_check.py`](../cpas_autogen/continuity_check.py) validates that the seed token and thread token match expected values. It recomputes the signature using the supplied prompt and warns if it differs from the embedded value. Warnings are also logged if the alignment profile or thread prefix diverges.
 
 ### Generated Agents
 Modules produced by `cpas_autogen/generate_agents.py` now integrate the seed token directly. `create_agent()` attaches `SeedToken.generate(IDP_METADATA)` to the returned agent, and a helper `send_message()` wraps outgoing prompts with `wrap_with_seed_token()` while verifying thread tokens via `continuity_check`. A warning is emitted if verification fails.
-`send_message()` also checks the latest drift metrics via `cpas_autogen.drift_monitor.latest_metrics` and automatically regenerates the seed token when `should_realign()` indicates drift beyond the defined thresholds.
+`send_message()` computes the signature before wrapping so no extra call is required by the caller. It also checks the latest drift metrics via `cpas_autogen.drift_monitor.latest_metrics` and automatically regenerates the seed token when `should_realign()` indicates drift beyond the defined thresholds.
 
 ## Purpose
 By threading the SeedToken through messengers and wrappers, CPAS-Core enforces continuous instance identity. Every tool can verify that interactions originate from a legitimate seed, reducing drift and maintaining alignment across collaborations.
