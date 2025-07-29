@@ -8,14 +8,20 @@ import requests
 
 
 def broadcast_state(agent: Any, state: dict, *, thread_token: str,
+                    digest: dict | None = None,
                     api_url: str = "http://localhost:5000/api/v1/messages") -> bool:
-    """Broadcast ``state`` to other instances via the T-BEEP API."""
+    """Broadcast ``state`` to other instances via the T-BEEP API.
+
+    When ``digest`` is provided, it is included in the payload for recipients
+    interested in DKA persistence.
+    """
     payload = {
         "threadToken": thread_token,
         "instance": getattr(agent, "idp_metadata", {}).get("instance_name"),
         "type": "state_broadcast",
         "seedToken": getattr(agent, "seed_token", None) and agent.seed_token.to_dict(),
         "state": state,
+        "digest": digest,
     }
     try:
         res = requests.post(api_url, json=payload, timeout=5)

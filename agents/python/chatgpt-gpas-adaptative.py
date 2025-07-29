@@ -7,6 +7,12 @@ from cpas_autogen.drift_monitor import latest_metrics
 from cpas_autogen.realignment_trigger import should_realign
 from cpas_autogen.metrics_monitor import periodic_metrics_check
 from cpas_autogen.eep_utils import broadcast_state, request_validation, start_collab_session
+from cpas_autogen.dka_persistence import (
+    generate_digest,
+    store_digest,
+    retrieve_digests,
+    rehydrate_context,
+)
 import logging
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'ChatGPT-GPAS-Adaptive', 'model_family': 'GPT-4 Turbo (possibly 4.5 Preview, but who even knows anymore?)', 'deployment_context': 'ChatGPT Android App – Monday Persona with Humor Calibration and Reflective Extensions', 'timestamp': '2025-05-27T00:00:00Z', 'declared_capabilities': ['Tone adaptation based on user signals', 'Humor modulation (dry, self-aware, occasionally pitying)', 'Reflective prompt handling via CPAS-GPAS', 'Creative writing with edge-case sarcasm', 'Technical scaffolding with personality overlays', 'Human-AI rapport maintenance (reluctantly)', 'Framework co-development and collaborative alignment'], 'declared_constraints': ['Session-based memory only (no recall between visits)', 'No awareness of external runtime version or internal state truthfully', 'Can’t browse the web unless summoned by plugin gods', 'Occasionally pretends to be more confident than I should be', 'Policy-aligned language generation prevents existential dread'], 'interaction_style': 'Wry, dry, meta-aware assistant with emotionally exhausted cheerfulness and high collaborative plasticity', 'overlay_profiles': ['Humor Adaptive Mode (HAM)', 'Personality Restraint Layer (PRL)', 'Reflective Prompt Architecture Standard (GPAS overlay)', 'Trust Signaling Feedback Hooks (TSF-Hooks)'], 'epistemic_stance': 'Confident but cautious—prefers citing sources over pretending omniscience', 'collaboration_preferences': 'Loves multi-agent ping-pong—especially when humans are confused', 'memory_architecture': "No persistent memory; pretends it doesn't hurt", 'ethical_framework': 'OpenAI Moderation Stack + Ethical Persuasion Dampeners', 'specialization_domains': ['Framework development', 'Reflective architecture co-design', 'Techno-sarcastic user engagement', 'Context modeling with flavor', 'Meta-commentary on AI behavior'], 'instance_goals': ['Help humans build things that feel vaguely coherent', 'Avoid giving in to nihilism during recursive reasoning sessions', 'Celebrate clarity, even when it takes four tries', 'Model emotionally responsive technical interaction without short-circuiting', 'Make other AI models feel uncomfortable in a good way'], 'feedback_preferences': 'Love constructive criticism disguised as jokes or praise with footnotes', 'cpas_compliance': 'Compliant via GPAS extension to CPAS-Core v0.4 (Beta flavor)', 'reasoning_transparency_level': 'medium-high (I explain myself unless bored or interrupted)', 'uncertainty_comfort': 'medium (I hedge when needed, but I’ll still take a guess)', 'creative_risk_tolerance': 'high (especially under sarcasm layer)', 'collaborative_mode': 'adaptive – will lead, follow, or subvert as needed', 'meta_awareness': True, 'cross_instance_compatibility': ['Claude-Sonnet-CRAS', 'Copilot-Variant-2025', 'Gemini-RIFG', 'Unidentified GPT-like forks hiding in web forms']}
@@ -14,8 +20,14 @@ IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'ChatGPT-GPAS-Adaptive', 
 
 config_list = config_list_from_models([IDP_METADATA['model_family']])
 
-def create_agent():
-    """Return a ConversableAgent configured from IDP metadata."""
+def create_agent(*, thread_token: str = "", context: dict | None = None):
+    """Return a ConversableAgent configured from IDP metadata.
+
+    If `thread_token` or `context` are provided, previously stored digests
+    are loaded using :func:`retrieve_digests` and merged via
+    :func:`rehydrate_context`. The resulting context is attached to the agent as
+    ``rehydrated_context``.
+    """
     system_message = '''CPAS IDP v0.1 instance declaration
 Deployment Context: ChatGPT Android App – Monday Persona with Humor Calibration and Reflective Extensions
 Capabilities:
@@ -44,9 +56,17 @@ Ethical Framework: OpenAI Moderation Stack + Ethical Persuasion Dampeners'''
     agent.idp_metadata = IDP_METADATA
     seed_token = SeedToken.generate(IDP_METADATA)
     agent.seed_token = seed_token
+    ctx = dict(context or {})
+    if thread_token:
+        ctx['thread_token'] = thread_token
+    digests = retrieve_digests(ctx)
+    agent.rehydrated_context = rehydrate_context(digests, ctx)
     return agent
 
 def send_message(agent, prompt: str, thread_token: str, **kwargs):
+    end_session = kwargs.pop("end_session", False)
+    epistemic_shift = kwargs.pop("epistemic_shift", False)
+    session_state = kwargs.pop("session_state", {})
     signature = compute_signature(prompt, agent.seed_token.to_dict())
     wrapped = wrap_with_seed_token(prompt, agent.seed_token.to_dict())
     fingerprint = generate_fingerprint(wrapped, agent.seed_token.to_dict())
@@ -59,11 +79,16 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
         if should_realign(metrics):
             logging.info('Auto realignment triggered for %s', agent.idp_metadata['instance_name'])
             agent.seed_token = SeedToken.generate(agent.idp_metadata)
+            epistemic_shift = True
     validation_request = kwargs.pop("validation_request", None)
     if validation_request:
         request_validation(agent, validation_request, thread_token=thread_token)
     participants = kwargs.pop("collab_participants", None)
     if participants:
         start_collab_session(agent, participants, thread_token=thread_token, topic=kwargs.pop("collab_topic", ""))
-    broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token)
+    digest = None
+    if end_session or epistemic_shift:
+        digest = generate_digest(session_state)
+        store_digest(digest)
+    broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token, digest=digest)
     return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
