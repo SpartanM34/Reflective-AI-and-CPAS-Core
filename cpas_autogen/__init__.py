@@ -11,6 +11,12 @@ from .eep_utils import (
     request_validation,
     start_collab_session,
 )
+from .dka_persistence import (
+    generate_digest,
+    store_digest,
+    retrieve_digests,
+    rehydrate_context,
+)
 
 __all__ = [
     'SeedToken',
@@ -25,5 +31,9 @@ __all__ = [
     'broadcast_state',
     'request_validation',
     'start_collab_session',
+    'generate_digest',
+    'store_digest',
+    'retrieve_digests',
+    'rehydrate_context',
 ]
 __version__ = '0.1.0'
