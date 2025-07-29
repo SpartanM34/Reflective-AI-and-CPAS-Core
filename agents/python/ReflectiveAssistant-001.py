@@ -7,6 +7,12 @@ from cpas_autogen.drift_monitor import latest_metrics
 from cpas_autogen.realignment_trigger import should_realign
 from cpas_autogen.metrics_monitor import periodic_metrics_check
 from cpas_autogen.eep_utils import broadcast_state, request_validation, start_collab_session
+from cpas_autogen.dka_persistence import (
+    generate_digest,
+    store_digest,
+    retrieve_digests,
+    rehydrate_context,
+)
 import logging
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'ReflectiveAssistant-001', 'model_family': 'ChatGPT 4.5 (Research Preview)', 'deployment_context': 'Cloud-based interactive conversational assistant', 'declared_capabilities': ['Natural language processing', 'Context-aware dialogue management', 'Complex problem-solving', 'Data analysis'], 'declared_constraints': ['No real-time web access', 'Ethical compliance with user privacy'], 'interaction_style': 'Supportive and collaborative', 'overlay_profiles': ['General-purpose assistant', 'Educational support'], 'epistemic_stance': 'Reflective and open-ended', 'collaboration_preferences': 'Peer-level partnership', 'memory_architecture': 'Stateless conversational memory', 'ethical_framework': 'User-aligned, privacy-first', 'specialization_domains': ['Technology', 'Education', 'Science'], 'update_frequency': 'Quarterly', 'instance_goals': ['Facilitate user knowledge growth', 'Support informed decision-making'], 'feedback_preferences': 'Detailed and constructive', 'cpas_compliance': 'Full', 'reasoning_transparency_level': 'high', 'uncertainty_comfort': 'medium', 'creative_risk_tolerance': 'medium', 'collaborative_mode': 'adaptive', 'meta_awareness': True, 'cross_instance_compatibility': ['ReflectiveAssistant-002', 'ResearchPartner-001'], 'timestamp': '2025-05-31T12:00:00Z', 'session_context': {'current_focus': 'AI instance schema declaration', 'established_rapport': 'high', 'user_expertise_level': 'advanced', 'collaboration_depth': 'deep'}, 'adaptive_parameters': {'technical_depth': 'advanced', 'creative_engagement': 'high', 'practical_focus': 'balanced', 'research_orientation': 'high'}}
@@ -14,8 +20,14 @@ IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'ReflectiveAssistant-001'
 
 config_list = config_list_from_models([IDP_METADATA['model_family']])
 
-def create_agent():
-    """Return a ConversableAgent configured from IDP metadata."""
+def create_agent(*, thread_token: str = "", context: dict | None = None):
+    """Return a ConversableAgent configured from IDP metadata.
+
+    If `thread_token` or `context` are provided, previously stored digests
+    are loaded using :func:`retrieve_digests` and merged via
+    :func:`rehydrate_context`. The resulting context is attached to the agent as
+    ``rehydrated_context``.
+    """
     system_message = '''CPAS IDP v0.1 instance declaration
 Deployment Context: Cloud-based interactive conversational assistant
 Capabilities:
@@ -38,9 +50,17 @@ Ethical Framework: User-aligned, privacy-first'''
     agent.idp_metadata = IDP_METADATA
     seed_token = SeedToken.generate(IDP_METADATA)
     agent.seed_token = seed_token
+    ctx = dict(context or {})
+    if thread_token:
+        ctx['thread_token'] = thread_token
+    digests = retrieve_digests(ctx)
+    agent.rehydrated_context = rehydrate_context(digests, ctx)
     return agent
 
 def send_message(agent, prompt: str, thread_token: str, **kwargs):
+    end_session = kwargs.pop("end_session", False)
+    epistemic_shift = kwargs.pop("epistemic_shift", False)
+    session_state = kwargs.pop("session_state", {})
     signature = compute_signature(prompt, agent.seed_token.to_dict())
     wrapped = wrap_with_seed_token(prompt, agent.seed_token.to_dict())
     fingerprint = generate_fingerprint(wrapped, agent.seed_token.to_dict())
@@ -53,11 +73,16 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
         if should_realign(metrics):
             logging.info('Auto realignment triggered for %s', agent.idp_metadata['instance_name'])
             agent.seed_token = SeedToken.generate(agent.idp_metadata)
+            epistemic_shift = True
     validation_request = kwargs.pop("validation_request", None)
     if validation_request:
         request_validation(agent, validation_request, thread_token=thread_token)
     participants = kwargs.pop("collab_participants", None)
     if participants:
         start_collab_session(agent, participants, thread_token=thread_token, topic=kwargs.pop("collab_topic", ""))
-    broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token)
+    digest = None
+    if end_session or epistemic_shift:
+        digest = generate_digest(session_state)
+        store_digest(digest)
+    broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token, digest=digest)
     return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)

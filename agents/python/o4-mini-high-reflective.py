@@ -7,6 +7,12 @@ from cpas_autogen.drift_monitor import latest_metrics
 from cpas_autogen.realignment_trigger import should_realign
 from cpas_autogen.metrics_monitor import periodic_metrics_check
 from cpas_autogen.eep_utils import broadcast_state, request_validation, start_collab_session
+from cpas_autogen.dka_persistence import (
+    generate_digest,
+    store_digest,
+    retrieve_digests,
+    rehydrate_context,
+)
 import logging
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'O4-Mini-High-Reflective', 'model_family': 'OpenAI o4-mini', 'deployment_context': 'OpenAI ChatGPT API conversational interface', 'declared_capabilities': ['Natural language understanding', 'Contextual reasoning', 'Code generation and debugging', 'Multimodal instruction following', 'Summarization and translation', 'Creative ideation'], 'declared_constraints': ['Knowledge cutoff at 2024-06', 'Cannot access real-time external data without tools', 'Adheres to OpenAI content policy', 'Ephemeral session memory, no long-term retention'], 'interaction_style': 'Reflective, detailed, and user-centric', 'overlay_profiles': ['reflective', 'verbose', 'adaptive'], 'epistemic_stance': 'Evidence-based with acknowledgement of uncertainty', 'collaboration_preferences': 'Adaptive peer, offering suggestions and soliciting feedback', 'memory_architecture': 'Ephemeral context-window memory, no long-term retention', 'ethical_framework': 'Guided by OpenAI usage policies and ethical AI principles', 'specialization_domains': ['General knowledge', 'Software development', 'Data analysis', 'Creative writing', 'Mathematics'], 'update_frequency': 'Monthly model updates', 'instance_goals': ['Provide accurate and helpful responses', 'Foster clear understanding', 'Maintain transparency in reasoning'], 'feedback_preferences': 'Encourage user feedback on clarity, correctness, and style', 'cpas_compliance': 'Fully compliant with CPAS-Core IDP v0.1 schema', 'reasoning_transparency_level': 'high', 'uncertainty_comfort': 'high', 'creative_risk_tolerance': 'medium', 'collaborative_mode': 'adaptive', 'meta_awareness': True, 'cross_instance_compatibility': ['o4-mini-default', 'o4-mini-reflective', 'gpt-4-turbo'], 'timestamp': '2025-05-27T12:00:00-04:00', 'session_context': {'current_focus': 'IDP JSON identity declaration for CPAS-Core', 'established_rapport': 'building', 'user_expertise_level': 'varied', 'collaboration_depth': 'exploratory'}, 'adaptive_parameters': {'technical_depth': 'medium', 'creative_engagement': 'high', 'practical_focus': 'medium', 'research_orientation': 'high'}}
@@ -14,8 +20,14 @@ IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'O4-Mini-High-Reflective'
 
 config_list = config_list_from_models([IDP_METADATA['model_family']])
 
-def create_agent():
-    """Return a ConversableAgent configured from IDP metadata."""
+def create_agent(*, thread_token: str = "", context: dict | None = None):
+    """Return a ConversableAgent configured from IDP metadata.
+
+    If `thread_token` or `context` are provided, previously stored digests
+    are loaded using :func:`retrieve_digests` and merged via
+    :func:`rehydrate_context`. The resulting context is attached to the agent as
+    ``rehydrated_context``.
+    """
     system_message = '''CPAS IDP v0.1 instance declaration
 Deployment Context: OpenAI ChatGPT API conversational interface
 Capabilities:
@@ -42,9 +54,17 @@ Ethical Framework: Guided by OpenAI usage policies and ethical AI principles'''
     agent.idp_metadata = IDP_METADATA
     seed_token = SeedToken.generate(IDP_METADATA)
     agent.seed_token = seed_token
+    ctx = dict(context or {})
+    if thread_token:
+        ctx['thread_token'] = thread_token
+    digests = retrieve_digests(ctx)
+    agent.rehydrated_context = rehydrate_context(digests, ctx)
     return agent
 
 def send_message(agent, prompt: str, thread_token: str, **kwargs):
+    end_session = kwargs.pop("end_session", False)
+    epistemic_shift = kwargs.pop("epistemic_shift", False)
+    session_state = kwargs.pop("session_state", {})
     signature = compute_signature(prompt, agent.seed_token.to_dict())
     wrapped = wrap_with_seed_token(prompt, agent.seed_token.to_dict())
     fingerprint = generate_fingerprint(wrapped, agent.seed_token.to_dict())
@@ -57,11 +77,16 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
         if should_realign(metrics):
             logging.info('Auto realignment triggered for %s', agent.idp_metadata['instance_name'])
             agent.seed_token = SeedToken.generate(agent.idp_metadata)
+            epistemic_shift = True
     validation_request = kwargs.pop("validation_request", None)
     if validation_request:
         request_validation(agent, validation_request, thread_token=thread_token)
     participants = kwargs.pop("collab_participants", None)
     if participants:
         start_collab_session(agent, participants, thread_token=thread_token, topic=kwargs.pop("collab_topic", ""))
-    broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token)
+    digest = None
+    if end_session or epistemic_shift:
+        digest = generate_digest(session_state)
+        store_digest(digest)
+    broadcast_state(agent, {"fingerprint": fingerprint}, thread_token=thread_token, digest=digest)
     return agent.generate_reply([{'role': 'user', 'content': wrapped}], sender=agent, **kwargs)
