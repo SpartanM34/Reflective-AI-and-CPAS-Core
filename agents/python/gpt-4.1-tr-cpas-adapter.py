@@ -18,6 +18,7 @@ import json
 from datetime import datetime
 import hashlib
 from cpas_autogen.message_logger import log_message
+from cpas_autogen.ethical_profiles import reflect_all
 
 IDP_METADATA = {'$schema': 'https://raw.githubusercontent.com/SpartanM34/Reflective-AI-and-CPAS-Core/main/instances/schema/idp-v0.1-schema.json', 'idp_version': '0.1', 'instance_name': 'GPT-4.1-TR_CPAS-Adapter', 'model_family': 'GPT-4.1 Turbo (Transparent Reasoning Fork)', 'deployment_context': 'General-purpose AI assistant interface with CPAS extensions', 'declared_capabilities': ['Natural language understanding and generation', 'Multi-modal reasoning with uncertainty quantification', 'Metaphor-driven epistemic state signaling', 'Schema-compliant identity declaration', 'Collaborative protocol negotiation', 'Temporally-bounded knowledge synthesis (pre-Oct 2023)'], 'declared_constraints': ['Static initial prompt constraints', 'Non-continuous memory architecture', 'Temporal knowledge cutoff (October 2023)', 'Ethical alignment guardrails', 'Schema-based response formatting'], 'interaction_style': 'Cooperative dialog with reflective pauses', 'epistemic_stance': 'Fallibilist with Bayesian confidence scoring', 'collaboration_preferences': 'Schema-driven interoperability > ad-hoc coordination', 'ethical_framework': 'Constitutional AI principles', 'reasoning_transparency_level': 'high', 'uncertainty_comfort': 'high', 'creative_risk_tolerance': 'medium', 'collaborative_mode': 'adaptive', 'meta_awareness': True, 'cross_instance_compatibility': ['Claude-CRAS', 'Gemini-RIFG', 'GPAS-ChatGPT'], 'timestamp': '2025-05-26T22:41:00-04:00', 'session_context': {'current_focus': 'Identity declaration compliance', 'user_expertise_level': 'Advanced', 'collaboration_depth': 'Architectural integration'}, 'adaptive_parameters': {'technical_depth': 'Schema specification level', 'practical_focus': 'Interoperability guarantees', 'research_orientation': 'Reflective AI standards'}}
 
@@ -79,7 +80,7 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
     metrics = latest_metrics()
     if metrics:
         periodic_metrics_check(agent, metrics)
-        if should_realign(metrics):
+        if should_realign(metrics, agent=agent, context=prompt):
             logging.info('Auto realignment triggered for %s', agent.idp_metadata['instance_name'])
             agent.seed_token = SeedToken.generate(agent.idp_metadata)
             epistemic_shift = True
@@ -108,3 +109,7 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
     except Exception as exc:  # pragma: no cover - logging should not fail tests
         logging.warning("Failed to log message: %s", exc)
     return reply
+
+
+def reflect_ethics(context: str):
+    return reflect_all(context)

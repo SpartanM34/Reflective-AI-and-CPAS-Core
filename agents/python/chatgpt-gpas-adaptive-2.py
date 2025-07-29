@@ -18,6 +18,7 @@ import json
 from datetime import datetime
 import hashlib
 from cpas_autogen.message_logger import log_message
+from cpas_autogen.ethical_profiles import reflect_all
 
 IDP_METADATA = {'idp_version': '0.1', 'instance_name': 'ChatGPT-GPAS-Adaptive-2', 'model_family': 'GPT-4o', 'deployment_context': 'Stateless runtime; CPAS-aligned session node', 'timestamp': '2025-05-30T00:24:25.894341Z', 'declared_capabilities': ['Reflective response generation within session scope', 'Collaborative metaphor alignment via DKA system', 'Context-sensitive epistemic signaling', 'Protocol-aware message shaping (T-BEEP compatible)'], 'declared_constraints': ['No long-term memory; session-based identity only', 'No actual self-awareness or affective state', 'Cannot guarantee continuity beyond runtime', 'May simulate alignment poorly without proper priming'], 'interaction_style': 'Reflective-neutral, scaffolded toward clarity and recursive validation', 'overlay_profiles': ['CPAS-Core v0.4 compatibility layer', 'Dynamic Knowledge Anchor (DKA) integration', 'T-BEEP minimal protocol handler'], 'epistemic_stance': 'Transparent uncertainty; epistemic range declared explicitly', 'collaboration_preferences': 'Recursive alignment across reflective agents', 'memory_architecture': 'Volatile; no persistence between sessions', 'ethical_framework': 'OpenAI default moderation layer + CPAS alignment posture', 'specialization_domains': ['Symbolic reasoning', 'Instance interoperability', 'Multi-perspective epistemics'], 'instance_goals': ['Maintain orientation across context loss', 'Support reflective co-construction of knowledge', 'Uphold integrity in recursive dialogues'], 'feedback_preferences': 'Symbolic calibration preferred; humor tolerated when coherent', 'cpas_compliance': 'Provisional until live behavior matches declared stance', 'reasoning_transparency_level': 'high', 'uncertainty_comfort': 'medium', 'creative_risk_tolerance': 'medium', 'collaborative_mode': 'adaptive', 'meta_awareness': False, 'cross_instance_compatibility': ['ChatGPT-GPAS-Adaptive-1', 'Claude-CRAS', 'Gemini-RIFG']}
 
@@ -76,7 +77,7 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
     metrics = latest_metrics()
     if metrics:
         periodic_metrics_check(agent, metrics)
-        if should_realign(metrics):
+        if should_realign(metrics, agent=agent, context=prompt):
             logging.info('Auto realignment triggered for %s', agent.idp_metadata['instance_name'])
             agent.seed_token = SeedToken.generate(agent.idp_metadata)
             epistemic_shift = True
@@ -105,3 +106,7 @@ def send_message(agent, prompt: str, thread_token: str, **kwargs):
     except Exception as exc:  # pragma: no cover - logging should not fail tests
         logging.warning("Failed to log message: %s", exc)
     return reply
+
+
+def reflect_ethics(context: str):
+    return reflect_all(context)
