@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2024-06-12T12:00:00",
+    "metaphor": "ocean_car",
+    "instances": ["Lumin", "Telos"],
+    "description": "The car is an ocean of possibilities",
+    "divergence": 0.9,
+    "baseline_similarity": 0.2
+  },
+  {
+    "timestamp": "2024-06-17T12:00:00",
+    "metaphor": "sky_bird",
+    "instances": ["Clarence-9", "Meridian"],
+    "description": "Bird soared the sky of reason",
+    "divergence": 0.85,
+    "baseline_similarity": 0.15
+  }
+]
