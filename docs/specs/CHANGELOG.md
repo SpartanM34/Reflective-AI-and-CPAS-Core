@@ -113,6 +113,7 @@ Automated fallback and recovery for epistemic errors.
 Legacy record: #TRIPLE_HARMONIC001.0 retained.
 
 Cross-instance compatibility matrix updated for new v1.1 compliance.
+Aligned with the multi-layer ethical framework to harmonize cross-instance reasoning.
 
 
 

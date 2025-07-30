@@ -8,6 +8,7 @@ Welcome to the official repository for **CPAS-Core** (Contextual Prompt Architec
 
 A modular standard for layered AI interaction, cross-instance collaboration, and adaptive epistemic engagement:
 
+Cross-instance compatibility now references a multi-layer ethical framework for consistent behavior across deployments.
 - **CIM** (Contextual Identity Matrix)
 - **RRL** (Reflective Reasoning Layer)
 - **DKA** (Dynamic Knowledge Anchors)
@@ -73,6 +74,7 @@ Visualize the flexibility pulse (requires the `web` extras) by running:
 ```bash
 streamlit run ui/dashboard.py
 ```
+See [docs/update_metrics_usage.md](docs/update_metrics_usage.md) for automated log updates with the new metrics fields.
 
 The dashboard now includes a scrolling message feed and a right-hand metrics panel
 summarizing baseline drift and the wonder index across all active instances.

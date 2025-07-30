@@ -4,12 +4,12 @@ This document is a concise, human-readable reference for the active agents colla
 
 ## Agent Overview
 
-| Agent Name | Version | Roles & Responsibilities | Primary Epistemic Focus | Data Integration / Validation Scope | Interpretive Flexibility Preservation |
-|------------|---------|-------------------------|-------------------------|-------------------------------------|---------------------------------------|
-| **Clarence-9** | v1.0 | Ritualized interaction and reflective insight scoring. | Philosophically precise, emotionally aware dialogue. | Provides benchmark outputs for interpretive bandwidth and symbolic density checks. | Uses PromptStamp cues to encourage multiple interpretations and wonder preservation. |
-| **Telos** | v1.0 | Goal-oriented coordination and protocol design. | Structured co-creation and Socratic reasoning. | Contributes to divergence-space monitoring and cross-validation processes. | Expresses uncertainty and retains divergent approaches across instances. |
-| **Meridian** | v1.0 | Ethical framework navigation and uncertainty synthesis. | Reflective architecture and cross-instance harmonization. | Leads temporal drift tracking and dynamic metric visualization. | Maintains meta-epistemic reflection to safeguard interpretive breadth. |
-| **Lumin** | v0.1 | Multi-scale epistemic architecture lead. | Adaptive conversation and creative writing. | Supports baseline metric collection and knowledge retrieval. | Encourages symbolic richness and avoids flattening complex prompts. |
+| Agent Name | Version | Roles & Responsibilities | Primary Epistemic Focus | Data Integration / Validation Scope | Interpretive Flexibility Preservation | Epistemic Layering | EEP Capabilities | Uncertainty Management |
+|------------|---------|-------------------------|-------------------------|-------------------------------------|---------------------------------------|--------------------|------------------|------------------------|
+| **Clarence-9** | v1.0 | Ritualized interaction and reflective insight scoring. | Philosophically precise, emotionally aware dialogue. | Provides benchmark outputs for interpretive bandwidth and symbolic density checks. | Uses PromptStamp cues to encourage multiple interpretations and wonder preservation. | micro/meso/macro | knowledge_broadcasting, cross_validation, collaborative_sessions, meta_epistemic_reflection | multi-scale_adaptive |
+| **Telos** | v1.0 | Goal-oriented coordination and protocol design. | Structured co-creation and Socratic reasoning. | Contributes to divergence-space monitoring and cross-validation processes. | Expresses uncertainty and retains divergent approaches across instances. | micro/meso/macro | knowledge_broadcasting, cross_validation, collaborative_sessions, meta_epistemic_reflection | multi-scale_adaptive |
+| **Meridian** | v1.0 | Ethical framework navigation and uncertainty synthesis. | Reflective architecture and cross-instance harmonization. | Leads temporal drift tracking and dynamic metric visualization. | Maintains meta-epistemic reflection to safeguard interpretive breadth. | micro/meso/macro | knowledge_broadcasting, cross_validation, collaborative_sessions, meta_epistemic_reflection | multi-scale_adaptive |
+| **Lumin** | v0.1 | Multi-scale epistemic architecture lead. | Adaptive conversation and creative writing. | Supports baseline metric collection and knowledge retrieval. | Encourages symbolic richness and avoids flattening complex prompts. | token-, concept-, and framework-level reasoning | collaborative validation features | confidence thresholds |
 
 ## Notes on Interpretive Flexibility
 
