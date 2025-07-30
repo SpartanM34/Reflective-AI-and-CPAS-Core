@@ -22,12 +22,28 @@
   },
   "messages": [
     {
-      "threadToken": "demo-thread-1",
-      "timestamp": "2025-06-10T12:00:00Z",
-      "instance": "Codex",
+      "threadToken": "session-1",
+      "timestamp": "2025-07-01T00:00:00Z",
+      "instance": "Lumin",
       "seedToken": "seed-001",
-      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
-      "fingerprint": "fp-0001"
+      "contentHash": "64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c",
+      "fingerprint": "fp-lumin-1"
+    },
+    {
+      "threadToken": "session-1",
+      "timestamp": "2025-07-01T00:01:00Z",
+      "instance": "Telos",
+      "seedToken": "seed-001",
+      "contentHash": "b58c73323425a8cda53945164b160cdb7f1a2fb0a6d7cbf33a998e83476c52d9",
+      "fingerprint": "fp-telos-1"
+    },
+    {
+      "threadToken": "session-2",
+      "timestamp": "2025-07-02T13:05:00Z",
+      "instance": "Meridian",
+      "seedToken": "seed-444",
+      "contentHash": "1dc7017a73a3c55c0d6a8423e3813c7ab6562d9d3064c2ec6ac7822f61b1db9c",
+      "fingerprint": "fp-meridian-7"
     }
   ]
 }

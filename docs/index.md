@@ -5,3 +5,4 @@
 - **T-BEEP Specification**: [protocols/T-BEEP/](../protocols/T-BEEP/)
 - **Agent Regeneration Guide**: [agents/README.md](../agents/README.md)
 - **Dashboard Usage**: [docs/dashboard_usage.md](dashboard_usage.md)
+- **Message Manifest Schema**: [docs/manifest_schema.md](manifest_schema.md)
