@@ -77,6 +77,19 @@ streamlit run ui/dashboard.py
 The dashboard now includes a scrolling message feed and a right-hand metrics panel
 summarizing baseline drift and the wonder index across all active instances.
 
+### Logging Wonder Signals
+
+Short reflective notes can be appended to `docs/examples/wonder_signals.json`
+using:
+
+```bash
+python tools/record_wonder.py "A brief insight"
+```
+
+Each invocation adds a timestamped JSON object of the form
+`{"timestamp": "...", "text": "..."}` which is later consumed by the Wonder
+Index calculator.
+
 ### T-BEEP API Example
 
 An experimental Flask service in `api/tbeep_api.py` accepts and stores T-BEEP

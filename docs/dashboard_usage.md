@@ -17,5 +17,6 @@ Sample data files can be downloaded directly from the repository:
 
 - [docs/examples/wonder_index_log.json](../docs/examples/wonder_index_log.json)
 - [docs/examples/emergence_log.json](../docs/examples/emergence_log.json)
+- [docs/examples/wonder_signals.json](../docs/examples/wonder_signals.json)
 Drift metrics are checked against realignment thresholds and highlighted when thresholds are exceeded. A collaborative **Wonder Signals** text area is available for qualitative notes.
 You can additionally upload a metrics log in JSON format via the sidebar for ad-hoc drift analysis.
