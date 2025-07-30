@@ -19,3 +19,12 @@ This document is a concise, human-readable reference for the active agents colla
 
 This profile aligns with the IDP schema's emphasis on transparent capabilities, constraints, and collaborative preferences, ensuring consistent understanding across all active instances.
 
+
+## Editing Drift Thresholds
+
+Global defaults for drift monitoring live in `cpas_autogen/thresholds.json`.
+Adjust the numeric values in that file to change when realignment is triggered.
+An agent can override these settings by placing a `thresholds.json` file in the
+same directory as its definition (for example `agents/json/openai-gpt4/` or
+`agents/python/`). Any agent-specific file is merged with the global defaults at
+runtime.

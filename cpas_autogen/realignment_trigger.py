@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import inspect
 from pathlib import Path
 from typing import Dict, Any
 
@@ -15,17 +16,47 @@ _DEFAULT_THRESHOLDS: Dict[str, float] = {
     "divergence_score": 0.5,
 }
 
+
+def _load_thresholds(path: Path) -> Dict[str, float]:
+    """Load thresholds from ``path`` if it exists."""
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text())
+        if isinstance(data, dict):
+            return {
+                key: float(data[key])
+                for key in _DEFAULT_THRESHOLDS
+                if key in data
+            }
+    except Exception as exc:  # pragma: no cover - don't break on errors
+        logging.warning("Failed to load thresholds from %s: %s", path, exc)
+    return {}
+
+
 # Thresholds for drift metrics that require realignment
 DRIFT_THRESHOLDS: Dict[str, float] = dict(_DEFAULT_THRESHOLDS)
-if THRESHOLDS_FILE.exists():
+DRIFT_THRESHOLDS.update(_load_thresholds(THRESHOLDS_FILE))
+
+
+def _thresholds_for_agent(agent: Any | None) -> Dict[str, float]:
+    """Return thresholds, applying any agent-specific overrides."""
+    if agent is None:
+        return DRIFT_THRESHOLDS
     try:
-        data = json.loads(THRESHOLDS_FILE.read_text())
-        if isinstance(data, dict):
-            for key in DRIFT_THRESHOLDS:
-                if key in data:
-                    DRIFT_THRESHOLDS[key] = float(data[key])
+        module = inspect.getmodule(agent)
+        if module and hasattr(module, "__file__"):
+            agent_file = Path(module.__file__)
+        else:
+            agent_file = Path(inspect.getfile(agent))
+        override = _load_thresholds(agent_file.parent / "thresholds.json")
+        if override:
+            merged = dict(DRIFT_THRESHOLDS)
+            merged.update(override)
+            return merged
     except Exception as exc:  # pragma: no cover - don't break on errors
-        logging.warning("Failed to load thresholds: %s", exc)
+        logging.warning("Failed to determine thresholds for agent: %s", exc)
+    return DRIFT_THRESHOLDS
 
 
 def should_realign(drift_metrics: Dict[str, float], *, agent: Any | None = None,
@@ -38,8 +69,9 @@ def should_realign(drift_metrics: Dict[str, float], *, agent: Any | None = None,
         Mapping containing ``symbolic_density``, ``interpretive_bandwidth``,
         and ``divergence_score`` values.
     """
+    thresholds = _thresholds_for_agent(agent)
     triggers = []
-    for key, threshold in DRIFT_THRESHOLDS.items():
+    for key, threshold in thresholds.items():
         value = drift_metrics.get(key)
         if value is not None and value < threshold:
             triggers.append(f"{key}<{threshold}")
