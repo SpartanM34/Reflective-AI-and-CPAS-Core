@@ -4,21 +4,33 @@ from cpas_autogen import dka_persistence
 
 
 def test_generate_digest_keys():
-    state = {"participating_instances": ["A", "B"]}
+    state = {
+        "participating_instances": ["A", "B"],
+        "metaphor_category": "Navigation",
+        "library_version": "MLib-v0.1",
+    }
     digest = dka_persistence.generate_digest(state)
     assert digest["digest_version"] == "1.0"
     assert digest["participating_instances"] == ["A", "B"]
     assert digest["digest_id"].startswith("DKA_")
+    assert digest["metaphor_category"] == "Navigation"
+    assert digest["library_version"] == "MLib-v0.1"
 
 
 def test_store_digest_hash(tmp_path):
-    state = {"participating_instances": ["A"]}
+    state = {
+        "participating_instances": ["A"],
+        "metaphor_category": "Illumination",
+        "library_version": "MLib-v0.1",
+    }
     digest = dka_persistence.generate_digest(state)
     file_path = dka_persistence.store_digest(digest, path=tmp_path)
     data = json.loads(file_path.read_text())
     stored_hash = data.pop("hash")
     expected = hashlib.sha256(json.dumps(data, sort_keys=True).encode("utf-8")).hexdigest()
     assert stored_hash == expected
+    assert data["metaphor_category"] == "Illumination"
+    assert data["library_version"] == "MLib-v0.1"
 
 
 def test_retrieve_digests_filter(tmp_path):
