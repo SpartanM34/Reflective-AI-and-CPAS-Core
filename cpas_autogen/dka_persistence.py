@@ -35,6 +35,8 @@ def generate_digest(session_state: Dict) -> Dict:
         "temporal_metadata": session_state.get("temporal_metadata", {}),
         "inter_dka_linkages": session_state.get("inter_dka_linkages", []),
         "rehydration_instructions": session_state.get("rehydration_instructions", {}),
+        "metaphor_category": session_state.get("metaphor_category", ""),
+        "library_version": session_state.get("library_version", ""),
     }
     return digest
 
@@ -49,6 +51,8 @@ def store_digest(digest: Dict, path: Path = DIGEST_DIR) -> Path:
     """Store ``digest`` as JSON in ``path`` and return the file path."""
     path.mkdir(parents=True, exist_ok=True)
     digest_no_hash = dict(digest)
+    digest_no_hash.setdefault("metaphor_category", "")
+    digest_no_hash.setdefault("library_version", "")
     digest_hash = _compute_hash(digest_no_hash)
     digest_no_hash["hash"] = digest_hash
     file_path = path / f"{digest_no_hash['digest_id']}.json"
