@@ -91,7 +91,7 @@ def test_full_pipeline(tmp_path, monkeypatch):
     divergence_log.write_text(
         json.dumps([{"timestamp": ts, "labels": ["a", "b"], "matrix": [[0, 0.1], [0.1, 0]]}])
     )
-    signals_file.write_text(json.dumps([{"timestamp": ts, "wonder_signal": 0.5}]))
+    signals_file.write_text(json.dumps([{"timestamp": ts, "text": "note"}]))
     wonder_index_calculator.main([
         "--drift", str(drift_log),
         "--div", str(divergence_log),

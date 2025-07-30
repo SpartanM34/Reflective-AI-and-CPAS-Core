@@ -73,17 +73,29 @@ def load_divergence(path: Path) -> Dict[str, MetricDict]:
 
 
 def load_wonder_signals(path: Path) -> Dict[str, MetricDict]:
-    """Load optional Wonder Signals JSON (timestamp -> value)."""
+    """Load optional Wonder Signals JSON produced by ``record_wonder.py``."""
     if not path.exists():
         return {}
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
+
     result: Dict[str, MetricDict] = {}
+    if not isinstance(data, list):
+        return result
+
     for entry in data:
         ts = entry.get("timestamp")
-        val = entry.get("wonder_signal")
-        if ts and val is not None:
-            result[ts] = {"wonder_signal": float(val)}
+        if ts is None:
+            continue
+        if "wonder_signal" in entry:
+            val = entry.get("wonder_signal")
+            if val is not None:
+                result[ts] = {"wonder_signal": float(val)}
+            continue
+        text = entry.get("text")
+        if text is not None:
+            result[ts] = {"wonder_signal": min(len(text) / 100.0, 1.0)}
+
     return result
 
 
