@@ -1,6 +1,6 @@
 # Metrics Update Utility
 
-`tools/update_metrics.py` appends session metrics to the monitoring logs and refreshes baseline values.
+`tools/update_metrics.py` appends session metrics to the monitoring logs and refreshes baseline values. The utility now records `epistemic_layering`, `eep_capabilities`, and `uncertainty_management` fields when present.
 
 ## Manual Usage
 
@@ -8,7 +8,9 @@
 python tools/update_metrics.py path/to/session_metrics.json
 ```
 
-`session_metrics.json` must provide `interpretive_bandwidth`, `symbolic_density` and `divergence_space` values.
+`session_metrics.json` must provide `interpretive_bandwidth`, `symbolic_density` and `divergence_space` values. Optional keys `epistemic_layering`, `eep_capabilities`, and `uncertainty_management` will be stored alongside the core metrics.
+
+An example metrics file with the new fields is provided at [docs/examples/session_metrics_sample.json](examples/session_metrics_sample.json).
 
 ## Cron Example
 

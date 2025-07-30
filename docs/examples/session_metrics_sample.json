@@ -1,0 +1,8 @@
+{
+  "interpretive_bandwidth": 0.78,
+  "symbolic_density": 0.66,
+  "divergence_space": 0.55,
+  "epistemic_layering": ["micro", "meso"],
+  "eep_capabilities": ["cross_validation"],
+  "uncertainty_management": "bayesian"
+}
