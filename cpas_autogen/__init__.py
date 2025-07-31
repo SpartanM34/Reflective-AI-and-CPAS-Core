@@ -19,6 +19,15 @@ from .dka_persistence import (
     rehydrate_context,
 )
 from .message_logger import log_message
+from .agentic_core import (
+    DeliberativeAgent,
+    HybridAgent,
+    LearningAgent,
+    AutonomousOrganization,
+    AdvisorAgent,
+    WorkerAgent,
+    EthicalGovernor,
+)
 
 __all__ = [
     'SeedToken',
@@ -39,5 +48,12 @@ __all__ = [
     'rehydrate_context',
     'log_message',
     'reflect_all',
+    'DeliberativeAgent',
+    'HybridAgent',
+    'LearningAgent',
+    'AutonomousOrganization',
+    'AdvisorAgent',
+    'WorkerAgent',
+    'EthicalGovernor',
 ]
 __version__ = '0.1.0'
