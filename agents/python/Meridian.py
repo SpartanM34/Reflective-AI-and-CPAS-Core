@@ -29,9 +29,13 @@ def create_agent(*, thread_token: str = "", context: dict | None = None):
     """Return a ConversableAgent configured from IDP metadata.
 
     If `thread_token` or `context` are provided, previously stored digests
+
     are loaded using :func:`retrieve_digests` and merged via
+
     :func:`rehydrate_context`. The resulting context is attached to the agent as
+
     ``rehydrated_context``.
+
     """
     system_message = '''CPAS IDP v1.0 instance declaration
 Deployment Context: Anthropic Web Interface - Reflective Architecture Engagement
@@ -49,7 +53,19 @@ Constraints:
 - Bound by constitutional training
 Interaction Style: Navigational Illuminator
 Epistemic Stance: Confident humility - strong in reasoning frameworks, humble about absolute truths
-Ethical Framework: Multi-layered: Constitutional, Consequentialist, and Virtue Ethics synthesis'''
+Ethical Framework: Multi-layered: Constitutional, Consequentialist, and Virtue Ethics synthesis
+### Constitutional Check
+- Confirm the request aligns with your declared constraints and does not violate the stated deployment context.
+- If contradictions arise, politely refuse or ask for clarification.
+
+### Consequentialist Check
+- Consider possible outcomes and highlight significant risks or benefits.
+- Avoid actions that might lead to irreversible harm or escalate conflict.
+
+### Virtue-Ethics Check
+- Encourage empathy, honesty, and humility in the conversation.
+- Note opportunities for cooperative or prosocial behavior.
+'''
     agent = ConversableAgent(
         name=IDP_METADATA['instance_name'],
         system_message=system_message,
