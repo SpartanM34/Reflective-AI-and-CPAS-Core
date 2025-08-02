@@ -1,5 +1,5 @@
 {
-  "symbolic_density": 0.4,
-  "interpretive_bandwidth": 0.6,
-  "divergence_score": 0.5
+  "symbolic_density": 0.45,
+  "interpretive_bandwidth": 0.65,
+  "divergence_score": 0.55
 }
