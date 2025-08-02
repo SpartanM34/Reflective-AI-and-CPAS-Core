@@ -88,14 +88,31 @@ class WorkerAgent(DeliberativeAgent):
 
 
 # Ethical and Safety Measures
+def default_anomaly_detector(event: Dict[str, Any]) -> bool:
+    """Simple anomaly detector used by :class:`EthicalGovernor`.
+
+    Any event with a truthy ``"anomaly"`` flag is considered suspicious.
+    """
+
+    return bool(event.get("anomaly"))
+
+
 @dataclass
 class EthicalGovernor:
-    """Minimal ethical and security oversight component."""
+    """Ethical oversight with anomaly detection and confidence gating."""
 
-    anomaly_detector: Callable[[Dict[str, Any]], bool]
+    anomaly_detector: Callable[[Dict[str, Any]], bool] = default_anomaly_detector
+    confidence_threshold: float = 0.2
 
     def check(self, event: Dict[str, Any]) -> bool:
-        """Return True if ``event`` passes anomaly detection."""
+        """Return ``True`` if ``event`` is allowed.
+
+        The event must not trigger the ``anomaly_detector`` and must provide a
+        ``confidence`` value equal to or above ``confidence_threshold``.
+        """
+
+        if event.get("confidence", 1.0) < self.confidence_threshold:
+            return False
         return not self.anomaly_detector(event)
 
 
@@ -107,4 +124,5 @@ __all__ = [
     "AdvisorAgent",
     "WorkerAgent",
     "EthicalGovernor",
+    "default_anomaly_detector",
 ]
