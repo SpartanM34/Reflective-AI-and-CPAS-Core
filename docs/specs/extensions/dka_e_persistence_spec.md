@@ -1,4 +1,5 @@
 # DKA-E Persistence Layer Technical Specification
+> **Status:** Superseded by [dka_e_complete_spec.md](dka_e_complete_spec.md).
 ## Version 1.0 - Draft for RIFG-CRAS Co-Development
 
 ### Abstract

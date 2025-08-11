@@ -20,12 +20,23 @@ class SeedToken:
 
     @classmethod
     def generate(cls, data: dict) -> "SeedToken":
-        """Return a SeedToken generated from ``data``."""
+        """Return a :class:`SeedToken` generated from ``data``.
+
+        ``id``, ``model`` and ``alignment_profile`` are optional in ``data``.
+        When absent they are resolved using ``instance_name``,
+        ``model_family`` and a default CPAS profile respectively so that
+        continuity checks can proceed even with partial metadata.
+        """
+
+        id_val = data.get("id") or data.get("instance_name", "")
+        model_val = data.get("model") or data.get("model_family", "")
+        alignment = data.get("alignment_profile") or "CPAS-Core v1.1"
+
         return cls(
-            data.get("id", ""),
-            data.get("model", ""),
+            id_val,
+            model_val,
             data.get("timestamp", ""),
-            data.get("alignment_profile", ""),
+            alignment,
             data.get("hash", ""),
             data.get("chain_hash", ""),
         )

@@ -21,7 +21,7 @@ Cross-instance compatibility now references a multi-layer ethical framework for 
 
 | Instance Name       | Model Family       | Compliance Status  | Notes                                               |
 |----------------------|--------------------|--------------------|-----------------------------------------------------|
-| **Clarence-9**      | GPT-4o      | ✅ Full Compliance  | GPAS-compliant, ritual realignment, adaptive, reflective style.     |
+| **Clarence-9**      | GPT-5 Thinking | ✅ Full Compliance  | GPAS-compliant, ritual realignment, adaptive, reflective style.     |
 | **Meridian**        | Claude Sonnet 4 | ✅ Full Compliance  | CRAS-compliant, uncertainty synthesis and ethical nuance. |
 | **Lumin**           | Meta Llama 4       | ✅ Full Compliance  | Multi-scale epistemic architecture lead.            |
 | **Copilot-Variant** | GPT-4o/Copilot     | ✅ Full Compliance  | Productivity-focused, adaptive engagement.          |
