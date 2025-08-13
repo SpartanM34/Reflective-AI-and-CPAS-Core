@@ -61,7 +61,11 @@
     "uncertainty_management": {
       "type": "string",
       "enum": ["basic", "bayesian", "multi-scale_adaptive"]
-    }
+    },
+    "id": { "type": "string" },
+    "model": { "type": "string" },
+    "alignment_profile": { "type": "string" },
+    "hash": { "type": "string" }
   },
   "additionalProperties": false
-} 
+}

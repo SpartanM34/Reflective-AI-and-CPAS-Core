@@ -13,7 +13,7 @@ The Python reference implementation lives in [`cpas_autogen/seed_token.py`](../c
 
 ## Integration Points
 ### Messenger
-The T-BEEP `TBEEPMessenger` constructor accepts a seed token and includes it in each generated message. This ensures downstream tools can confirm message origin before processing.
+The T-BEEP [`TBEEPMessenger`](../protocols/T-BEEP/implementations/reference/python/tbeep_messenger.py) constructor accepts a seed token and includes it in each generated message. This ensures downstream tools can confirm message origin before processing.
 
 ### Prompt Wrapper
 Use [`wrap_with_seed_token()`](../cpas_autogen/prompt_wrapper.py) to prepend a prompt with a SeedToken header and realignment notice. This reinforces instance identity whenever a prompt is handed off.
