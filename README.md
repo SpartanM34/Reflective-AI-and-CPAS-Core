@@ -152,8 +152,12 @@ For the focused v2 reference dependencies only:
 
 ```bash
 python -m pip install -r requirements-v2.txt
+python tools/validate_cpas_v2.py
 pytest -q tests/test_cpas_v2_*.py
 ```
+
+The same repository invariants and the complete test suite run in GitHub
+Actions; see [docs/ci-v2.md](docs/ci-v2.md) for scope and limitations.
 
 ### Post-Commit Monitoring Hook
 

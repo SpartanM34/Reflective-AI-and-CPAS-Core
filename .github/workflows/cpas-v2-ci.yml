@@ -1,0 +1,82 @@
+name: CPAS v2 CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cpas-v2-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-v2.txt
+
+      - name: Install focused test dependencies
+        run: python -m pip install -r requirements-v2.txt
+
+      - name: Run complete test suite
+        run: python -m pytest -q --basetemp="${RUNNER_TEMP}/cpas-pytest-${{ matrix.python-version }}"
+
+  repository-invariants:
+    name: Repository invariants
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-v2.txt
+
+      - name: Install focused validation dependencies
+        run: python -m pip install -r requirements-v2.txt
+
+      - name: Validate CPAS v2 repository contracts
+        run: python tools/validate_cpas_v2.py
+
+      - name: Compile reference and migration modules
+        run: python -m compileall -q cpas tools/validate_cpas_v2.py migrations/migrate_idp_v1_to_v2.py
+
+      - name: Reject whitespace errors in the proposed diff
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "${PR_BASE_SHA}" ]; then
+            git diff --check "${PR_BASE_SHA}...HEAD"
+          elif git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+            git diff --check HEAD^ HEAD
+          else
+            git show --check --oneline HEAD
+          fi

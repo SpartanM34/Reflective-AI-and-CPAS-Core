@@ -29,6 +29,7 @@ The runtime is replaceable infrastructure, not the identity.
 | Open questions | [`docs/open-questions-v2.md`](docs/open-questions-v2.md) |
 | Platform research | [`docs/research/current-platform-capabilities-2026-08.md`](docs/research/current-platform-capabilities-2026-08.md) |
 | Verification record | [`docs/verification/CPAS-v2-verification-2026-08-11.md`](docs/verification/CPAS-v2-verification-2026-08-11.md) |
+| CI guardrails | [`docs/ci-v2.md`](docs/ci-v2.md), [workflow](.github/workflows/cpas-v2-ci.yml), and [verification](docs/verification/CPAS-v2-CI-foundation-2026-08-11.md) |
 
 ## Status vocabulary
 
