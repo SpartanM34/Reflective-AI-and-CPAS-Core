@@ -1,0 +1,103 @@
+{
+  "$schema": "../../schemas/dka-e-v2.0.schema.json",
+  "dka_version": "2.0",
+  "dka_id": "cpas-runtime-identity-separation",
+  "branch": "main",
+  "revision": 1,
+  "title": "The model runtime is not the declared instance identity",
+  "claim": "CPAS continuity should preserve a stable declared identity and epistemic policy while treating provider, model, tools, and state availability as replaceable runtime bindings.",
+  "epistemic_state": {
+    "confidence": {
+      "level": 0.93,
+      "basis": "The v1 declaration's model changed in repository history without an identity redesign, and current platforms expose replaceable model/tool adapters.",
+      "calibration": "subjective"
+    },
+    "assumptions": [
+      {
+        "id": "assumption-declared-identity",
+        "statement": "An instance identity is a declared interaction architecture rather than ontological persistence.",
+        "status": "supported"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "evidence-architecture-audit",
+        "summary": "The baseline repository audit records the Clarence-9 model-binding history and current implementation boundaries.",
+        "source_ref": "docs/audits/CPAS-Core-v1.1-architecture-audit.md",
+        "support": "supports",
+        "retrieved_at": "2026-08-11T00:00:00Z"
+      }
+    ],
+    "uncertainties": [
+      {
+        "id": "uncertainty-behavioral-equivalence",
+        "statement": "Stable declaration digests do not guarantee equivalent behavior across model runtimes.",
+        "status": "active"
+      }
+    ],
+    "contested_zones": [
+      {
+        "id": "contest-identity-projection",
+        "question": "Which policy fields must remain in the stable identity projection across future CPAS versions?",
+        "positions": [
+          "Keep safety policy in the stable projection.",
+          "Version safety policy separately to permit governance updates."
+        ],
+        "resolution_status": "open"
+      }
+    ],
+    "dependencies": [
+      {
+        "ref": "schemas/idp-v2.0.schema.json",
+        "kind": "artifact",
+        "required": true
+      }
+    ]
+  },
+  "validity": {
+    "status": "active",
+    "valid_from": "2026-08-11T00:00:00Z",
+    "valid_until": null,
+    "epistemic_half_life_seconds": 15552000,
+    "invalidation_triggers": [
+      {
+        "id": "trigger-identity-runtime-collapse",
+        "condition": "A reviewed CPAS release intentionally makes runtime metadata part of stable identity.",
+        "action": "review"
+      }
+    ],
+    "last_evaluated_at": "2026-08-11T00:00:00Z"
+  },
+  "relationships": [],
+  "evolution": {
+    "parent_digest": null,
+    "merge_parents": [],
+    "change_summary": "Initial v2 modernization anchor derived from the architecture audit."
+  },
+  "provenance": {
+    "created_at": "2026-08-11T00:00:00Z",
+    "created_by": "OpenAI Codex modernization draft under Spartan-M34 stewardship",
+    "updated_at": "2026-08-11T00:00:00Z",
+    "sources": [
+      {
+        "ref": "docs/audits/CPAS-Core-v1.1-architecture-audit.md",
+        "kind": "repository",
+        "digest": "sha256:37ac1ee71621bc4033d513ddbca85081bb12d1c7c946680fa5e845401975e619",
+        "observed_at": "2026-08-11T00:00:00Z"
+      }
+    ],
+    "transformations": ["Structured as a DKA-E v2 epistemic record."]
+  },
+  "presentation": {
+    "metaphor": "Bridge Under Repair",
+    "summary": "Preserve the higher-level span while replacing the runtime supports."
+  },
+  "access": {
+    "classification": "public",
+    "policy_ref": null
+  },
+  "integrity": {
+    "canonicalization": "cpas-canonical-json-v1",
+    "digest": "sha256:2930e4c3d22c1bda81cd3f1d35da49156feb6093f4c730aa71a1d5a69a0a4ceb"
+  }
+}

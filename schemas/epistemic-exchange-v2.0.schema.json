@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpas-core.org/schemas/epistemic-exchange-v2.0.schema.json",
+  "title": "CPAS Epistemic Exchange Protocol v2.0 message",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol_version", "message_id", "message_type", "sender", "receiver", "instance_profile", "task", "claim", "confidence", "assumptions", "evidence", "uncertainties", "disagreements", "requested_validation", "dka_refs", "provenance", "timestamp", "consensus"],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri-reference" },
+    "protocol_version": { "const": "2.0" },
+    "message_id": { "$ref": "#/$defs/id" },
+    "message_type": { "enum": ["claim", "critique", "validation_request", "validation_result", "synthesis", "consensus_record"] },
+    "thread_id": { "$ref": "#/$defs/id" },
+    "in_reply_to": { "type": ["string", "null"] },
+    "sender": { "$ref": "#/$defs/party" },
+    "receiver": { "$ref": "#/$defs/party" },
+    "instance_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["instance_id", "identity_digest", "runtime"],
+      "properties": {
+        "instance_id": { "$ref": "#/$defs/id" },
+        "identity_digest": { "$ref": "#/$defs/digest" },
+        "runtime": { "type": ["string", "null"] },
+        "specialization": { "type": ["string", "null"] }
+      }
+    },
+    "task": { "type": "string", "minLength": 1 },
+    "claim": { "type": "string", "minLength": 1 },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "basis", "calibration"],
+      "properties": {
+        "level": { "type": "number", "minimum": 0, "maximum": 1 },
+        "basis": { "type": "string", "minLength": 1 },
+        "calibration": { "enum": ["subjective", "empirical", "derived", "unknown"] }
+      }
+    },
+    "assumptions": { "type": "array", "items": { "type": "string" } },
+    "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } },
+    "uncertainties": { "type": "array", "items": { "type": "string" } },
+    "disagreements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["with", "point", "status"],
+        "properties": {
+          "with": { "type": "string", "minLength": 1 },
+          "point": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["open", "resolved", "deferred"] }
+        }
+      }
+    },
+    "requested_validation": {
+      "type": "array",
+      "items": { "enum": ["source_check", "independent_reproduction", "counterexample", "runtime_probe", "human_review", "merge_review"] },
+      "uniqueItems": true
+    },
+    "dka_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dka_id", "digest"],
+        "properties": {
+          "dka_id": { "$ref": "#/$defs/id" },
+          "digest": { "$ref": "#/$defs/digest" },
+          "relation": { "enum": ["supports", "contradicts", "updates", "requests_review"] }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "transport", "auth_status"],
+      "properties": {
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "transport": { "type": "string", "minLength": 1 },
+        "auth_status": { "enum": ["not_checked", "integrity_only", "authenticated"] },
+        "trace_id": { "type": ["string", "null"] }
+      }
+    },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "consensus": { "$ref": "#/$defs/consensus" },
+    "extensions": { "type": "object", "additionalProperties": true }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "message_type": { "const": "consensus_record" } },
+        "required": ["message_type"]
+      },
+      "then": {
+        "properties": {
+          "consensus": {
+            "properties": {
+              "status": { "not": { "const": "not_computed" } },
+              "method": { "not": { "const": "none" } },
+              "decided_by": { "minItems": 1 },
+              "basis": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "party": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "kind": { "enum": ["human", "instance", "agent", "service", "group"] }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "source_ref", "support"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "source_ref": { "type": "string", "minLength": 1 },
+        "support": { "enum": ["supports", "contradicts", "contextual", "unknown"] },
+        "digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "consensus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "method", "decided_by", "basis"],
+      "properties": {
+        "status": { "enum": ["not_computed", "provisional", "accepted", "rejected", "contested"] },
+        "method": { "enum": ["none", "human_decision", "rule_based", "weighted_aggregation", "formal_verification"] },
+        "decided_by": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "basis": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

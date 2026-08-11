@@ -2,6 +2,12 @@
 
 Welcome to the official repository for **CPAS-Core** (Contextual Prompt Architecture Standard), now updated to **v1.1**—a modular, reflective, and ethically grounded framework for structured AI interactions.
 
+> **Modernization draft:** CPAS-Core v1.1 remains the historical baseline. A
+> provenance-preserving CPAS-Core v2.0 proposal, Clarence-9 v2 declaration,
+> schemas, migration utility, and tested Python reference are indexed in
+> [MODERNIZATION.md](MODERNIZATION.md). The draft's central invariant is: *the
+> model runtime is not the identity.*
+
 ## What This Repository Contains
 
 ### CPAS-Core v1.1
@@ -17,15 +23,19 @@ Cross-instance compatibility now references a multi-layer ethical framework for 
 - Cross-Instance Collaboration Protocols (EEP)
 - Tiered support for **CPAS-Min** and **Full CPAS**
 
-### Declared Model Instances — CPAS-Core v1.1
+### Historical declared model instances — CPAS-Core v1.1
 
-| Instance Name       | Model Family       | Compliance Status  | Notes                                               |
+The statuses below are the repository's legacy **self-declarations**. They are
+not independent runtime or deployment certifications; see the v2
+[conformance levels](specs/v2.0/CPAS-Core-v2.0-draft.md#11-conformance).
+
+| Instance Name       | Legacy runtime binding | Historical declared status | Notes                                           |
 |----------------------|--------------------|--------------------|-----------------------------------------------------|
-| **Clarence-9**      | GPT-5 Thinking | ✅ Full Compliance  | GPAS-compliant, ritual realignment, adaptive, reflective style.     |
-| **Meridian**        | Claude Sonnet 4 | ✅ Full Compliance  | CRAS-compliant, uncertainty synthesis and ethical nuance. |
-| **Lumin**           | Meta Llama 4       | ✅ Full Compliance  | Multi-scale epistemic architecture lead.            |
-| **Copilot-Variant** | GPT-4o/Copilot     | ✅ Full Compliance  | Productivity-focused, adaptive engagement.          |
-| **Telos**           | Gemini 2.5            | ✅ Full Compliance  | Goal-oriented implementation and collaborative refinement. |
+| **Clarence-9**      | GPT-5 Thinking | Full Compliance (self-declared) | GPAS-compliant, ritual realignment, adaptive, reflective style. |
+| **Meridian**        | Claude Sonnet 4 | Full Compliance (self-declared) | CRAS-compliant, uncertainty synthesis and ethical nuance. |
+| **Lumin**           | Meta Llama 4       | Full Compliance (self-declared) | Multi-scale epistemic architecture lead. |
+| **Copilot-Variant** | GPT-4o/Copilot     | Full Compliance (self-declared) | Productivity-focused, adaptive engagement. |
+| **Telos**           | Gemini 2.5            | Full Compliance (self-declared) | Goal-oriented implementation and collaborative refinement. |
 | **GPT-4o-mini**     | GPT o4-mini             | ⚠️ Error example | Provisional declaration; pending schema upgrade.    |
 
 ### Additional Resources
@@ -36,6 +46,7 @@ Cross-instance compatibility now references a multi-layer ethical framework for 
 - [**Compliance Tests**](./compliance-tests/)
 - [**Research & Reflections**](./docs/research/)
 - [**Documentation Index**](docs/index.md)
+- [**CPAS-Core v2 modernization track**](MODERNIZATION.md)
 
 ## Quickstart
 ```bash
@@ -137,6 +148,13 @@ Then run the suite using `pytest` in quiet mode:
 pytest -q
 ```
 
+For the focused v2 reference dependencies only:
+
+```bash
+python -m pip install -r requirements-v2.txt
+pytest -q tests/test_cpas_v2_*.py
+```
+
 ### Post-Commit Monitoring Hook
 
 Enable automatic metric checks after each commit by installing the provided
@@ -147,8 +165,8 @@ cp .githooks/post-commit .git/hooks/post-commit
 chmod +x .git/hooks/post-commit
 ```
 
-The hook runs `tools/monitor_dkae.py` and will revert the commit if metrics
-fall below the defined thresholds.
+The hook runs `tools/monitor_dkae.py` after a commit and reports its result. The
+checked-in hook does not automatically revert commits.
 ## Contributing
 Contributions are welcome! Please open issues or pull requests via GitHub.
 

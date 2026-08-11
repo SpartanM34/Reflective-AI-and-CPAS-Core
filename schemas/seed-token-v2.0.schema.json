@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpas-core.org/schemas/seed-token-v2.0.schema.json",
+  "title": "CPAS SeedToken v2.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["seed_version", "token_id", "instance_id", "instance_name", "identity_digest", "cpas_version", "idp_version", "created_at", "runtime", "capability_profile", "state_refs", "parent_seed", "continuity_scope", "provenance", "integrity"],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri-reference" },
+    "seed_version": { "const": "2.0" },
+    "token_id": { "$ref": "#/$defs/id" },
+    "instance_id": { "$ref": "#/$defs/id" },
+    "instance_name": { "type": "string", "minLength": 1 },
+    "identity_digest": { "$ref": "#/$defs/digest" },
+    "identity_profile": { "type": "string", "minLength": 1 },
+    "cpas_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-[0-9A-Za-z.-]+)?$" },
+    "idp_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model", "runtime_version", "observed_at"],
+      "properties": {
+        "provider": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "runtime_version": { "type": ["string", "null"] },
+        "observed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "capability_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "capabilities"],
+      "properties": {
+        "digest": { "$ref": "#/$defs/digest" },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "status"],
+            "properties": {
+              "name": { "$ref": "#/$defs/id" },
+              "status": { "enum": ["unknown", "declared", "probed", "verified", "unavailable"] }
+            }
+          }
+        }
+      }
+    },
+    "state_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "ref", "digest"],
+        "properties": {
+          "kind": { "enum": ["idp", "dka", "context_digest", "workspace_manifest", "event_head"] },
+          "ref": { "type": "string", "minLength": 1 },
+          "digest": { "$ref": "#/$defs/digest" }
+        }
+      }
+    },
+    "parent_seed": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["token_id", "integrity_digest"],
+      "properties": {
+        "token_id": { "$ref": "#/$defs/id" },
+        "integrity_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "continuity_scope": {
+      "type": "array",
+      "items": { "enum": ["declarative", "contextual", "epistemic", "persistent_system"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuer", "issued_for", "source_refs"],
+      "properties": {
+        "issuer": { "type": "string", "minLength": 1 },
+        "issued_for": { "type": "string", "minLength": 1 },
+        "source_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "canonicalization", "digest"],
+      "properties": {
+        "algorithm": { "const": "sha-256" },
+        "canonicalization": { "const": "cpas-canonical-json-v1" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "authenticator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "key_id", "tag"],
+      "properties": {
+        "type": { "const": "hmac-sha256" },
+        "key_id": { "$ref": "#/$defs/id" },
+        "tag": { "type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "extensions": { "type": "object", "additionalProperties": true }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  }
+}
