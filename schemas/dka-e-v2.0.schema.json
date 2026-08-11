@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpas-core.org/schemas/dka-e-v2.0.schema.json",
+  "title": "Dynamic Knowledge Anchor - External v2.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["dka_version", "dka_id", "branch", "revision", "title", "claim", "epistemic_state", "validity", "relationships", "evolution", "provenance", "integrity"],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri-reference" },
+    "dka_version": { "const": "2.0" },
+    "semantic_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$" },
+    "dka_id": { "$ref": "#/$defs/id" },
+    "branch": { "$ref": "#/$defs/id" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "claim": { "type": "string", "minLength": 1 },
+    "epistemic_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["confidence", "assumptions", "evidence", "uncertainties", "contested_zones", "dependencies"],
+      "properties": {
+        "confidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["level", "basis", "calibration"],
+          "properties": {
+            "level": { "type": "number", "minimum": 0, "maximum": 1 },
+            "basis": { "type": "string", "minLength": 1 },
+            "calibration": { "enum": ["subjective", "empirical", "derived", "unknown"] }
+          }
+        },
+        "assumptions": { "type": "array", "items": { "$ref": "#/$defs/epistemicItem" } },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } },
+        "uncertainties": { "type": "array", "items": { "$ref": "#/$defs/epistemicItem" } },
+        "contested_zones": { "type": "array", "items": { "$ref": "#/$defs/contested" } },
+        "dependencies": { "type": "array", "items": { "$ref": "#/$defs/dependency" } }
+      }
+    },
+    "validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "valid_from", "valid_until", "epistemic_half_life_seconds", "invalidation_triggers", "last_evaluated_at"],
+      "properties": {
+        "status": { "enum": ["active", "stale", "expired", "invalidated", "contested", "superseded"] },
+        "valid_from": { "type": "string", "format": "date-time" },
+        "valid_until": { "type": ["string", "null"], "format": "date-time" },
+        "epistemic_half_life_seconds": { "type": ["integer", "null"], "minimum": 1 },
+        "invalidation_triggers": { "type": "array", "items": { "$ref": "#/$defs/trigger" } },
+        "last_evaluated_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "relationships": { "type": "array", "items": { "$ref": "#/$defs/relationship" } },
+    "evolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parent_digest", "merge_parents", "change_summary"],
+      "properties": {
+        "parent_digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" },
+        "merge_parents": { "type": "array", "items": { "$ref": "#/$defs/digest" }, "maxItems": 2, "uniqueItems": true },
+        "change_summary": { "type": "string", "minLength": 1 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["created_at", "created_by", "updated_at", "sources", "transformations"],
+      "properties": {
+        "created_at": { "type": "string", "format": "date-time" },
+        "created_by": { "type": "string", "minLength": 1 },
+        "updated_at": { "type": "string", "format": "date-time" },
+        "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+        "transformations": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "metaphor": { "type": ["string", "null"] },
+        "summary": { "type": ["string", "null"] }
+      }
+    },
+    "access": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "policy_ref"],
+      "properties": {
+        "classification": { "enum": ["public", "internal", "confidential", "restricted"] },
+        "policy_ref": { "type": ["string", "null"] }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalization", "digest"],
+      "properties": {
+        "canonicalization": { "const": "cpas-canonical-json-v1" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "extensions": { "type": "object", "additionalProperties": true }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "epistemicItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "statement": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["active", "supported", "contested", "rejected", "unknown"] }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "summary", "source_ref", "support"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "summary": { "type": "string", "minLength": 1 },
+        "source_ref": { "type": "string", "minLength": 1 },
+        "support": { "enum": ["supports", "contradicts", "contextual", "unknown"] },
+        "retrieved_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "contested": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "question", "positions", "resolution_status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "question": { "type": "string", "minLength": 1 },
+        "positions": { "type": "array", "items": { "type": "string" }, "minItems": 2, "uniqueItems": true },
+        "resolution_status": { "enum": ["open", "human_required", "resolved"] }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "kind"],
+      "properties": {
+        "ref": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["dka", "source", "capability", "policy", "artifact"] },
+        "required": { "type": "boolean", "default": true }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "condition", "action"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "condition": { "type": "string", "minLength": 1 },
+        "action": { "enum": ["review", "mark_stale", "invalidate"] }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "relation"],
+      "properties": {
+        "target": { "type": "string", "minLength": 1 },
+        "relation": { "enum": ["supports", "contradicts", "depends_on", "supersedes", "derived_from", "related_to"] }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "kind"],
+      "properties": {
+        "ref": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["repository", "web", "database", "conversation", "artifact", "human", "model"] },
+        "digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" },
+        "observed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "../../schemas/seed-token-v2.0.schema.json",
+  "seed_version": "2.0",
+  "token_id": "clarence-9-seed-example-001",
+  "instance_id": "clarence-9",
+  "instance_name": "Clarence-9",
+  "identity_digest": "sha256:a7f77be259d2bfa6a5024772dd4ade0c577ab8e0ea23df494ceedba006ad04af",
+  "identity_profile": "A reflective, philosophically precise collaboration profile reconstructed from declaration and supplied context. It tolerates uncertainty, tests assumptions, adapts interaction style, and preserves the distinction between performed reflection and felt experience.",
+  "cpas_version": "2.0.0-draft.1",
+  "idp_version": "2.0",
+  "created_at": "2026-08-11T00:00:00Z",
+  "expires_at": "2027-08-11T00:00:00Z",
+  "runtime": {
+    "provider": null,
+    "model": null,
+    "runtime_version": null,
+    "observed_at": null
+  },
+  "capability_profile": {
+    "digest": "sha256:5f04a9801df0dc2145a025e4772bed4daff18d47f584828ebcafce607cc0c650",
+    "capabilities": [
+      { "name": "external_persistence", "status": "unavailable" },
+      { "name": "long_context", "status": "unknown" },
+      { "name": "structured_output", "status": "unknown" },
+      { "name": "tool_calling", "status": "unknown" },
+      { "name": "web_research", "status": "unknown" }
+    ]
+  },
+  "state_refs": [
+    {
+      "kind": "idp",
+      "ref": "instances/current/Clarence-9-v2.0.json",
+      "digest": "sha256:9fd42932091dc680d9b95b272471b20a63bcb3e083855b0f3e7087f4ca547def"
+    },
+    {
+      "kind": "dka",
+      "ref": "cpas-runtime-identity-separation/main/1",
+      "digest": "sha256:2930e4c3d22c1bda81cd3f1d35da49156feb6093f4c730aa71a1d5a69a0a4ceb"
+    }
+  ],
+  "parent_seed": null,
+  "continuity_scope": ["declarative", "epistemic"],
+  "provenance": {
+    "issuer": "documentation-example",
+    "issued_for": "schema and reference implementation tests",
+    "source_refs": [
+      "instances/current/Clarence-9-v2.0.json",
+      "examples/v2/dka-e-v2.example.json"
+    ]
+  },
+  "integrity": {
+    "algorithm": "sha-256",
+    "canonicalization": "cpas-canonical-json-v1",
+    "digest": "sha256:dd3a18300544a92b8331f85dbe45c8164f3bb4ba33893cb7fcec21c85193805b"
+  },
+  "authenticator": {
+    "type": "hmac-sha256",
+    "key_id": "documentation-test-key",
+    "tag": "hmac-sha256:de7908b7d8d3eeba96ddb6ed924310038ff25ab05b207547b3b92bf27989e14e"
+  }
+}

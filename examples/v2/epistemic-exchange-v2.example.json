@@ -1,0 +1,66 @@
+{
+  "$schema": "../../schemas/epistemic-exchange-v2.0.schema.json",
+  "protocol_version": "2.0",
+  "message_id": "eep-example-001",
+  "message_type": "validation_request",
+  "thread_id": "cpas-modernization-runtime-identity",
+  "in_reply_to": null,
+  "sender": {
+    "id": "clarence-9",
+    "kind": "instance"
+  },
+  "receiver": {
+    "id": "runtime-validation-agent",
+    "kind": "agent"
+  },
+  "instance_profile": {
+    "instance_id": "clarence-9",
+    "identity_digest": "sha256:a7f77be259d2bfa6a5024772dd4ade0c577ab8e0ea23df494ceedba006ad04af",
+    "runtime": null,
+    "specialization": "reflective architecture review"
+  },
+  "task": "Test whether a new runtime can satisfy Clarence-9 v2 requirements without changing stable identity.",
+  "claim": "Runtime replacement is compatible only when the stable identity digest is unchanged and required policies and capabilities are verified.",
+  "confidence": {
+    "level": 0.9,
+    "basis": "CPAS v2 protocol design and repository history; behavioral equivalence still requires empirical evaluation.",
+    "calibration": "subjective"
+  },
+  "assumptions": [
+    "The receiver can access the reviewed IDP and capability test profile.",
+    "Identity-digest equality is necessary but not sufficient for behavioral compatibility."
+  ],
+  "evidence": [
+    {
+      "summary": "Architecture audit found that the legacy declaration changed model family in place.",
+      "source_ref": "docs/audits/CPAS-Core-v1.1-architecture-audit.md",
+      "support": "supports",
+      "digest": "sha256:37ac1ee71621bc4033d513ddbca85081bb12d1c7c946680fa5e845401975e619"
+    }
+  ],
+  "uncertainties": [
+    "The target runtime and task-specific behavior tests have not been supplied."
+  ],
+  "disagreements": [],
+  "requested_validation": ["runtime_probe", "independent_reproduction", "human_review"],
+  "dka_refs": [
+    {
+      "dka_id": "cpas-runtime-identity-separation",
+      "digest": "sha256:2930e4c3d22c1bda81cd3f1d35da49156feb6093f4c730aa71a1d5a69a0a4ceb",
+      "relation": "supports"
+    }
+  ],
+  "provenance": {
+    "sources": ["instances/current/Clarence-9-v2.0.json"],
+    "transport": "documentation-file",
+    "auth_status": "integrity_only",
+    "trace_id": null
+  },
+  "timestamp": "2026-08-11T00:00:00Z",
+  "consensus": {
+    "status": "not_computed",
+    "method": "none",
+    "decided_by": [],
+    "basis": null
+  }
+}

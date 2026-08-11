@@ -1,6 +1,15 @@
 # Documentation Index
 
+- **Modernization overview**: [MODERNIZATION.md](../MODERNIZATION.md)
+- **Architecture audit**: [audits/CPAS-Core-v1.1-architecture-audit.md](audits/CPAS-Core-v1.1-architecture-audit.md)
+- **CPAS-Core v2.0 draft**: [specs/v2.0/CPAS-Core-v2.0-draft.md](../specs/v2.0/CPAS-Core-v2.0-draft.md)
+- **Clarence-9 v2**: [instances/current/Clarence-9-v2.0.json](../instances/current/Clarence-9-v2.0.json)
+- **Current platform capability ledger**: [research/current-platform-capabilities-2026-08.md](research/current-platform-capabilities-2026-08.md)
+- **Migration guide**: [migrations/CPAS-v1.1-to-v2.0.md](../migrations/CPAS-v1.1-to-v2.0.md)
+- **Open questions**: [open-questions-v2.md](open-questions-v2.md)
+- **Verification record**: [verification/CPAS-v2-verification-2026-08-11.md](verification/CPAS-v2-verification-2026-08-11.md)
 - **IDP Schema**: [instances/schema/current/idp-v1.0-schema.json](../instances/schema/current/idp-v1.0-schema.json)
+- **IDP v2 Schema**: [schemas/idp-v2.0.schema.json](../schemas/idp-v2.0.schema.json)
 - **CPAS Specification**: [docs/specs/current/CPAS-Core-v1.1.md](specs/current/CPAS-Core-v1.1.md)
 - **T-BEEP Specification**: [protocols/T-BEEP/](../protocols/T-BEEP/)
 - **Agent Regeneration Guide**: [agents/README.md](../agents/README.md)

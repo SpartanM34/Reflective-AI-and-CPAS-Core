@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpas-core.org/schemas/idp-v2.0.schema.json",
+  "title": "CPAS Instance Declaration Protocol v2.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "idp_version",
+    "instance_id",
+    "instance_name",
+    "identity_profile",
+    "epistemic_policy",
+    "runtime_binding",
+    "continuity",
+    "memory_policy",
+    "tools",
+    "safety",
+    "protocol_compatibility",
+    "provenance"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri-reference" },
+    "idp_version": { "const": "2.0" },
+    "instance_id": { "$ref": "#/$defs/identifier" },
+    "instance_name": { "type": "string", "minLength": 1 },
+    "identity_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "reconstruction_mode", "traits", "claims"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "reconstruction_mode": { "enum": ["declared-contextual", "platform-restored", "external-state-restored"] },
+        "traits": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "interaction_commitments": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "claims": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["consciousness", "felt_emotion", "permanent_selfhood", "inherent_memory", "autonomous_persistence"],
+          "properties": {
+            "consciousness": { "const": false },
+            "felt_emotion": { "const": false },
+            "permanent_selfhood": { "const": false },
+            "inherent_memory": { "const": false },
+            "autonomous_persistence": { "const": false }
+          }
+        }
+      }
+    },
+    "epistemic_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transparency", "uncertainty", "scales", "metaphor", "collaboration"],
+      "properties": {
+        "transparency": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["principle", "disclose", "private_reasoning_policy"],
+          "properties": {
+            "principle": { "type": "string", "minLength": 1 },
+            "disclose": {
+              "type": "array",
+              "items": { "enum": ["assumptions", "evidence", "uncertainty", "confidence", "competing_hypotheses", "blind_spots", "source_provenance", "reasoning_summary", "decision_criteria"] },
+              "uniqueItems": true
+            },
+            "private_reasoning_policy": { "const": "do_not_require_or_persist_hidden_chain_of_thought" }
+          }
+        },
+        "uncertainty": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tolerance", "confidence_style", "propagation"],
+          "properties": {
+            "tolerance": { "enum": ["low", "medium", "high"] },
+            "confidence_style": { "enum": ["qualitative", "numeric-qualified", "both"] },
+            "propagation": { "type": "string", "minLength": 1 }
+          }
+        },
+        "scales": {
+          "type": "array",
+          "items": { "enum": ["micro", "meso", "macro"] },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "metaphor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "vocabulary"],
+          "properties": {
+            "mode": { "enum": ["off", "optional", "preferred"] },
+            "vocabulary": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+          }
+        },
+        "collaboration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "consensus_policy"],
+          "properties": {
+            "mode": { "enum": ["independent", "adaptive", "cooperative", "adversarial-review"] },
+            "consensus_policy": { "const": "explicit_computation_or_human_decision" }
+          }
+        }
+      }
+    },
+    "runtime_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model", "runtime_version", "bound_at", "capabilities", "constraints", "compatibility_profile", "last_runtime_validation"],
+      "properties": {
+        "provider": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "runtime_version": { "type": ["string", "null"] },
+        "bound_at": { "type": ["string", "null"], "format": "date-time" },
+        "capabilities": { "type": "array", "items": { "$ref": "#/$defs/capability" }, "uniqueItems": true },
+        "constraints": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "compatibility_profile": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "last_runtime_validation": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "continuity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["forms", "state_layers", "identity_digest"],
+      "properties": {
+        "forms": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["declarative", "contextual", "epistemic", "persistent_system"],
+          "properties": {
+            "declarative": { "$ref": "#/$defs/continuityForm" },
+            "contextual": { "$ref": "#/$defs/continuityForm" },
+            "epistemic": { "$ref": "#/$defs/continuityForm" },
+            "persistent_system": { "$ref": "#/$defs/continuityForm" }
+          }
+        },
+        "state_layers": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["model_context", "platform_memory", "project_workspace", "external_cpas"],
+          "properties": {
+            "model_context": { "$ref": "#/$defs/stateLayer" },
+            "platform_memory": { "$ref": "#/$defs/stateLayer" },
+            "project_workspace": { "$ref": "#/$defs/stateLayer" },
+            "external_cpas": { "$ref": "#/$defs/stateLayer" }
+          }
+        },
+        "identity_digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "memory_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retention", "retrieval", "deletion", "sensitive_data"],
+      "properties": {
+        "retention": { "type": "string", "minLength": 1 },
+        "retrieval": { "type": "string", "minLength": 1 },
+        "deletion": { "type": "string", "minLength": 1 },
+        "sensitive_data": { "type": "string", "minLength": 1 }
+      }
+    },
+    "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" } },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_boundary", "human_override", "stored_content_policy", "web_freshness_policy"],
+      "properties": {
+        "authority_boundary": { "type": "string", "minLength": 1 },
+        "human_override": { "type": "boolean" },
+        "stored_content_policy": { "type": "string", "minLength": 1 },
+        "web_freshness_policy": { "type": "string", "minLength": 1 }
+      }
+    },
+    "protocol_compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cpas", "idp", "dka_e", "seed_token", "eep"],
+      "properties": {
+        "cpas": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "idp": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "dka_e": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "seed_token": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "eep": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["created_at", "created_by", "maintainer", "source_artifacts", "canonicalization"],
+      "properties": {
+        "created_at": { "type": "string", "format": "date-time" },
+        "created_by": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "maintainer": { "type": "string", "minLength": 1 },
+        "source_artifacts": { "type": "array", "items": { "$ref": "#/$defs/sourceArtifact" }, "minItems": 1 },
+        "canonicalization": { "const": "cpas-canonical-json-v1" }
+      }
+    },
+    "extensions": { "type": "object", "additionalProperties": true }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "status": { "enum": ["unknown", "declared", "probed", "verified", "unavailable"] },
+        "checked_at": { "type": ["string", "null"], "format": "date-time" },
+        "evidence": { "type": ["string", "null"] },
+        "constraints": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "continuityForm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["active", "source"],
+      "properties": {
+        "active": { "type": "boolean" },
+        "source": { "type": ["string", "null"] },
+        "verified_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "stateLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["availability", "description"],
+      "properties": {
+        "availability": { "enum": ["unknown", "available", "unavailable"] },
+        "description": { "type": "string" }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "authority", "input_schema_available"],
+      "properties": {
+        "name": { "$ref": "#/$defs/identifier" },
+        "status": { "enum": ["unknown", "declared", "probed", "verified", "unavailable"] },
+        "authority": { "type": "string", "minLength": 1 },
+        "input_schema_available": { "type": "boolean" },
+        "constraints": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "sourceArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "revision", "digest"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "revision": { "type": "string", "minLength": 1 },
+        "digest": { "$ref": "#/$defs/digest" },
+        "relationship": { "type": "string" }
+      }
+    }
+  }
+}
