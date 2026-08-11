@@ -35,7 +35,7 @@
       "summary": "Architecture audit found that the legacy declaration changed model family in place.",
       "source_ref": "docs/audits/CPAS-Core-v1.1-architecture-audit.md",
       "support": "supports",
-      "digest": "sha256:37ac1ee71621bc4033d513ddbca85081bb12d1c7c946680fa5e845401975e619"
+      "digest": "sha256:c7ea00a25ea09649ce4cee394825f0363e44b6ef17b5612c2a5f38e8252995d7"
     }
   ],
   "uncertainties": [
@@ -46,7 +46,7 @@
   "dka_refs": [
     {
       "dka_id": "cpas-runtime-identity-separation",
-      "digest": "sha256:2930e4c3d22c1bda81cd3f1d35da49156feb6093f4c730aa71a1d5a69a0a4ceb",
+      "digest": "sha256:70b8b180a8c52c0b55180af48c3a97106f3b8928dd46b454cdf6f919640d9e6a",
       "relation": "supports"
     }
   ],

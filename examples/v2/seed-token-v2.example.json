@@ -35,7 +35,7 @@
     {
       "kind": "dka",
       "ref": "cpas-runtime-identity-separation/main/1",
-      "digest": "sha256:2930e4c3d22c1bda81cd3f1d35da49156feb6093f4c730aa71a1d5a69a0a4ceb"
+      "digest": "sha256:70b8b180a8c52c0b55180af48c3a97106f3b8928dd46b454cdf6f919640d9e6a"
     }
   ],
   "parent_seed": null,
@@ -51,11 +51,11 @@
   "integrity": {
     "algorithm": "sha-256",
     "canonicalization": "cpas-canonical-json-v1",
-    "digest": "sha256:dd3a18300544a92b8331f85dbe45c8164f3bb4ba33893cb7fcec21c85193805b"
+    "digest": "sha256:1546f098122b0a936ef7dc38523e7590cc484449a089a4b47040d8f058808567"
   },
   "authenticator": {
     "type": "hmac-sha256",
     "key_id": "documentation-test-key",
-    "tag": "hmac-sha256:de7908b7d8d3eeba96ddb6ed924310038ff25ab05b207547b3b92bf27989e14e"
+    "tag": "hmac-sha256:a0d76e5d5481c2a9a86a0ff249a3a4d3b7ad5cadafdc47ab2805d2f44a6b792a"
   }
 }

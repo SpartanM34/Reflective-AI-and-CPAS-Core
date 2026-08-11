@@ -8,6 +8,8 @@
 - **Migration guide**: [migrations/CPAS-v1.1-to-v2.0.md](../migrations/CPAS-v1.1-to-v2.0.md)
 - **Open questions**: [open-questions-v2.md](open-questions-v2.md)
 - **Verification record**: [verification/CPAS-v2-verification-2026-08-11.md](verification/CPAS-v2-verification-2026-08-11.md)
+- **CPAS v2 continuous integration**: [ci-v2.md](ci-v2.md)
+- **CI foundation verification**: [verification/CPAS-v2-CI-foundation-2026-08-11.md](verification/CPAS-v2-CI-foundation-2026-08-11.md)
 - **IDP Schema**: [instances/schema/current/idp-v1.0-schema.json](../instances/schema/current/idp-v1.0-schema.json)
 - **IDP v2 Schema**: [schemas/idp-v2.0.schema.json](../schemas/idp-v2.0.schema.json)
 - **CPAS Specification**: [docs/specs/current/CPAS-Core-v1.1.md](specs/current/CPAS-Core-v1.1.md)
