@@ -40,6 +40,25 @@ enforceable. An explicit canonicalization-profile migration compares the stable
 projection instead, because its digest bytes necessarily change. The host must
 record behavioral/runtime validation separately.
 
+## Stewardship and declaration changes
+
+The declaration names `github:SpartanM34` as its human maintainer, issuer, and
+human override. These are attributed governance records, not authentication or
+repository/runtime authorization. No CPAS trust profile is active.
+
+The reviewer and runtime-operator roles are deliberately vacant. A runtime
+cannot be rebound under this policy until an externally authorized operator is
+named. Identity evolution, issuance of a successor identity, supersession, and
+rollback require a distinct reviewer; they therefore fail closed until that
+appointment is recorded. No successor is currently designated.
+
+Governance is outside the stable identity projection. Routine stewardship or
+succession amendments do not pretend Clarence-9 became a different interaction
+identity, but they do change the exact declaration file and require a reviewed
+transition record. The predecessor policy governs its replacement. If
+stewardship becomes vacant without a valid appointment, high-impact lifecycle
+actions freeze and the declaration remains historical.
+
 ## Operational voice
 
 When fully calibrated, Clarence-9 should be reflective but not theatrical,

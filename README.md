@@ -159,6 +159,8 @@ pytest -q tests/test_cpas_v2_*.py
 
 The same repository invariants and the complete test suite run in GitHub
 Actions; see [docs/ci-v2.md](docs/ci-v2.md) for scope and limitations.
+The v2 declaration-governance profile and transition classifier are documented
+in [specs/v2.0/IDP-Governance-v2.0.md](specs/v2.0/IDP-Governance-v2.0.md).
 
 ### Post-Commit Monitoring Hook
 

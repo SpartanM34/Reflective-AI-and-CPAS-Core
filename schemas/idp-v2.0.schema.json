@@ -15,6 +15,7 @@
     "memory_policy",
     "tools",
     "safety",
+    "governance",
     "protocol_compatibility",
     "provenance"
   ],
@@ -175,6 +176,7 @@
         "web_freshness_policy": { "type": "string", "minLength": 1 }
       }
     },
+    "governance": { "$ref": "#/$defs/governance" },
     "protocol_compatibility": {
       "type": "object",
       "additionalProperties": false,
@@ -284,6 +286,238 @@
         "authority": { "type": "string", "minLength": 1 },
         "input_schema_available": { "type": "boolean" },
         "constraints": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "role": {
+      "enum": [
+        "maintainer",
+        "reviewer",
+        "issuer",
+        "runtime_operator",
+        "human_override"
+      ]
+    },
+    "authority": {
+      "enum": [
+        "issue_declaration",
+        "amend_declaration",
+        "review_declaration",
+        "bind_runtime",
+        "evolve_identity",
+        "change_governance",
+        "supersede_declaration",
+        "rollback_declaration",
+        "retire_declaration",
+        "appoint_successor",
+        "approve_retirement",
+        "emergency_override"
+      ]
+    },
+    "roleAssignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "subject",
+        "actor_type",
+        "status",
+        "authorities",
+        "effective_from",
+        "evidence_ref"
+      ],
+      "properties": {
+        "role": { "$ref": "#/$defs/role" },
+        "subject": { "type": ["string", "null"], "minLength": 1 },
+        "actor_type": {
+          "enum": ["human", "service", "group", "unspecified", "unassigned"]
+        },
+        "status": { "enum": ["active", "conditional", "vacant", "revoked"] },
+        "authorities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/authority" }
+        },
+        "effective_from": { "type": ["string", "null"], "format": "date-time" },
+        "evidence_ref": { "type": ["string", "null"] },
+        "conditions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "vacant" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "subject": { "type": "null" },
+              "actor_type": { "const": "unassigned" },
+              "effective_from": { "type": "null" }
+            }
+          },
+          "else": {
+            "properties": { "subject": { "type": "string", "minLength": 1 } }
+          }
+        }
+      ]
+    },
+    "approvalRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "authority"],
+      "properties": {
+        "role": { "$ref": "#/$defs/role" },
+        "authority": { "$ref": "#/$defs/authority" }
+      }
+    },
+    "changePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_approvals",
+        "minimum_approvals",
+        "distinct_actors",
+        "human_approval_required"
+      ],
+      "properties": {
+        "required_approvals": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/approvalRequirement" }
+        },
+        "minimum_approvals": { "type": "integer", "minimum": 1 },
+        "distinct_actors": { "type": "boolean" },
+        "human_approval_required": { "type": "boolean" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "governance_version",
+        "policy_id",
+        "policy_status",
+        "declaration_revision",
+        "lifecycle_status",
+        "roles",
+        "change_control",
+        "succession",
+        "transition_refs",
+        "assurance"
+      ],
+      "properties": {
+        "governance_version": { "const": "1.0" },
+        "policy_id": { "$ref": "#/$defs/identifier" },
+        "policy_status": { "enum": ["proposed", "active", "suspended", "retired"] },
+        "declaration_revision": { "type": "integer", "minimum": 1 },
+        "lifecycle_status": { "enum": ["draft", "active", "superseded", "retired"] },
+        "roles": {
+          "type": "array",
+          "minItems": 5,
+          "items": { "$ref": "#/$defs/roleAssignment" },
+          "allOf": [
+            { "contains": { "properties": { "role": { "const": "maintainer" } }, "required": ["role"] } },
+            { "contains": { "properties": { "role": { "const": "reviewer" } }, "required": ["role"] } },
+            { "contains": { "properties": { "role": { "const": "issuer" } }, "required": ["role"] } },
+            { "contains": { "properties": { "role": { "const": "runtime_operator" } }, "required": ["role"] } },
+            { "contains": { "properties": { "role": { "const": "human_override" } }, "required": ["role"] } }
+          ]
+        },
+        "change_control": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "runtime_rebind",
+            "compatible_amendment",
+            "identity_evolution",
+            "new_identity",
+            "supersession",
+            "rollback",
+            "retirement"
+          ],
+          "properties": {
+            "runtime_rebind": { "$ref": "#/$defs/changePolicy" },
+            "compatible_amendment": { "$ref": "#/$defs/changePolicy" },
+            "identity_evolution": { "$ref": "#/$defs/changePolicy" },
+            "new_identity": { "$ref": "#/$defs/changePolicy" },
+            "supersession": { "$ref": "#/$defs/changePolicy" },
+            "rollback": { "$ref": "#/$defs/changePolicy" },
+            "retirement": { "$ref": "#/$defs/changePolicy" }
+          }
+        },
+        "succession": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "steward",
+            "mode",
+            "designated_successors",
+            "activation_requirements",
+            "vacancy_behavior"
+          ],
+          "properties": {
+            "steward": { "type": ["string", "null"] },
+            "mode": { "enum": ["explicit_appointment", "external_policy"] },
+            "designated_successors": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            },
+            "activation_requirements": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            },
+            "vacancy_behavior": { "type": "string", "minLength": 1 }
+          }
+        },
+        "transition_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "assurance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "trust_model",
+            "authentication_profile",
+            "authorization_profile",
+            "statement"
+          ],
+          "properties": {
+            "trust_model": { "enum": ["metadata_only", "external_profile"] },
+            "authentication_profile": { "type": ["string", "null"] },
+            "authorization_profile": { "type": ["string", "null"] },
+            "statement": { "type": "string", "minLength": 1 }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "trust_model": { "const": "metadata_only" } },
+                "required": ["trust_model"]
+              },
+              "then": {
+                "properties": {
+                  "authentication_profile": { "type": "null" },
+                  "authorization_profile": { "type": "null" }
+                }
+              },
+              "else": {
+                "properties": {
+                  "authentication_profile": { "type": "string", "minLength": 1 },
+                  "authorization_profile": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          ]
+        }
       }
     },
     "sourceArtifact": {

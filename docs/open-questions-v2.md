@@ -6,8 +6,6 @@ confidence in a proposed answer.
 
 | # | Open question | Why unresolved | Current leaning | Importance confidence |
 |---|---|---|---|---|
-| 1 | Which fields belong permanently in the stable identity projection? | Safety and epistemic policy constrain identity, but governance may need to update them without claiming a new instance. | Keep them stable within IDP major version; record reviewed identity evolution explicitly. | **High** |
-| 2 | Who is authorized to issue, revise, or retire a Clarence-9 declaration? | Maintainer attribution is present, but no governance, key, or succession policy is implemented. | Define maintainer/reviewer roles and a signed release process before production claims. | **High** |
 | 3 | Should SeedToken gain a public-key signature profile? | HMAC is implementable but unsuitable for public verification and non-repudiation; algorithm agility introduces complexity. | Draft a separate signed-envelope profile only after threat-model and key-governance review. | **High** |
 | 5 | How are DKA deletions reconciled with immutable Git/event history and privacy law? | Tombstones retain evidence of deletion but Git history may retain the content; rewriting history harms provenance. | Classify sensitive records before storage and use erasable encrypted payloads or non-Git stores where deletion is mandatory. | **High** |
 | 6 | What is the normative distributed DKA-E consistency model? | The file reference demonstrates local CAS only. Databases, Git, and object/event stores have different transaction and conflict guarantees. | Specify a minimal store contract plus backend profiles rather than promise universal transactions. | **High** |
@@ -26,8 +24,8 @@ confidence in a proposed answer.
 
 ## Decisions required before a stable 2.0.0
 
-At minimum, maintainers should resolve declaration governance, production
-persistence profiles, privacy/deletion handling,
+At minimum, maintainers should resolve production trust/reviewer appointments,
+production persistence profiles, privacy/deletion handling,
 capability evidence levels, SeedToken authentication direction, and a behavioral
 runtime-replacement evaluation. Other questions can remain profiled extensions
 if the stable core clearly labels them.
@@ -40,3 +38,14 @@ digests use RFC 8785/JCS plus explicit artifact domains, while the former Python
 profile remains frozen for legacy verification. The remaining pre-release task
 is interoperability review against the published Python and Node vectors, not
 selection of another encoding.
+
+Questions 1 and 2 are resolved at the protocol/profile level by
+[ADR-0002](adr/0002-declaration-governance-and-identity-evolution.md) and the
+[IDP governance profile](../specs/v2.0/IDP-Governance-v2.0.md). Governance is
+outside the stable identity projection; deterministic classification records
+runtime rebind, compatible amendment, identity evolution, or new identity;
+and the predecessor policy governs transitions. Clarence-9 names Spartan-M34
+as maintainer/issuer/human override while reviewer, runtime operator, and
+successor remain vacant. Production actor authentication, reviewer appointment,
+and emergency succession are deliberately still unresolved rather than being
+inferred from repository metadata.

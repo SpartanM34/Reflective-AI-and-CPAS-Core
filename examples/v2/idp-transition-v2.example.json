@@ -1,0 +1,95 @@
+{
+  "$schema": "../../schemas/idp-transition-v2.0.schema.json",
+  "transition_version": "1.0",
+  "transition_id": "example:contextual-continuity-amendment",
+  "operation": "amendment",
+  "change_class": "compatible_amendment",
+  "instance_id_before": "example-instance",
+  "instance_id_after": "example-instance",
+  "from": {
+    "identity_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "identity_digest_profile": "cpas-digest-v2:idp-identity",
+    "declaration_ref": "example:declaration-revision-1",
+    "artifact_digest": null,
+    "artifact_digest_profile": null
+  },
+  "to": {
+    "identity_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "identity_digest_profile": "cpas-digest-v2:idp-identity",
+    "declaration_ref": "example:declaration-revision-2",
+    "artifact_digest": null,
+    "artifact_digest_profile": null
+  },
+  "changed_paths": [
+    "/continuity/forms/contextual"
+  ],
+  "substantive_paths": [
+    "/continuity/forms/contextual"
+  ],
+  "identity_digest_changed": false,
+  "requested_by": {
+    "actor": "example:maintainer",
+    "role": "maintainer",
+    "evidence_ref": "example:change-request"
+  },
+  "reason": "Documentation-only vector for a contextual-continuity amendment; it is not an actual approval or identity claim.",
+  "recorded_at": "2026-08-12T02:00:00Z",
+  "approvals": [
+    {
+      "approval_id": "approval:example-maintainer",
+      "transition_id": "example:contextual-continuity-amendment",
+      "actor": "example:maintainer",
+      "actor_type": "human",
+      "role": "maintainer",
+      "decision": "approve",
+      "recorded_at": "2026-08-12T02:00:00Z",
+      "evidence_ref": "example:review-record",
+      "assurance": "unverified_claim",
+      "authentication": {
+        "status": "not_claimed",
+        "profile": null,
+        "evidence_ref": null
+      },
+      "notes": [
+        "Schema example only; no actor authentication or external authorization was performed."
+      ]
+    }
+  ],
+  "policy": {
+    "policy_id": "example-declaration-governance",
+    "governance_version": "1.0",
+    "policy_key": "compatible_amendment",
+    "required_approvals": [
+      {
+        "role": "maintainer",
+        "authority": "amend_declaration"
+      }
+    ],
+    "minimum_approvals": 1,
+    "distinct_actors": false,
+    "human_approval_required": true
+  },
+  "evaluation": {
+    "status": "requirements_met_metadata_only",
+    "policy_key": "compatible_amendment",
+    "missing_requirements": [],
+    "valid_approval_ids": ["approval:example-maintainer"],
+    "valid_actors": ["example:maintainer"],
+    "rejection_ids": [],
+    "unauthorized_approval_ids": [],
+    "distinct_actors_met": true,
+    "human_approval_met": true,
+    "authentication": {
+      "status": "not_verified",
+      "approval_ids": [],
+      "actors": []
+    }
+  },
+  "provenance": {
+    "classifier": "cpas-idp-change-v1",
+    "generated_by": "documentation-example",
+    "source_refs": [
+      "specs/v2.0/IDP-Governance-v2.0.md"
+    ]
+  }
+}

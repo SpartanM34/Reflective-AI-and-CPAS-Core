@@ -81,9 +81,21 @@ Legacy direct hashes remain identifiable and verifiable but are not
 interchangeable with new values. Encoding-profile migration can change a digest
 string without changing the declared identity projection.
 
+### 2.5 Declaration governance
+
+IDP governance names maintainer, reviewer, issuer, runtime operator, and human
+override roles with explicit authorities and vacancies. Governance is outside
+the stable identity projection, but changes require a transition evaluated
+under the predecessor policy. `cpas-idp-change-v1` distinguishes runtime
+rebind, compatible amendment, identity evolution, and new identity; it does not
+authenticate actors or grant authority. See the
+[IDP governance profile](IDP-Governance-v2.0.md) and
+[ADR-0002](../../docs/adr/0002-declaration-governance-and-identity-evolution.md).
+
 ## 3. Activation protocol
 
-1. Parse a trusted IDP; verify schema and provenance/digest expectations.
+1. Parse a trusted IDP; verify schema, lifecycle/governance state, and
+   provenance/digest expectations.
 2. Resolve explicit user/task context and CPAS-Min/Full preference.
 3. Bind the observed runtime separately and negotiate required/optional
    capabilities using status plus evidence.
@@ -95,7 +107,8 @@ string without changing the declared identity projection.
 7. Continue only in the reported full or degraded mode accepted by the host/user.
 
 Runtime replacement repeats steps 3–7. Within one digest profile it is
-compatible when the stable identity digest remains equal and all
+classified as a runtime rebind only when substantive changes are limited to
+runtime/tool sections. It is compatible when the stable identity digest remains equal and all
 identity-required policies/capabilities are satisfied. Across an explicit
 encoding migration, implementations compare the stable projection and record
 both digest tuples. Output behavior may still differ and must be validated.
@@ -172,6 +185,7 @@ decision authority; agreement alone leaves consensus `not_computed`.
 | Protocol | Version | Role |
 |---|---|---|
 | IDP | 2.0 | Instance identity/policy and current binding declaration. |
+| IDP transition | 1.0 | Governance policy snapshot, change class, approvals, and assurance result. |
 | DKA-E | 2.0 | External epistemic records and lifecycle. |
 | SeedToken | 2.0 | Compact continuity metadata and state references. |
 | EEP | 2.0 | Cross-instance epistemic exchange and explicit consensus records. |
@@ -198,7 +212,9 @@ Historical v1.1 files remain immutable in their original paths. v1 imports use
 explicit adapters and preserve the complete source under provenance/extensions.
 Model family becomes a runtime observation; transparency becomes outward
 epistemic summary; legacy hashes remain legacy; DKA metaphor becomes optional;
-T-BEEP messages require an explicit gateway. Down-conversion is lossy.
+T-BEEP messages require an explicit gateway. Pre-governance v2 drafts require a
+bootstrap governance migration that preserves identity semantics but changes
+exact artifact bytes. Down-conversion is lossy.
 
 ## 13. Normative language and maturity
 

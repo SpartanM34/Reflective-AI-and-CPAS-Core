@@ -75,7 +75,7 @@ jobs:
         run: node tools/verify_canonicalization_vectors.mjs
 
       - name: Compile reference and migration modules
-        run: python -m compileall -q cpas tools/validate_cpas_v2.py tools/verify_canonicalization_vectors.py migrations/migrate_idp_v1_to_v2.py
+        run: python -m compileall -q cpas tools/validate_cpas_v2.py tools/verify_canonicalization_vectors.py migrations/migrate_idp_v1_to_v2.py migrations/migrate_idp_v2_governance.py
 
       - name: Reject whitespace errors in the proposed diff
         env:

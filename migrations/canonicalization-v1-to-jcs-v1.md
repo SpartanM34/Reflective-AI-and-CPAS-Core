@@ -1,5 +1,12 @@
 # Migrating CPAS draft digests from canonicalization v1 to JCS v1
 
+> **Historical value note:** the digest table below records the exact artifacts
+> at the issue #97 migration. Later reviewed amendments can change raw file,
+> SeedToken integrity, and authenticator values without changing the Clarence-9
+> stable identity projection. The declaration-governance follow-on is recorded
+> separately in
+> [`idp-v2-draft-governance.md`](idp-v2-draft-governance.md).
+
 This migration applies [ADR-0001](../docs/adr/0001-canonicalization-and-digest-profiles.md).
 It is a content-address migration, not a claim that Clarence-9 acquired a new
 identity or memory.
@@ -17,7 +24,7 @@ The old tuple remains recoverable from Git history or an explicit migration
 record. Legacy records with `cpas-canonical-json-v1` and no `digest_profile`
 resolve to `cpas-sha256-direct-v1` for verification only.
 
-## Current repository mapping
+## Issue #97 repository mapping (historical)
 
 | Value | Former profile/value | JCS/domain-separated value |
 |---|---|---|

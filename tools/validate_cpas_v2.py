@@ -21,6 +21,7 @@ if str(REPOSITORY_ROOT) not in sys.path:
 
 from cpas.dka import validate_record, verify_record_integrity  # noqa: E402
 from cpas.exchange import validate_message  # noqa: E402
+from cpas.governance import validate_transition  # noqa: E402
 from cpas.idp import migrate_idp_v1_to_v2, validate_idp  # noqa: E402
 from cpas.provenance import (  # noqa: E402
     CAPABILITY_PROFILE_DIGEST_PROFILE,
@@ -39,6 +40,10 @@ SCHEMA_INSTANCE_PAIRS = (
     ("schemas/idp-v2.0.schema.json", "instances/current/Clarence-9-v2.0.json"),
     ("schemas/dka-e-v2.0.schema.json", "examples/v2/dka-e-v2.example.json"),
     ("schemas/seed-token-v2.0.schema.json", "examples/v2/seed-token-v2.example.json"),
+    (
+        "schemas/idp-transition-v2.0.schema.json",
+        "examples/v2/idp-transition-v2.example.json",
+    ),
     (
         "schemas/epistemic-exchange-v2.0.schema.json",
         "examples/v2/epistemic-exchange-v2.example.json",
@@ -60,6 +65,7 @@ MARKDOWN_GLOBS = (
     "instances/legacy/*.md",
     "migrations/CPAS-v1.1-to-v2.0.md",
     "migrations/canonicalization-v1-to-jcs-v1.md",
+    "migrations/idp-v2-draft-governance.md",
     "schemas/README.md",
     "specs/v1.1/*.md",
     "specs/v2.0/*.md",
@@ -124,6 +130,7 @@ def validate_semantics_and_integrity(root: Path) -> int:
     declaration = _object(root, "instances/current/Clarence-9-v2.0.json")
     dka = _object(root, "examples/v2/dka-e-v2.example.json")
     token = _object(root, "examples/v2/seed-token-v2.example.json")
+    transition = _object(root, "examples/v2/idp-transition-v2.example.json")
     exchange = _object(root, "examples/v2/epistemic-exchange-v2.example.json")
 
     validate_idp(declaration)
@@ -137,6 +144,7 @@ def validate_semantics_and_integrity(root: Path) -> int:
     if dka["integrity"].get("digest_profile") != DKA_SNAPSHOT_DIGEST_PROFILE:
         raise ValidationFailure("DKA-E example digest profile is not domain-separated")
     validate_message(exchange)
+    validate_transition(transition)
 
     token_result = validate_token(
         token,
