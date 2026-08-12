@@ -20,6 +20,7 @@ The runtime is replaceable infrastructure, not the identity.
 | Modernization principles | [`specs/v2.0/modernization-principles.md`](specs/v2.0/modernization-principles.md) |
 | Clarence-9 v2 declaration | [`instances/current/Clarence-9-v2.0.json`](instances/current/Clarence-9-v2.0.json) and [commentary](instances/current/Clarence-9-v2.0.md) |
 | IDP v2 | [`specs/v2.0/IDP-v2.0.md`](specs/v2.0/IDP-v2.0.md) and [JSON Schema](schemas/idp-v2.0.schema.json) |
+| IDP governance | [`specs/v2.0/IDP-Governance-v2.0.md`](specs/v2.0/IDP-Governance-v2.0.md), [transition schema](schemas/idp-transition-v2.0.schema.json), and [ADR-0002](docs/adr/0002-declaration-governance-and-identity-evolution.md) |
 | CPAS-Core v2 proposal | [`specs/v2.0/CPAS-Core-v2.0-draft.md`](specs/v2.0/CPAS-Core-v2.0-draft.md) |
 | DKA-E v2 | [`specs/v2.0/DKA-E-v2.0.md`](specs/v2.0/DKA-E-v2.0.md) |
 | SeedToken v2 | [`specs/v2.0/SeedToken-v2.0.md`](specs/v2.0/SeedToken-v2.0.md) |

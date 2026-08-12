@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpas-core.org/schemas/idp-transition-v2.0.schema.json",
+  "title": "CPAS IDP v2 declaration transition record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "transition_version",
+    "transition_id",
+    "operation",
+    "change_class",
+    "instance_id_before",
+    "instance_id_after",
+    "from",
+    "to",
+    "changed_paths",
+    "substantive_paths",
+    "identity_digest_changed",
+    "requested_by",
+    "reason",
+    "recorded_at",
+    "approvals",
+    "policy",
+    "evaluation",
+    "provenance"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri-reference" },
+    "transition_version": { "const": "1.0" },
+    "transition_id": { "$ref": "#/$defs/identifier" },
+    "operation": {
+      "enum": [
+        "runtime_rebind",
+        "amendment",
+        "identity_evolution",
+        "issuance",
+        "supersession",
+        "rollback",
+        "retirement"
+      ]
+    },
+    "change_class": {
+      "enum": [
+        "runtime_rebind",
+        "compatible_amendment",
+        "identity_evolution",
+        "new_identity"
+      ]
+    },
+    "instance_id_before": { "$ref": "#/$defs/identifier" },
+    "instance_id_after": { "$ref": "#/$defs/identifier" },
+    "from": { "$ref": "#/$defs/declarationIdentity" },
+    "to": { "$ref": "#/$defs/declarationIdentity" },
+    "changed_paths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^/" }
+    },
+    "substantive_paths": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^/" }
+    },
+    "identity_digest_changed": { "type": "boolean" },
+    "requested_by": { "$ref": "#/$defs/requester" },
+    "reason": { "type": "string", "minLength": 1 },
+    "recorded_at": { "type": "string", "format": "date-time" },
+    "approvals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/approval" }
+    },
+    "policy": { "$ref": "#/$defs/policySnapshot" },
+    "evaluation": { "$ref": "#/$defs/evaluation" },
+    "provenance": { "$ref": "#/$defs/provenance" }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "role": {
+      "enum": [
+        "maintainer",
+        "reviewer",
+        "issuer",
+        "runtime_operator",
+        "human_override"
+      ]
+    },
+    "authority": {
+      "enum": [
+        "issue_declaration",
+        "amend_declaration",
+        "review_declaration",
+        "bind_runtime",
+        "evolve_identity",
+        "change_governance",
+        "supersede_declaration",
+        "rollback_declaration",
+        "retire_declaration",
+        "appoint_successor",
+        "approve_retirement",
+        "emergency_override"
+      ]
+    },
+    "declarationIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity_digest", "identity_digest_profile"],
+      "properties": {
+        "identity_digest": { "$ref": "#/$defs/digest" },
+        "identity_digest_profile": {
+          "enum": [
+            "cpas-sha256-direct-v1",
+            "cpas-digest-v2:idp-identity"
+          ]
+        },
+        "declaration_ref": { "type": ["string", "null"] },
+        "artifact_digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" },
+        "artifact_digest_profile": { "enum": ["raw-sha256", null] }
+      }
+    },
+    "requester": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor", "role"],
+      "properties": {
+        "actor": { "type": "string", "minLength": 1 },
+        "role": { "$ref": "#/$defs/role" },
+        "evidence_ref": { "type": ["string", "null"] }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "profile", "evidence_ref"],
+      "properties": {
+        "status": { "enum": ["not_claimed", "host_verified"] },
+        "profile": { "type": ["string", "null"] },
+        "evidence_ref": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "host_verified" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "profile": { "type": "string", "minLength": 1 },
+              "evidence_ref": { "type": "string", "minLength": 1 }
+            }
+          },
+          "else": {
+            "properties": { "profile": { "type": "null" } }
+          }
+        }
+      ]
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approval_id",
+        "transition_id",
+        "actor",
+        "actor_type",
+        "role",
+        "decision",
+        "recorded_at",
+        "evidence_ref",
+        "assurance",
+        "authentication"
+      ],
+      "properties": {
+        "approval_id": { "$ref": "#/$defs/identifier" },
+        "transition_id": { "$ref": "#/$defs/identifier" },
+        "actor": { "type": "string", "minLength": 1 },
+        "actor_type": { "enum": ["human", "service", "group", "unspecified"] },
+        "role": { "$ref": "#/$defs/role" },
+        "decision": { "enum": ["approve", "reject", "abstain"] },
+        "recorded_at": { "type": "string", "format": "date-time" },
+        "evidence_ref": { "type": ["string", "null"] },
+        "assurance": {
+          "enum": [
+            "unverified_claim",
+            "repository_attributed",
+            "external_trust_assertion"
+          ]
+        },
+        "authentication": { "$ref": "#/$defs/authentication" },
+        "notes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "approvalRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "authority"],
+      "properties": {
+        "role": { "$ref": "#/$defs/role" },
+        "authority": { "$ref": "#/$defs/authority" }
+      }
+    },
+    "policySnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "governance_version",
+        "policy_key",
+        "required_approvals",
+        "minimum_approvals",
+        "distinct_actors",
+        "human_approval_required"
+      ],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/identifier" },
+        "governance_version": { "const": "1.0" },
+        "policy_key": {
+          "enum": [
+            "runtime_rebind",
+            "compatible_amendment",
+            "identity_evolution",
+            "new_identity",
+            "supersession",
+            "rollback",
+            "retirement"
+          ]
+        },
+        "required_approvals": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/approvalRequirement" }
+        },
+        "minimum_approvals": { "type": "integer", "minimum": 1 },
+        "distinct_actors": { "type": "boolean" },
+        "human_approval_required": { "type": "boolean" }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "policy_key",
+        "missing_requirements",
+        "valid_approval_ids",
+        "valid_actors",
+        "rejection_ids",
+        "unauthorized_approval_ids",
+        "distinct_actors_met",
+        "human_approval_met",
+        "authentication"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "requirements_not_met",
+            "requirements_met_metadata_only",
+            "requirements_met_host_authenticated",
+            "rejected"
+          ]
+        },
+        "policy_key": { "type": "string", "minLength": 1 },
+        "missing_requirements": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "valid_approval_ids": { "type": "array", "items": { "$ref": "#/$defs/identifier" }, "uniqueItems": true },
+        "valid_actors": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "rejection_ids": { "type": "array", "items": { "$ref": "#/$defs/identifier" }, "uniqueItems": true },
+        "unauthorized_approval_ids": { "type": "array", "items": { "$ref": "#/$defs/identifier" }, "uniqueItems": true },
+        "distinct_actors_met": { "type": "boolean" },
+        "human_approval_met": { "type": "boolean" },
+        "authentication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "approval_ids", "actors"],
+          "properties": {
+            "status": { "enum": ["not_verified", "host_asserted"] },
+            "approval_ids": { "type": "array", "items": { "$ref": "#/$defs/identifier" }, "uniqueItems": true },
+            "actors": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classifier", "generated_by", "source_refs"],
+      "properties": {
+        "classifier": { "const": "cpas-idp-change-v1" },
+        "generated_by": { "type": "string", "minLength": 1 },
+        "source_refs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    }
+  }
+}

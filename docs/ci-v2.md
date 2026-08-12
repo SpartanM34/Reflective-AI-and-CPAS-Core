@@ -13,7 +13,7 @@ python -m pip install -r requirements-v2.txt
 python tools/validate_cpas_v2.py
 node tools/verify_canonicalization_vectors.mjs
 python -m pytest -q
-python -m compileall -q cpas tools/validate_cpas_v2.py tools/verify_canonicalization_vectors.py migrations/migrate_idp_v1_to_v2.py
+python -m compileall -q cpas tools/validate_cpas_v2.py tools/verify_canonicalization_vectors.py migrations/migrate_idp_v1_to_v2.py migrations/migrate_idp_v2_governance.py
 git diff --check
 ```
 
@@ -27,9 +27,11 @@ python tools/validate_cpas_v2.py --json
 
 `tools/validate_cpas_v2.py` performs these checks:
 
-- Draft 2020-12 meta-schema and example-instance validation for IDP, DKA-E,
-  SeedToken, and EEP;
+- Draft 2020-12 meta-schema and example-instance validation for IDP, IDP
+  transitions, DKA-E, SeedToken, and EEP;
 - semantic IDP identity-digest consistency;
+- declaration governance shape, deterministic change classification, role
+  vacancies, approval metadata, and transition-record consistency;
 - DKA-E content integrity;
 - SeedToken integrity, capability-profile digest, static documentation-vector
   time checks, and HMAC verification with the intentionally public test key;

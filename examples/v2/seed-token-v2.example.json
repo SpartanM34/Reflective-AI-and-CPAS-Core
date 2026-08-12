@@ -33,7 +33,7 @@
     {
       "kind": "idp",
       "ref": "instances/current/Clarence-9-v2.0.json",
-      "digest": "sha256:2d39a0784306260f4d582ded2d3a6ef68475e1b564a909b289cb140dd9b4312d",
+      "digest": "sha256:d57ef2d558daad8639c48181a8ebba8593e8aa28057c326107ef15fc22eadc62",
       "digest_profile": "raw-sha256"
     },
     {
@@ -57,12 +57,12 @@
     "algorithm": "sha-256",
     "canonicalization": "rfc8785-jcs-v1",
     "digest_profile": "cpas-digest-v2:seed-token-integrity",
-    "digest": "sha256:c7fed012323cf542be021cf94ba624d2152bbabfaa60067aea746b1351e20b39"
+    "digest": "sha256:cc353aba09bbb61172d5f9cbeadf7da22aca8c1dc116a877489f162cf7429a29"
   },
   "authenticator": {
     "type": "hmac-sha256",
     "authentication_profile": "cpas-hmac-v2:seed-token-authentication",
     "key_id": "documentation-test-key",
-    "tag": "hmac-sha256:26ea74112021bf95785de55156d89bf6746a918a800426669b869df452dab59b"
+    "tag": "hmac-sha256:39f9a5a498851b015af67dc8d4aa51be7ac987d8fa2ea9531c3877e35484aab8"
   }
 }

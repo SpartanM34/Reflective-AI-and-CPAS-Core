@@ -51,10 +51,16 @@ declarative continuity. Review each generated draft manually:
 3. validate outward epistemic transparency and chain-of-thought privacy;
 4. bind a runtime only after probing it;
 5. declare real state layers, tools, retention, deletion, and authority;
-6. compare the stable identity digest before/after runtime rebinding.
+6. review proposed governance roles, approval thresholds, succession, and
+   vacancies without inferring authentication;
+7. compare the stable identity digest before/after runtime rebinding.
 
 Clarence-9’s reviewed result is
 [`instances/current/Clarence-9-v2.0.json`](../instances/current/Clarence-9-v2.0.json).
+Earlier v2 drafts that predate the required governance section use the
+non-destructive
+[`migrate_idp_v2_governance.py`](migrate_idp_v2_governance.py) utility and the
+[governance migration guide](idp-v2-draft-governance.md).
 
 ## 4. Replace PromptStamp and SeedToken semantics
 
@@ -145,6 +151,8 @@ continuity, not sufficient for behavioral equivalence.
 - Keep v1.1 readers during a stated compatibility window.
 - Require human review for security semantics, contested merges, and deletion of
   persisted data.
+- Evaluate declaration transitions under the predecessor governance policy;
+  never allow a proposed replacement policy to approve itself.
 
 ## Rollback
 
@@ -165,4 +173,8 @@ later retry.
 - [ ] Stored/retrieved content remains untrusted data.
 - [ ] Agent agreement is not silently labeled consensus.
 - [ ] Runtime/tool capabilities are dated and probed/verified.
+- [ ] Governance roles, vacancies, succession, and approval evidence are
+      explicit and are not mislabeled as authentication/authorization.
+- [ ] Runtime rebind, compatible amendment, identity evolution, and new
+      identity classifications match `cpas-idp-change-v1`.
 - [ ] Tests and limitations are published without fabricated results.

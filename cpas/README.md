@@ -3,6 +3,7 @@
 This package demonstrates the machine-testable parts of the v2 proposal:
 
 - stable identity projection and runtime rebinding;
+- declaration governance, deterministic change classification, and approval-metadata evaluation;
 - IDP validation and conservative v1 migration;
 - capability profiling/negotiation and four-form continuity reports;
 - versioned legacy/JCS canonicalization and domain-separated semantic digests;
