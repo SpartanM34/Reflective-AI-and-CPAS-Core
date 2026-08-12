@@ -99,6 +99,15 @@ requirements. Git is effective for reviewable low-frequency artifacts;
 transactional databases/event stores are better for concurrent updates; object
 stores suit immutable snapshots; graphs/vector stores are useful derived views.
 
+The v1 [DKA-E store contract](../specs/v2.0/DKA-Store-Contract-v1.0.md)
+separates portable semantics from backend guarantees. The first tested profile,
+[`cpas-sqlite-rollback-single-host-v1`](../specs/v2.0/DKA-E-SQLite-Profile-v1.0.md),
+is available only for one POSIX host/local filesystem and serialized writes.
+Existing verified `FileDKAStore` state can be imported non-destructively with
+the [migration utility](FileDKAStore-to-SQLite-v1.md); exact snapshot digests
+are preserved and legacy events are retained only as source observations, not
+upgraded into authenticated audit history.
+
 Implement authentication, authorization, encryption, tenant isolation,
 retention/deletion, backups, recovery, and key rotation outside the core record.
 Test immutable writes, compare-and-swap conflicts, corrupt snapshots, stale

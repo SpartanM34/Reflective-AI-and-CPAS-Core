@@ -161,6 +161,11 @@ The same repository invariants and the complete test suite run in GitHub
 Actions; see [docs/ci-v2.md](docs/ci-v2.md) for scope and limitations.
 The v2 declaration-governance profile and transition classifier are documented
 in [specs/v2.0/IDP-Governance-v2.0.md](specs/v2.0/IDP-Governance-v2.0.md).
+The first production-oriented DKA-E backend profile is the deliberately scoped
+[SQLite rollback single-host profile](specs/v2.0/DKA-E-SQLite-Profile-v1.0.md).
+Its passing tests establish reference implementation behavior, not deployment
+certification; the [operations runbook](docs/operations/DKA-E-SQLite-Profile-v1.0.md)
+lists the required external controls.
 
 ### Post-Commit Monitoring Hook
 

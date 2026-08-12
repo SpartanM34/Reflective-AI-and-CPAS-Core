@@ -26,6 +26,7 @@ IDP_IDENTITY_DIGEST_PROFILE = "cpas-digest-v2:idp-identity"
 DKA_SNAPSHOT_DIGEST_PROFILE = "cpas-digest-v2:dka-snapshot"
 CAPABILITY_PROFILE_DIGEST_PROFILE = "cpas-digest-v2:capability-profile"
 SEED_TOKEN_DIGEST_PROFILE = "cpas-digest-v2:seed-token-integrity"
+DKA_STORE_EVENT_DIGEST_PROFILE = "cpas-digest-v2:dka-store-event"
 
 V2_DIGEST_PROFILES = frozenset(
     {
@@ -33,6 +34,7 @@ V2_DIGEST_PROFILES = frozenset(
         DKA_SNAPSHOT_DIGEST_PROFILE,
         CAPABILITY_PROFILE_DIGEST_PROFILE,
         SEED_TOKEN_DIGEST_PROFILE,
+        DKA_STORE_EVENT_DIGEST_PROFILE,
     }
 )
 

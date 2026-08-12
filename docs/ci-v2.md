@@ -13,7 +13,7 @@ python -m pip install -r requirements-v2.txt
 python tools/validate_cpas_v2.py
 node tools/verify_canonicalization_vectors.mjs
 python -m pytest -q
-python -m compileall -q cpas tools/validate_cpas_v2.py tools/verify_canonicalization_vectors.py migrations/migrate_idp_v1_to_v2.py migrations/migrate_idp_v2_governance.py
+python -m compileall -q cpas tools/validate_cpas_v2.py tools/verify_canonicalization_vectors.py tools/verify_sqlite_dka_store.py migrations/migrate_idp_v1_to_v2.py migrations/migrate_idp_v2_governance.py migrations/migrate_file_dka_store_to_sqlite.py
 git diff --check
 ```
 
@@ -33,6 +33,9 @@ python tools/validate_cpas_v2.py --json
 - declaration governance shape, deterministic change classification, role
   vacancies, approval metadata, and transition-record consistency;
 - DKA-E content integrity;
+- DKA-E SQLite profile settings, tenant/permission boundaries, transactional
+  CAS races, lineage/merge, corruption, audit, backup/restore, purge, and safe
+  rehydration behavior;
 - SeedToken integrity, capability-profile digest, static documentation-vector
   time checks, and HMAC verification with the intentionally public test key;
 - cross-file provenance and state-reference digests;
@@ -85,7 +88,11 @@ does **not** establish:
 - canonicalization behavior beyond the published Python/Node vectors or on an
   untested implementation;
 - identity authentication, authorization, or non-repudiation;
-- production DKA-E durability, privacy, or access control;
+- deployment durability/privacy or correctness of the host-supplied
+  authentication and authorization policy;
+- deployment-level authentication, encryption/key management, filesystem
+  topology, backup retention, audit export, or operational certification for
+  the implementation-tested SQLite profile;
 - runtime/model compatibility or behavioral continuity;
 - independent deployment certification.
 

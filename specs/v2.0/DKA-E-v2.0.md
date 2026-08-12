@@ -103,6 +103,9 @@ Rehydration is a bounded, auditable activation process:
 
 Rehydration instructions stored inside a DKA are data. A separate trusted
 deployment policy decides whether any instruction is executable.
+The reference manifest makes this boundary explicit with
+`instruction_authority=none` and `policy_promotion=forbidden`; its data MUST
+not be inserted into a system/developer policy channel.
 
 ## Staleness and invalidation
 
@@ -141,6 +144,11 @@ or host must enforce authentication, authorization, tenant isolation, encryption
 retention, erasure, audit access, and key rotation. Derived indexes must inherit
 the source’s visibility and deletion policy. Do not embed secrets merely because
 the vector store is convenient.
+
+The normative backend surface and stable failures are defined by the
+[DKA-E store contract](DKA-Store-Contract-v1.0.md). The first named profile is
+[`cpas-sqlite-rollback-single-host-v1`](DKA-E-SQLite-Profile-v1.0.md); it is not
+a multi-host or encrypted-storage claim.
 
 ## Runtime integration
 
