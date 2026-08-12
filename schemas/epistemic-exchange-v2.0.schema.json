@@ -21,6 +21,12 @@
       "properties": {
         "instance_id": { "$ref": "#/$defs/id" },
         "identity_digest": { "$ref": "#/$defs/digest" },
+        "identity_digest_profile": {
+          "enum": [
+            "cpas-sha256-direct-v1",
+            "cpas-digest-v2:idp-identity"
+          ]
+        },
         "runtime": { "type": ["string", "null"] },
         "specialization": { "type": ["string", "null"] }
       }
@@ -67,6 +73,12 @@
         "properties": {
           "dka_id": { "$ref": "#/$defs/id" },
           "digest": { "$ref": "#/$defs/digest" },
+          "digest_profile": {
+            "enum": [
+              "cpas-sha256-direct-v1",
+              "cpas-digest-v2:dka-snapshot"
+            ]
+          },
           "relation": { "enum": ["supports", "contradicts", "updates", "requests_review"] }
         }
       }
@@ -126,7 +138,8 @@
         "summary": { "type": "string", "minLength": 1 },
         "source_ref": { "type": "string", "minLength": 1 },
         "support": { "enum": ["supports", "contradicts", "contextual", "unknown"] },
-        "digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" }
+        "digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" },
+        "digest_profile": { "type": "string", "minLength": 1 }
       }
     },
     "consensus": {

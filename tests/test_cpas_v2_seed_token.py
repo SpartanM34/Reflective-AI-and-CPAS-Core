@@ -5,13 +5,21 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+import pytest
+
 from cpas.seed_token import (
+    SEED_TOKEN_AUTHENTICATION_PROFILE,
     add_hmac_authenticator,
     build_seed_token,
     seal_token,
     validate_token,
     verify_hmac,
     verify_integrity,
+)
+from cpas.provenance import (
+    CAPABILITY_PROFILE_DIGEST_PROFILE,
+    JCS_CANONICALIZATION,
+    SEED_TOKEN_DIGEST_PROFILE,
 )
 
 
@@ -25,6 +33,16 @@ def load(relative: str):
 
 def test_documented_token_integrity_and_hmac_verify():
     token = load("examples/v2/seed-token-v2.example.json")
+    assert token["integrity"]["canonicalization"] == JCS_CANONICALIZATION
+    assert token["integrity"]["digest_profile"] == SEED_TOKEN_DIGEST_PROFILE
+    assert (
+        token["capability_profile"]["digest_profile"]
+        == CAPABILITY_PROFILE_DIGEST_PROFILE
+    )
+    assert (
+        token["authenticator"]["authentication_profile"]
+        == SEED_TOKEN_AUTHENTICATION_PROFILE
+    )
     assert verify_integrity(token)
     assert verify_hmac(token, {"documentation-test-key": KEY})
     result = validate_token(
@@ -120,3 +138,23 @@ def test_resealing_removes_stale_authenticator():
     resealed = seal_token(token)
     assert "authenticator" not in resealed
     assert verify_integrity(resealed)
+
+
+def test_new_state_references_require_an_explicit_digest_profile():
+    declaration = load("instances/current/Clarence-9-v2.0.json")
+    with pytest.raises(ValueError, match="state references require digest_profile"):
+        build_seed_token(
+            declaration,
+            token_id="seed-test-untyped-ref",
+            created_at="2026-08-11T00:00:00Z",
+            issued_for="unit test",
+            issuer="test suite",
+            continuity_scope=["epistemic"],
+            state_refs=[
+                {
+                    "kind": "dka",
+                    "ref": "example/main/1",
+                    "digest": "sha256:" + "0" * 64,
+                }
+            ],
+        )

@@ -12,7 +12,15 @@ from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import ValidationError
 
 from .identity import identity_digest
-from .provenance import file_sha256, load_json, sha256_digest
+from .provenance import (
+    IDP_IDENTITY_DIGEST_PROFILE,
+    JCS_CANONICALIZATION,
+    LEGACY_CANONICALIZATION,
+    file_sha256,
+    load_json,
+    resolve_digest_profile,
+    sha256_digest,
+)
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -92,6 +100,7 @@ def migrate_idp_v1_to_v2(
     source_digest: str | None = None,
     migrated_at: str | None = None,
     maintainer: str = "unassigned",
+    canonicalization: str = JCS_CANONICALIZATION,
 ) -> dict[str, Any]:
     """Create a conservative, review-required IDP v2 draft from v1.
 
@@ -113,6 +122,17 @@ def migrate_idp_v1_to_v2(
         uncertainty = "medium"
     collaboration = "adaptive" if source.get("collaborative_mode") == "adaptive" else "cooperative"
     source_hash = source_digest or sha256_digest(dict(source))
+    source_hash_profile = "raw-sha256" if source_digest else "cpas-sha256-direct-v1"
+    identity_profile = resolve_digest_profile(
+        canonicalization,
+        (
+            IDP_IDENTITY_DIGEST_PROFILE
+            if canonicalization == JCS_CANONICALIZATION
+            else None
+        ),
+    )
+    if canonicalization not in {JCS_CANONICALIZATION, LEGACY_CANONICALIZATION}:
+        raise ValueError(f"unsupported migration canonicalization: {canonicalization}")
 
     declaration: dict[str, Any] = {
         "$schema": "../../schemas/idp-v2.0.schema.json",
@@ -192,6 +212,7 @@ def migrate_idp_v1_to_v2(
                 "external_cpas": {"availability": "unavailable", "description": "No verified external store migrated."},
             },
             "identity_digest": None,
+            "identity_digest_profile": identity_profile,
         },
         "memory_policy": {
             "retention": "No retention is inferred from the v1 declaration.",
@@ -222,10 +243,11 @@ def migrate_idp_v1_to_v2(
                     "path": source_path,
                     "revision": source_revision,
                     "digest": source_hash,
+                    "digest_profile": source_hash_profile,
                     "relationship": "migrated_from",
                 }
             ],
-            "canonicalization": "cpas-canonical-json-v1",
+            "canonicalization": canonicalization,
         },
         "extensions": {
             "legacy_idp_v1": copy.deepcopy(dict(source)),
@@ -250,6 +272,7 @@ def migrate_idp_file(
     source_revision: str = "unrecorded",
     migrated_at: str | None = None,
     maintainer: str = "unassigned",
+    canonicalization: str = JCS_CANONICALIZATION,
 ) -> dict[str, Any]:
     source_path = Path(path)
     source = load_json(source_path)
@@ -262,4 +285,5 @@ def migrate_idp_file(
         source_digest=file_sha256(source_path),
         migrated_at=migrated_at,
         maintainer=maintainer,
+        canonicalization=canonicalization,
     )

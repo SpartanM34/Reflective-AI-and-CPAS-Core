@@ -13,7 +13,7 @@ if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from cpas.idp import migrate_idp_file
-from cpas.provenance import load_json
+from cpas.provenance import JCS_CANONICALIZATION, LEGACY_CANONICALIZATION, load_json
 
 
 def candidates(source: Path) -> list[Path]:
@@ -44,6 +44,12 @@ def main() -> int:
     parser.add_argument("--source-revision", default="unrecorded")
     parser.add_argument("--maintainer", default="unassigned")
     parser.add_argument("--migrated-at", help="fixed RFC 3339 date-time for reproducible output")
+    parser.add_argument(
+        "--canonicalization",
+        choices=[JCS_CANONICALIZATION, LEGACY_CANONICALIZATION],
+        default=JCS_CANONICALIZATION,
+        help="digest encoding for the generated declaration (default: RFC 8785/JCS)",
+    )
     parser.add_argument("--force", action="store_true", help="replace existing generated output")
     parser.add_argument("--dry-run", action="store_true", help="validate migration without writing")
     args = parser.parse_args()
@@ -61,6 +67,7 @@ def main() -> int:
             source_revision=args.source_revision,
             migrated_at=args.migrated_at,
             maintainer=args.maintainer,
+            canonicalization=args.canonicalization,
         )
         if args.dry_run:
             print(f"validated {source_file} -> {target}")

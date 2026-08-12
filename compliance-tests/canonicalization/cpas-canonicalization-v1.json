@@ -1,0 +1,105 @@
+{
+  "vector_version": "1.0",
+  "canonicalization": "rfc8785-jcs-v1",
+  "digest_frame": {
+    "magic_hex": "435041532d4449474553542d563200",
+    "layout": "magic || ASCII(digest_profile) || 00 || ASCII(canonicalization) || 00 || canonical_bytes"
+  },
+  "positive": [
+    {
+      "id": "rfc8785-primitives-and-numbers",
+      "value": {
+        "numbers": [
+          333333333.3333333,
+          1e+30,
+          4.5,
+          0.002,
+          1e-27
+        ],
+        "string": "€$\u000f\nA'B\"\\\"/",
+        "literals": [
+          null,
+          true,
+          false
+        ]
+      },
+      "canonical_hex": "7b226c69746572616c73223a5b6e756c6c2c747275652c66616c73655d2c226e756d62657273223a5b3333333333333333332e333333333333332c31652b33302c342e352c302e3030322c31652d32375d2c22737472696e67223a22e282ac245c75303030665c6e4127425c225c5c5c222f227d",
+      "canonical_length": 116,
+      "digests": {
+        "cpas-digest-v2:capability-profile": "sha256:40f5cd75c3a3ea7bc4e7561c2f7b0268e8b8bd747830c089ba07a4fb356abb9c",
+        "cpas-digest-v2:dka-snapshot": "sha256:8d78e789bdee23df1d68d95ca11aa5bad173c638489419715ef6ec7550897596",
+        "cpas-digest-v2:idp-identity": "sha256:8c03ab218a8691720a7c55ec03fa543f61f3dd80fa457fef260dc9eb08b078ed",
+        "cpas-digest-v2:seed-token-integrity": "sha256:c7d57a8a558394bcd4a73a30d49a3eab34387b18da108d2fd2ee45eb831fcafa"
+      }
+    },
+    {
+      "id": "utf16-and-integer-like-key-order",
+      "value": {
+        "2": "two",
+        "10": "ten",
+        "": "private-use-bmp",
+        "😀": "supplementary",
+        "é": "composed",
+        "é": "decomposed"
+      },
+      "canonical_hex": "7b223130223a2274656e222c2232223a2274776f222c2265cc81223a226465636f6d706f736564222c22c3a9223a22636f6d706f736564222c22f09f9880223a22737570706c656d656e74617279222c22ee8080223a22707269766174652d7573652d626d70227d",
+      "canonical_length": 104,
+      "digests": {
+        "cpas-digest-v2:capability-profile": "sha256:0f55e7c13632937f59724d04db5e2e1fce49c688c6569d39cf2e9821c8739e00",
+        "cpas-digest-v2:dka-snapshot": "sha256:198702650950028fd02cbdeaa60f59d703617b7e9b2cfe588fc9a7223172900a",
+        "cpas-digest-v2:idp-identity": "sha256:21247ec5011bcaf094db106f2c994a6d9952c1e0b6f7e39f022f81d725c9832e",
+        "cpas-digest-v2:seed-token-integrity": "sha256:a63461f2c8e3f9ec6481e09b7b9e6b3c26467385136a2e0114c84f6ce13c377a"
+      }
+    },
+    {
+      "id": "ecmascript-number-boundaries",
+      "value": {
+        "minus_zero": -0.0,
+        "small_exponent": 1e-07,
+        "small_plain": 1e-06,
+        "large_plain": 1e+20,
+        "large_exponent": 1e+21
+      },
+      "canonical_hex": "7b226c617267655f6578706f6e656e74223a31652b32312c226c617267655f706c61696e223a3130303030303030303030303030303030303030302c226d696e75735f7a65726f223a302c22736d616c6c5f6578706f6e656e74223a31652d372c22736d616c6c5f706c61696e223a302e3030303030317d",
+      "canonical_length": 120,
+      "digests": {
+        "cpas-digest-v2:capability-profile": "sha256:cbd5e25f3975b74eb1fd4ed94149bc26a1a825f42492fc1c1f6c2153bdeb9376",
+        "cpas-digest-v2:dka-snapshot": "sha256:fedaf5d67cb51cbde6895aa56b611abcaa37f50716290e7933e0dae3644e1dca",
+        "cpas-digest-v2:idp-identity": "sha256:aacdbba02680aaf06b03192b1379f464b61a53bbbbfa8ad4736c369072734cd1",
+        "cpas-digest-v2:seed-token-integrity": "sha256:b8439472d37644c0104a4e59dff0101bb11ecbf03727d1e0e5c29fb04acf2e9e"
+      }
+    }
+  ],
+  "legacy": {
+    "canonicalization": "cpas-canonical-json-v1",
+    "digest_profile": "cpas-sha256-direct-v1",
+    "value": {
+      "z": 0,
+      "a": "legacy"
+    },
+    "canonical_hex": "7b2261223a226c6567616379222c227a223a307d",
+    "digest": "sha256:cec138b0d41b2d7395a0857e584041a5e271b82d01f193dfa74b04aa28b6dda7"
+  },
+  "negative": [
+    {
+      "id": "duplicate-object-member",
+      "input_json": "{\"a\":1,\"a\":2}",
+      "expected_error": "duplicate_key"
+    },
+    {
+      "id": "non-finite-number",
+      "input_json": "{\"x\":NaN}",
+      "expected_error": "non_finite_number"
+    },
+    {
+      "id": "unsafe-integer",
+      "input_json": "{\"x\":9007199254740992}",
+      "expected_error": "integer_domain"
+    },
+    {
+      "id": "lone-surrogate",
+      "input_json": "{\"x\":\"\\ud800\"}",
+      "expected_error": "invalid_unicode"
+    }
+  ]
+}

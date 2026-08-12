@@ -9,7 +9,6 @@ confidence in a proposed answer.
 | 1 | Which fields belong permanently in the stable identity projection? | Safety and epistemic policy constrain identity, but governance may need to update them without claiming a new instance. | Keep them stable within IDP major version; record reviewed identity evolution explicitly. | **High** |
 | 2 | Who is authorized to issue, revise, or retire a Clarence-9 declaration? | Maintainer attribution is present, but no governance, key, or succession policy is implemented. | Define maintainer/reviewer roles and a signed release process before production claims. | **High** |
 | 3 | Should SeedToken gain a public-key signature profile? | HMAC is implementable but unsuitable for public verification and non-repudiation; algorithm agility introduces complexity. | Draft a separate signed-envelope profile only after threat-model and key-governance review. | **High** |
-| 4 | What canonicalization standard should a stable release use? | The repository profile is deterministic for accepted data but not RFC 8785 and could diverge across languages/numbers. | Evaluate RFC 8785/CBOR deterministic encoding before 2.0.0; freeze whichever profile is chosen. | **High** |
 | 5 | How are DKA deletions reconciled with immutable Git/event history and privacy law? | Tombstones retain evidence of deletion but Git history may retain the content; rewriting history harms provenance. | Classify sensitive records before storage and use erasable encrypted payloads or non-Git stores where deletion is mandatory. | **High** |
 | 6 | What is the normative distributed DKA-E consistency model? | The file reference demonstrates local CAS only. Databases, Git, and object/event stores have different transaction and conflict guarantees. | Specify a minimal store contract plus backend profiles rather than promise universal transactions. | **High** |
 | 7 | How should confidence be calibrated and propagated? | Subjective numbers are easy to serialize but may imply unsupported precision; different domains need different calibration evidence. | Require basis/calibration labels now; develop domain profiles and scoring rules later. | **High** |
@@ -27,8 +26,17 @@ confidence in a proposed answer.
 
 ## Decisions required before a stable 2.0.0
 
-At minimum, maintainers should resolve canonicalization stability, declaration
-governance, production persistence profiles, privacy/deletion handling,
+At minimum, maintainers should resolve declaration governance, production
+persistence profiles, privacy/deletion handling,
 capability evidence levels, SeedToken authentication direction, and a behavioral
 runtime-replacement evaluation. Other questions can remain profiled extensions
 if the stable core clearly labels them.
+
+## Resolved during draft hardening
+
+The former question 4 is resolved for the v2 draft by
+[ADR-0001](adr/0001-canonicalization-and-digest-profiles.md): new semantic
+digests use RFC 8785/JCS plus explicit artifact domains, while the former Python
+profile remains frozen for legacy verification. The remaining pre-release task
+is interoperability review against the published Python and Node vectors, not
+selection of another encoding.

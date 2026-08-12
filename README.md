@@ -153,6 +153,7 @@ For the focused v2 reference dependencies only:
 ```bash
 python -m pip install -r requirements-v2.txt
 python tools/validate_cpas_v2.py
+node tools/verify_canonicalization_vectors.mjs
 pytest -q tests/test_cpas_v2_*.py
 ```
 

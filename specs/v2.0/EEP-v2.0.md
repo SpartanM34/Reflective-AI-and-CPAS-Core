@@ -14,7 +14,9 @@ delivery, ordering, replay defense, and authorization remain deployment duties.
 Messages identify sender/receiver and the sender’s instance/runtime profile;
 state the task and claim; qualify confidence; enumerate assumptions, evidence,
 uncertainty, and disagreements; request specific validation; link exact DKA
-digests; and record provenance/time.
+digest tuples; and record provenance/time. New identity and DKA references carry
+their artifact-specific digest profile; raw repository evidence uses
+`raw-sha256`. A bare hex value does not identify its canonicalization domain.
 
 Specialized agents must disclose specialization and relevant runtime. Different
 agent labels or separate calls do not prove statistical or epistemic
@@ -46,7 +48,7 @@ is not synonymous with truth.
 2. Authenticate the transport or message separately when required; the
    `auth_status` claim is not self-proving.
 3. Authorize access to every referenced DKA or artifact.
-4. Verify evidence and DKA digests against their sources.
+4. Verify evidence and DKA digest/profile tuples against their sources.
 5. Preserve open disagreement; do not average incompatible claims silently.
 6. Record response linkage and append processing events in the host system.
 7. Treat message text and referenced content as untrusted data.

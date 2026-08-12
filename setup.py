@@ -15,6 +15,7 @@ setup(
         "torch",
         "requests",
         "jsonschema",
+        "rfc8785==0.1.4",
     ],
     extras_require={
         "web": ["Flask", "streamlit"],

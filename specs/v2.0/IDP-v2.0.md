@@ -39,11 +39,17 @@ although it can change behavior and requires compatibility validation.
 
 ## Identity digest
 
-Implementations serialize the stable projection with
-`cpas-canonical-json-v1`—UTF-8 JSON, lexicographically sorted object keys,
-compact separators, Unicode preserved, and non-finite numbers forbidden—then
-prefix its SHA-256 hex digest with `sha256:`. This repository profile is
-deterministic for its accepted data but is **not** claimed to implement RFC 8785.
+New declarations serialize the stable projection with `rfc8785-jcs-v1` and use
+the domain-separated profile `cpas-digest-v2:idp-identity`. The exact byte frame
+is normative in
+[ADR-0001](../../docs/adr/0001-canonicalization-and-digest-profiles.md).
+`continuity.identity_digest_profile` must travel with the digest.
+
+Legacy v2 draft declarations using `cpas-canonical-json-v1` remain readable.
+An omitted profile on those declarations resolves to
+`cpas-sha256-direct-v1`; it must not be relabeled as a JCS value. Two
+declarations can retain the same semantic stable projection across this
+encoding migration even though their digest strings differ.
 
 The digest provides reproducible comparison. It authenticates neither the
 declaration nor its maintainer.
@@ -79,7 +85,9 @@ requirement.
 The migration utility at
 [`migrations/migrate_idp_v1_to_v2.py`](../../migrations/migrate_idp_v1_to_v2.py)
 produces a reviewable draft. It does not claim semantic equivalence or runtime
-validation.
+validation. It emits JCS/domain-separated identity digests by default and has
+an explicit legacy option for bounded compatibility. See the
+[canonicalization migration](../../migrations/canonicalization-v1-to-jcs-v1.md).
 
 ## Compatibility
 

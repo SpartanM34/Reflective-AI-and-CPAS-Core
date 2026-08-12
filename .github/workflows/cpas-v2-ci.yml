@@ -53,6 +53,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
@@ -66,8 +71,11 @@ jobs:
       - name: Validate CPAS v2 repository contracts
         run: python tools/validate_cpas_v2.py
 
+      - name: Verify canonicalization vectors independently in Node.js
+        run: node tools/verify_canonicalization_vectors.mjs
+
       - name: Compile reference and migration modules
-        run: python -m compileall -q cpas tools/validate_cpas_v2.py migrations/migrate_idp_v1_to_v2.py
+        run: python -m compileall -q cpas tools/validate_cpas_v2.py tools/verify_canonicalization_vectors.py migrations/migrate_idp_v1_to_v2.py
 
       - name: Reject whitespace errors in the proposed diff
         env:

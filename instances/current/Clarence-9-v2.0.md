@@ -35,8 +35,10 @@ core identity to match a model catalog.
 A conforming host copies the declaration, fills or overlays a runtime binding,
 probes required capabilities, loads permitted tools, validates any SeedToken,
 and reports active continuity. Binding to a new runtime is compatible only if
-the stable identity digest remains unchanged and required policies remain
-enforceable. The host must record behavioral/runtime validation separately.
+the stable identity digest tuple remains unchanged and required policies remain
+enforceable. An explicit canonicalization-profile migration compares the stable
+projection instead, because its digest bytes necessarily change. The host must
+record behavioral/runtime validation separately.
 
 ## Operational voice
 

@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping
 
-from .provenance import sha256_digest
+from .provenance import (
+    CAPABILITY_PROFILE_DIGEST_PROFILE,
+    JCS_CANONICALIZATION,
+    profiled_digest,
+    resolve_digest_profile,
+)
 
 
 CAPABILITY_RANK = {
@@ -16,7 +21,12 @@ CAPABILITY_RANK = {
 }
 
 
-def capability_profile(capabilities: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
+def capability_profile(
+    capabilities: Iterable[Mapping[str, Any]],
+    *,
+    canonicalization: str = JCS_CANONICALIZATION,
+    digest_profile: str | None = CAPABILITY_PROFILE_DIGEST_PROFILE,
+) -> dict[str, Any]:
     items = sorted(
         ({"name": str(item["name"]), "status": str(item["status"])} for item in capabilities),
         key=lambda item: item["name"],
@@ -26,7 +36,18 @@ def capability_profile(capabilities: Iterable[Mapping[str, Any]]) -> dict[str, A
     for item in items:
         if item["status"] not in CAPABILITY_RANK:
             raise ValueError(f"unknown capability status: {item['status']}")
-    return {"digest": sha256_digest(items), "capabilities": items}
+    resolved_profile = resolve_digest_profile(canonicalization, digest_profile)
+    return {
+        "canonicalization": canonicalization,
+        "digest_profile": resolved_profile,
+        "digest": profiled_digest(
+            items,
+            canonicalization=canonicalization,
+            digest_profile=resolved_profile,
+            expected_v2_profile=CAPABILITY_PROFILE_DIGEST_PROFILE,
+        ),
+        "capabilities": items,
+    }
 
 
 def negotiate_capabilities(

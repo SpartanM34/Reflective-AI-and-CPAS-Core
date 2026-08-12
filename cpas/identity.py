@@ -5,7 +5,12 @@ from __future__ import annotations
 import copy
 from typing import Any, Mapping
 
-from .provenance import sha256_digest
+from .provenance import (
+    IDP_IDENTITY_DIGEST_PROFILE,
+    LEGACY_CANONICALIZATION,
+    profiled_digest,
+    resolve_digest_profile,
+)
 
 
 IDENTITY_FIELDS = (
@@ -25,8 +30,38 @@ def identity_projection(declaration: Mapping[str, Any]) -> dict[str, Any]:
     return {field: copy.deepcopy(declaration[field]) for field in IDENTITY_FIELDS}
 
 
+def identity_digest_spec(declaration: Mapping[str, Any]) -> tuple[str, str]:
+    """Return the canonicalization and resolved identity digest profile."""
+
+    provenance = declaration.get("provenance", {})
+    continuity = declaration.get("continuity", {})
+    if not isinstance(provenance, Mapping) or not isinstance(continuity, Mapping):
+        raise TypeError("identity digest metadata must be objects")
+    canonicalization = str(
+        provenance.get("canonicalization", LEGACY_CANONICALIZATION)
+    )
+    profile = resolve_digest_profile(
+        canonicalization,
+        continuity.get("identity_digest_profile"),
+    )
+    if (
+        profile != IDP_IDENTITY_DIGEST_PROFILE
+        and canonicalization != LEGACY_CANONICALIZATION
+    ):
+        raise ValueError(
+            f"identity digest requires profile {IDP_IDENTITY_DIGEST_PROFILE}, got {profile}"
+        )
+    return canonicalization, profile
+
+
 def identity_digest(declaration: Mapping[str, Any]) -> str:
-    return sha256_digest(identity_projection(declaration))
+    canonicalization, profile = identity_digest_spec(declaration)
+    return profiled_digest(
+        identity_projection(declaration),
+        canonicalization=canonicalization,
+        digest_profile=profile,
+        expected_v2_profile=IDP_IDENTITY_DIGEST_PROFILE,
+    )
 
 
 def bind_runtime(
@@ -44,4 +79,6 @@ def bind_runtime(
 
 
 def same_declared_identity(left: Mapping[str, Any], right: Mapping[str, Any]) -> bool:
-    return identity_digest(left) == identity_digest(right)
+    """Compare declared identity semantics independently of digest encoding."""
+
+    return identity_projection(left) == identity_projection(right)

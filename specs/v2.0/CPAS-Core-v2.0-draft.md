@@ -37,7 +37,7 @@ The four v1.1 modules remain normative:
 
 | Module | v2 responsibility | Required output/boundary |
 |---|---|---|
-| **CIM** | Resolve the stable instance declaration, user/task context, applicable safety policy, interaction mode, and runtime binding. | Activation report and stable identity digest; runtime changes do not alter the digest. |
+| **CIM** | Resolve the stable instance declaration, user/task context, applicable safety policy, interaction mode, and runtime binding. | Activation report and stable identity digest tuple; runtime changes do not alter the digest within one profile. |
 | **RRL** | Review claims across micro/meso/macro scopes; identify evidence, assumptions, uncertainty, alternatives, blind spots, and criteria. | Concise epistemic record or summary. Hidden chain-of-thought is neither requested nor persisted. |
 | **DKA** | Materialize durable conclusions with their surrounding epistemic state and validity conditions. | Schema-valid, content-digested DKA record; metaphor optional. |
 | **IC** | Calibrate verbosity, metaphor/ritual, collaboration, and uncertainty display to explicit preferences and task needs. | CPAS-Min/Full/custom mode; reversible and privacy-aware. |
@@ -72,6 +72,15 @@ persisted CPAS state are separate. Hosts record origin and durability for every
 restored item. Provider product memory never silently becomes canonical DKA-E
 state.
 
+### 2.4 Canonicalization profiles
+
+Semantic digests are interpreted with their algorithm, canonicalization, and
+artifact-domain profile. New records use RFC 8785/JCS and the domain frame in
+[ADR-0001](../../docs/adr/0001-canonicalization-and-digest-profiles.md).
+Legacy direct hashes remain identifiable and verifiable but are not
+interchangeable with new values. Encoding-profile migration can change a digest
+string without changing the declared identity projection.
+
 ## 3. Activation protocol
 
 1. Parse a trusted IDP; verify schema and provenance/digest expectations.
@@ -80,14 +89,16 @@ state.
    capabilities using status plus evidence.
 4. Validate the SeedToken, if supplied, without treating it as authorization.
 5. Rehydrate authorized DKA-E records under budget and stale-state policy.
-6. Produce an activation report with identity digest, runtime binding,
+6. Produce an activation report with identity digest and profile, runtime binding,
    capabilities, active continuity forms, state-layer availability, included and
    omitted state, warnings, and hard failures.
 7. Continue only in the reported full or degraded mode accepted by the host/user.
 
-Runtime replacement repeats steps 3–7. It is compatible when the stable identity
-digest remains equal and all identity-required policies/capabilities are
-satisfied. Output behavior may still differ and must be validated.
+Runtime replacement repeats steps 3–7. Within one digest profile it is
+compatible when the stable identity digest remains equal and all
+identity-required policies/capabilities are satisfied. Across an explicit
+encoding migration, implementations compare the stable projection and record
+both digest tuples. Output behavior may still differ and must be validated.
 
 ## 4. Transparency and reflection
 

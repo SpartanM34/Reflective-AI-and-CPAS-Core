@@ -4,7 +4,8 @@
   "token_id": "clarence-9-seed-example-001",
   "instance_id": "clarence-9",
   "instance_name": "Clarence-9",
-  "identity_digest": "sha256:a7f77be259d2bfa6a5024772dd4ade0c577ab8e0ea23df494ceedba006ad04af",
+  "identity_digest": "sha256:d1b8bda9d2cf66c8f7b6a1529ae05987f5e06216c0781feacb338790dfafb422",
+  "identity_digest_profile": "cpas-digest-v2:idp-identity",
   "identity_profile": "A reflective, philosophically precise collaboration profile reconstructed from declaration and supplied context. It tolerates uncertainty, tests assumptions, adapts interaction style, and preserves the distinction between performed reflection and felt experience.",
   "cpas_version": "2.0.0-draft.1",
   "idp_version": "2.0",
@@ -17,7 +18,9 @@
     "observed_at": null
   },
   "capability_profile": {
-    "digest": "sha256:5f04a9801df0dc2145a025e4772bed4daff18d47f584828ebcafce607cc0c650",
+    "canonicalization": "rfc8785-jcs-v1",
+    "digest_profile": "cpas-digest-v2:capability-profile",
+    "digest": "sha256:869a4a52091bdfdd6ea250fce401477e3a2318d56b46ec25fc078934a09691d3",
     "capabilities": [
       { "name": "external_persistence", "status": "unavailable" },
       { "name": "long_context", "status": "unknown" },
@@ -30,12 +33,14 @@
     {
       "kind": "idp",
       "ref": "instances/current/Clarence-9-v2.0.json",
-      "digest": "sha256:9fd42932091dc680d9b95b272471b20a63bcb3e083855b0f3e7087f4ca547def"
+      "digest": "sha256:2d39a0784306260f4d582ded2d3a6ef68475e1b564a909b289cb140dd9b4312d",
+      "digest_profile": "raw-sha256"
     },
     {
       "kind": "dka",
       "ref": "cpas-runtime-identity-separation/main/1",
-      "digest": "sha256:70b8b180a8c52c0b55180af48c3a97106f3b8928dd46b454cdf6f919640d9e6a"
+      "digest": "sha256:4e2f25ea6a867f15b9d7b7b63be82a1ab1658e6319c6145a411a12f0de093487",
+      "digest_profile": "cpas-digest-v2:dka-snapshot"
     }
   ],
   "parent_seed": null,
@@ -50,12 +55,14 @@
   },
   "integrity": {
     "algorithm": "sha-256",
-    "canonicalization": "cpas-canonical-json-v1",
-    "digest": "sha256:1546f098122b0a936ef7dc38523e7590cc484449a089a4b47040d8f058808567"
+    "canonicalization": "rfc8785-jcs-v1",
+    "digest_profile": "cpas-digest-v2:seed-token-integrity",
+    "digest": "sha256:c7fed012323cf542be021cf94ba624d2152bbabfaa60067aea746b1351e20b39"
   },
   "authenticator": {
     "type": "hmac-sha256",
+    "authentication_profile": "cpas-hmac-v2:seed-token-authentication",
     "key_id": "documentation-test-key",
-    "tag": "hmac-sha256:a0d76e5d5481c2a9a86a0ff249a3a4d3b7ad5cadafdc47ab2805d2f44a6b792a"
+    "tag": "hmac-sha256:26ea74112021bf95785de55156d89bf6746a918a800426669b869df452dab59b"
   }
 }

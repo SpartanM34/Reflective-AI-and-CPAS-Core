@@ -22,30 +22,43 @@ scope.
 
 ## Canonicalization and integrity
 
-`cpas-canonical-json-v1` is UTF-8 JSON with sorted object keys, compact
-separators, Unicode preserved, and non-finite numbers rejected. It is a local
-deterministic profile, not RFC 8785.
+New tokens use `rfc8785-jcs-v1` and the digest profile
+`cpas-digest-v2:seed-token-integrity`. The exact domain frame is defined in
+[ADR-0001](../../docs/adr/0001-canonicalization-and-digest-profiles.md).
+The embedded identity and capability digests carry their own profiles; they are
+not SeedToken-integrity digests merely because they appear in the token.
 
 To compute `integrity.digest`:
 
 1. remove the entire `authenticator` member, if present;
-2. remove `integrity.digest`, retaining the integrity algorithm and
-   canonicalization fields;
-3. canonicalize and SHA-256 hash the remaining token;
+2. remove `integrity.digest`, retaining the integrity algorithm,
+   canonicalization, and digest-profile fields;
+3. JCS-canonicalize the remaining token, prepend the SeedToken domain frame,
+   and SHA-256 hash the resulting bytes;
 4. store `sha256:<lowercase hex>`.
 
 This detects accidental or malicious modification only when a verifier has a
 trusted expected token/digest. An attacker able to replace the token can also
 recompute an unkeyed digest.
 
+Legacy draft tokens with `cpas-canonical-json-v1` and no digest profile remain
+verifiable as `cpas-sha256-direct-v1`. The legacy bytes and digest must not be
+reused under a JCS marker.
+
 ## Optional HMAC authentication
 
 The repository implements one symmetric authenticator:
 
 1. first populate and verify `integrity.digest`;
-2. set `authenticator.type` and `authenticator.key_id`, leaving out `tag`;
-3. canonicalize the complete token with only `authenticator.tag` omitted;
+2. set `authenticator.type`, `authenticator.key_id`, and
+   `authentication_profile` to
+   `cpas-hmac-v2:seed-token-authentication`, leaving out `tag`;
+3. JCS-canonicalize the complete token with only `authenticator.tag` omitted
+   and prepend the HMAC domain frame defined by ADR-0001;
 4. compute HMAC-SHA256 and store `hmac-sha256:<lowercase hex>`.
+
+Legacy HMAC tokens without an authentication profile use
+`cpas-hmac-direct-v1` only when the token canonicalization is also legacy.
 
 The HMAC authenticates possession of a shared secret to another holder of that
 secret. It does not identify a human by itself, grant authorization, protect
@@ -63,7 +76,8 @@ boolean:
 3. recompute and constant-time compare the integrity digest;
 4. require `expires_at > created_at`, and reject a token expired at the
    verifier’s clock;
-5. compare `instance_id` and `identity_digest` with the expected IDP;
+5. compare `instance_id`, `identity_digest`, and its profile with the expected
+   IDP;
 6. if a parent is expected, compare both parent token ID and parent integrity
    digest; the link is evidence of ordering, not a globally unique chain;
 7. if authentication is required, resolve `key_id` through a trusted key store
@@ -102,6 +116,9 @@ memory.
   from canonical v2 content; never relabel an old hash as an HMAC or signature.
 - Default continuity scope to `declarative` unless concrete context, DKA, or
   store references can be verified.
+
+The draft-to-JCS digest migration is specified separately in
+[`migrations/canonicalization-v1-to-jcs-v1.md`](../../migrations/canonicalization-v1-to-jcs-v1.md).
 
 See [`examples/v2/seed-token-v2.example.json`](../../examples/v2/seed-token-v2.example.json)
 for a non-secret documentation token. Its HMAC key is intentionally documented

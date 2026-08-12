@@ -72,6 +72,7 @@
   "evolution": {
     "parent_digest": null,
     "merge_parents": [],
+    "merge_parent_digest_profiles": [],
     "change_summary": "Initial v2 modernization anchor derived from the architecture audit."
   },
   "provenance": {
@@ -83,6 +84,7 @@
         "ref": "docs/audits/CPAS-Core-v1.1-architecture-audit.md",
         "kind": "repository",
         "digest": "sha256:c7ea00a25ea09649ce4cee394825f0363e44b6ef17b5612c2a5f38e8252995d7",
+        "digest_profile": "raw-sha256",
         "observed_at": "2026-08-11T00:00:00Z"
       }
     ],
@@ -97,7 +99,8 @@
     "policy_ref": null
   },
   "integrity": {
-    "canonicalization": "cpas-canonical-json-v1",
-    "digest": "sha256:70b8b180a8c52c0b55180af48c3a97106f3b8928dd46b454cdf6f919640d9e6a"
+    "canonicalization": "rfc8785-jcs-v1",
+    "digest_profile": "cpas-digest-v2:dka-snapshot",
+    "digest": "sha256:4e2f25ea6a867f15b9d7b7b63be82a1ab1658e6319c6145a411a12f0de093487"
   }
 }
