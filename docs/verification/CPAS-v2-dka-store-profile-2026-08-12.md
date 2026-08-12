@@ -152,6 +152,20 @@ external controls required before any deployment-level claim.
 
 ## Remote CI status
 
-Pending publication of the branch and draft pull request. This record must be
-updated with the exact GitHub Actions run and per-job results; local success is
-not substituted for remote evidence.
+Initial publication commit
+[`c228d087e7f8fda1f6c4adf4d6d8cc8e7b1efd5a`](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/commit/c228d087e7f8fda1f6c4adf4d6d8cc8e7b1efd5a)
+on draft pull request
+[#104](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/pull/104)
+completed
+[CPAS v2 CI run #8](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31645506263)
+successfully on 2026-08-12 UTC.
+
+| GitHub Actions job | Job ID | Result |
+|---|---:|---|
+| Tests (Python 3.11) | [94277985568](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31645506263/job/94277985568) | success |
+| Tests (Python 3.12) | [94277985664](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31645506263/job/94277985664) | success |
+| Tests (Python 3.13) | [94277985561](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31645506263/job/94277985561) | success |
+| Repository invariants | [94277985647](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31645506263/job/94277985647) | success |
+
+The follow-up documentation commit that records this evidence requires its own
+successful CI run before the pull request is considered verified at its head.
