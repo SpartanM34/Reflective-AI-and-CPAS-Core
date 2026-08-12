@@ -12,11 +12,20 @@ from typing import Any, Mapping
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import ValidationError
 
-from .provenance import canonical_json, load_json, sha256_digest, without_paths
+from .provenance import (
+    DKA_SNAPSHOT_DIGEST_PROFILE,
+    JCS_CANONICALIZATION,
+    LEGACY_CANONICALIZATION,
+    load_json,
+    profiled_digest,
+    resolve_digest_profile,
+    without_paths,
+)
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DKA_SCHEMA = REPOSITORY_ROOT / "schemas" / "dka-e-v2.0.schema.json"
+_UNSET = object()
 
 
 def validate_record(record: Mapping[str, Any]) -> None:
@@ -29,16 +38,93 @@ def validate_record(record: Mapping[str, Any]) -> None:
             for error in errors
         )
         raise ValidationError(details)
+    evolution = record.get("evolution", {})
+    merge_parents = evolution.get("merge_parents", [])
+    merge_profiles = evolution.get("merge_parent_digest_profiles")
+    if merge_profiles is not None and len(merge_profiles) != len(merge_parents):
+        raise ValidationError(
+            "evolution/merge_parent_digest_profiles must align with merge_parents"
+        )
+    if evolution.get("parent_digest") is None and evolution.get("parent_digest_profile"):
+        raise ValidationError(
+            "evolution/parent_digest_profile requires parent_digest"
+        )
+
+
+def dka_digest_spec(record: Mapping[str, Any]) -> tuple[str, str]:
+    integrity = record.get("integrity", {})
+    if not isinstance(integrity, Mapping):
+        raise TypeError("DKA integrity metadata must be an object")
+    canonicalization = str(
+        integrity.get("canonicalization", LEGACY_CANONICALIZATION)
+    )
+    profile = resolve_digest_profile(
+        canonicalization,
+        integrity.get("digest_profile"),
+    )
+    if (
+        profile != DKA_SNAPSHOT_DIGEST_PROFILE
+        and canonicalization != LEGACY_CANONICALIZATION
+    ):
+        raise ValueError(
+            f"DKA digest requires profile {DKA_SNAPSHOT_DIGEST_PROFILE}, got {profile}"
+        )
+    return canonicalization, profile
 
 
 def dka_digest(record: Mapping[str, Any]) -> str:
-    return sha256_digest(without_paths(dict(record), [("integrity", "digest")]))
+    canonicalization, profile = dka_digest_spec(record)
+    return profiled_digest(
+        without_paths(dict(record), [("integrity", "digest")]),
+        canonicalization=canonicalization,
+        digest_profile=profile,
+        expected_v2_profile=DKA_SNAPSHOT_DIGEST_PROFILE,
+    )
 
 
-def seal_record(record: Mapping[str, Any], *, validate: bool = True) -> dict[str, Any]:
+def seal_record(
+    record: Mapping[str, Any],
+    *,
+    canonicalization: str | None = None,
+    digest_profile: str | None | object = _UNSET,
+    validate: bool = True,
+) -> dict[str, Any]:
     sealed = copy.deepcopy(dict(record))
-    sealed.setdefault("integrity", {})
-    sealed["integrity"].update({"canonicalization": "cpas-canonical-json-v1"})
+    integrity = sealed.setdefault("integrity", {})
+    if not isinstance(integrity, dict):
+        raise TypeError("DKA integrity metadata must be an object")
+    had_canonicalization = "canonicalization" in integrity
+    selected_canonicalization = (
+        canonicalization
+        if canonicalization is not None
+        else integrity.get("canonicalization", JCS_CANONICALIZATION)
+    )
+    if digest_profile is _UNSET:
+        selected_profile = integrity.get("digest_profile")
+        if not had_canonicalization or canonicalization is not None:
+            selected_profile = (
+                DKA_SNAPSHOT_DIGEST_PROFILE
+                if selected_canonicalization == JCS_CANONICALIZATION
+                else None
+            )
+    else:
+        selected_profile = digest_profile
+        if selected_profile is not None and not isinstance(selected_profile, str):
+            raise TypeError("digest_profile must be a string or None")
+    resolved_profile = resolve_digest_profile(
+        str(selected_canonicalization),
+        selected_profile if isinstance(selected_profile, str) else None,
+    )
+    if (
+        selected_canonicalization != LEGACY_CANONICALIZATION
+        and resolved_profile != DKA_SNAPSHOT_DIGEST_PROFILE
+    ):
+        raise ValueError(f"DKA records require {DKA_SNAPSHOT_DIGEST_PROFILE}")
+    integrity["canonicalization"] = selected_canonicalization
+    if selected_profile is None and selected_canonicalization == LEGACY_CANONICALIZATION:
+        integrity.pop("digest_profile", None)
+    else:
+        integrity["digest_profile"] = resolved_profile
     sealed["integrity"].pop("digest", None)
     sealed["integrity"]["digest"] = dka_digest(sealed)
     if validate:
@@ -48,7 +134,11 @@ def seal_record(record: Mapping[str, Any], *, validate: bool = True) -> dict[str
 
 def verify_record_integrity(record: Mapping[str, Any]) -> bool:
     expected = record.get("integrity", {}).get("digest", "")
-    return bool(expected) and hmac.compare_digest(str(expected), dka_digest(record))
+    try:
+        actual = dka_digest(record)
+    except (TypeError, ValueError):
+        return False
+    return bool(expected) and hmac.compare_digest(str(expected), actual)
 
 
 def _parse_time(value: str) -> datetime:
@@ -128,7 +218,9 @@ def revise_record(
     revised["revision"] = int(record["revision"]) + 1
     revised["evolution"] = {
         "parent_digest": record["integrity"]["digest"],
+        "parent_digest_profile": dka_digest_spec(record)[1],
         "merge_parents": [],
+        "merge_parent_digest_profiles": [],
         "change_summary": change_summary,
     }
     revised["provenance"]["updated_at"] = updated_at
@@ -174,6 +266,11 @@ def merge_records(
         raise ValueError("merge records must share dka_id")
     if not all(verify_record_integrity(record) for record in records):
         raise ValueError("all merge inputs must pass integrity verification")
+    digest_specs = {dka_digest_spec(record) for record in records}
+    if len(digest_specs) != 1:
+        raise ValueError(
+            "mixed DKA digest profiles require explicit migration before merge"
+        )
 
     merged = copy.deepcopy(dict(base))
     conflicts: list[tuple[str, Any, Any]] = []
@@ -208,7 +305,12 @@ def merge_records(
     merged["revision"] = max(int(left["revision"]), int(right["revision"])) + 1
     merged["evolution"] = {
         "parent_digest": base["integrity"]["digest"],
+        "parent_digest_profile": dka_digest_spec(base)[1],
         "merge_parents": [left["integrity"]["digest"], right["integrity"]["digest"]],
+        "merge_parent_digest_profiles": [
+            dka_digest_spec(left)[1],
+            dka_digest_spec(right)[1],
+        ],
         "change_summary": f"three-way merge by {actor}; {len(conflicts)} conflict(s) preserved",
     }
     merged["provenance"]["updated_at"] = updated_at

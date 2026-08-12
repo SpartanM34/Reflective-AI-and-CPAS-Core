@@ -25,6 +25,7 @@ def test_repository_validation_contract_passes():
     assert report.digest_references >= 8
     assert report.markdown_links > 0
     assert report.migrated_idps == 28
+    assert report.canonicalization_vector_checks == 17
 
 
 def test_cross_file_digest_mismatch_is_rejected(tmp_path):
@@ -57,3 +58,4 @@ def test_json_cli_report_is_machine_readable():
     report = json.loads(result.stdout)
     assert report["schemas"] == 4
     assert report["migrated_idps"] == 28
+    assert report["canonicalization_vector_checks"] == 17

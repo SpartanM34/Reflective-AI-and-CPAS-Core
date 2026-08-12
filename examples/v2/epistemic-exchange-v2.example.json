@@ -15,7 +15,8 @@
   },
   "instance_profile": {
     "instance_id": "clarence-9",
-    "identity_digest": "sha256:a7f77be259d2bfa6a5024772dd4ade0c577ab8e0ea23df494ceedba006ad04af",
+    "identity_digest": "sha256:d1b8bda9d2cf66c8f7b6a1529ae05987f5e06216c0781feacb338790dfafb422",
+    "identity_digest_profile": "cpas-digest-v2:idp-identity",
     "runtime": null,
     "specialization": "reflective architecture review"
   },
@@ -35,7 +36,8 @@
       "summary": "Architecture audit found that the legacy declaration changed model family in place.",
       "source_ref": "docs/audits/CPAS-Core-v1.1-architecture-audit.md",
       "support": "supports",
-      "digest": "sha256:c7ea00a25ea09649ce4cee394825f0363e44b6ef17b5612c2a5f38e8252995d7"
+      "digest": "sha256:c7ea00a25ea09649ce4cee394825f0363e44b6ef17b5612c2a5f38e8252995d7",
+      "digest_profile": "raw-sha256"
     }
   ],
   "uncertainties": [
@@ -46,7 +48,8 @@
   "dka_refs": [
     {
       "dka_id": "cpas-runtime-identity-separation",
-      "digest": "sha256:70b8b180a8c52c0b55180af48c3a97106f3b8928dd46b454cdf6f919640d9e6a",
+      "digest": "sha256:4e2f25ea6a867f15b9d7b7b63be82a1ab1658e6319c6145a411a12f0de093487",
+      "digest_profile": "cpas-digest-v2:dka-snapshot",
       "relation": "supports"
     }
   ],

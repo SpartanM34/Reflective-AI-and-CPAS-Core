@@ -12,6 +12,12 @@
     "instance_id": { "$ref": "#/$defs/id" },
     "instance_name": { "type": "string", "minLength": 1 },
     "identity_digest": { "$ref": "#/$defs/digest" },
+    "identity_digest_profile": {
+      "enum": [
+        "cpas-sha256-direct-v1",
+        "cpas-digest-v2:idp-identity"
+      ]
+    },
     "identity_profile": { "type": "string", "minLength": 1 },
     "cpas_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?(?:-[0-9A-Za-z.-]+)?$" },
     "idp_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$" },
@@ -33,6 +39,15 @@
       "additionalProperties": false,
       "required": ["digest", "capabilities"],
       "properties": {
+        "canonicalization": {
+          "enum": ["cpas-canonical-json-v1", "rfc8785-jcs-v1"]
+        },
+        "digest_profile": {
+          "enum": [
+            "cpas-sha256-direct-v1",
+            "cpas-digest-v2:capability-profile"
+          ]
+        },
         "digest": { "$ref": "#/$defs/digest" },
         "capabilities": {
           "type": "array",
@@ -46,7 +61,30 @@
             }
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["canonicalization"],
+            "properties": {
+              "canonicalization": { "const": "rfc8785-jcs-v1" }
+            }
+          },
+          "then": {
+            "required": ["digest_profile"],
+            "properties": {
+              "digest_profile": {
+                "const": "cpas-digest-v2:capability-profile"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "digest_profile": { "const": "cpas-sha256-direct-v1" }
+            }
+          }
+        }
+      ]
     },
     "state_refs": {
       "type": "array",
@@ -57,7 +95,8 @@
         "properties": {
           "kind": { "enum": ["idp", "dka", "context_digest", "workspace_manifest", "event_head"] },
           "ref": { "type": "string", "minLength": 1 },
-          "digest": { "$ref": "#/$defs/digest" }
+          "digest": { "$ref": "#/$defs/digest" },
+          "digest_profile": { "type": "string", "minLength": 1 }
         }
       }
     },
@@ -67,7 +106,13 @@
       "required": ["token_id", "integrity_digest"],
       "properties": {
         "token_id": { "$ref": "#/$defs/id" },
-        "integrity_digest": { "$ref": "#/$defs/digest" }
+        "integrity_digest": { "$ref": "#/$defs/digest" },
+        "integrity_digest_profile": {
+          "enum": [
+            "cpas-sha256-direct-v1",
+            "cpas-digest-v2:seed-token-integrity"
+          ]
+        }
       }
     },
     "continuity_scope": {
@@ -92,9 +137,39 @@
       "required": ["algorithm", "canonicalization", "digest"],
       "properties": {
         "algorithm": { "const": "sha-256" },
-        "canonicalization": { "const": "cpas-canonical-json-v1" },
+        "canonicalization": {
+          "enum": ["cpas-canonical-json-v1", "rfc8785-jcs-v1"]
+        },
+        "digest_profile": {
+          "enum": [
+            "cpas-sha256-direct-v1",
+            "cpas-digest-v2:seed-token-integrity"
+          ]
+        },
         "digest": { "$ref": "#/$defs/digest" }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "canonicalization": { "const": "rfc8785-jcs-v1" }
+            }
+          },
+          "then": {
+            "required": ["digest_profile"],
+            "properties": {
+              "digest_profile": {
+                "const": "cpas-digest-v2:seed-token-integrity"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "digest_profile": { "const": "cpas-sha256-direct-v1" }
+            }
+          }
+        }
+      ]
     },
     "authenticator": {
       "type": "object",
@@ -102,12 +177,72 @@
       "required": ["type", "key_id", "tag"],
       "properties": {
         "type": { "const": "hmac-sha256" },
+        "authentication_profile": {
+          "enum": [
+            "cpas-hmac-direct-v1",
+            "cpas-hmac-v2:seed-token-authentication"
+          ]
+        },
         "key_id": { "$ref": "#/$defs/id" },
         "tag": { "type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$" }
       }
     },
     "extensions": { "type": "object", "additionalProperties": true }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "integrity": {
+            "properties": {
+              "canonicalization": { "const": "rfc8785-jcs-v1" }
+            },
+            "required": ["canonicalization"]
+          }
+        }
+      },
+      "then": {
+        "required": ["identity_digest_profile"],
+        "properties": {
+          "capability_profile": {
+            "required": ["canonicalization", "digest_profile"],
+            "properties": {
+              "canonicalization": { "const": "rfc8785-jcs-v1" },
+              "digest_profile": {
+                "const": "cpas-digest-v2:capability-profile"
+              }
+            }
+          },
+          "state_refs": {
+            "items": {
+              "required": ["digest_profile"]
+            }
+          },
+          "parent_seed": {
+            "if": { "type": "object" },
+            "then": { "required": ["integrity_digest_profile"] }
+          },
+          "authenticator": {
+            "required": ["authentication_profile"],
+            "properties": {
+              "authentication_profile": {
+                "const": "cpas-hmac-v2:seed-token-authentication"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "authenticator": {
+            "properties": {
+              "authentication_profile": { "const": "cpas-hmac-direct-v1" }
+            }
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
     "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }

@@ -159,7 +159,8 @@
         "description": "No external CPAS state store is bound by this declaration."
       }
     },
-    "identity_digest": "sha256:a7f77be259d2bfa6a5024772dd4ade0c577ab8e0ea23df494ceedba006ad04af"
+    "identity_digest": "sha256:d1b8bda9d2cf66c8f7b6a1529ae05987f5e06216c0781feacb338790dfafb422",
+    "identity_digest_profile": "cpas-digest-v2:idp-identity"
   },
   "memory_policy": {
     "retention": "Retain only through explicitly configured platform, workspace, or CPAS stores; declaration alone retains nothing.",
@@ -194,16 +195,18 @@
         "path": "agents/json/openai-gpt4/Clarence-9.json",
         "revision": "fdac6182061112b73553935661c2247403e12b3d",
         "digest": "sha256:d4da2d0eaf0e60032fb74988983356ac999978d72986c0b78f37e908ee876ac3",
+        "digest_profile": "raw-sha256",
         "relationship": "migrated_from"
       },
       {
         "path": "docs/specs/current/CPAS-Core-v1.1.md",
         "revision": "fdac6182061112b73553935661c2247403e12b3d",
         "digest": "sha256:e88c8b805d01209807c646bf1b1aa04a877dd8939150a81ca0885067ec99ad3e",
+        "digest_profile": "raw-sha256",
         "relationship": "governing_historical_framework"
       }
     ],
-    "canonicalization": "cpas-canonical-json-v1"
+    "canonicalization": "rfc8785-jcs-v1"
   },
   "extensions": {
     "historical_language": {

@@ -22,8 +22,17 @@ if str(REPOSITORY_ROOT) not in sys.path:
 from cpas.dka import validate_record, verify_record_integrity  # noqa: E402
 from cpas.exchange import validate_message  # noqa: E402
 from cpas.idp import migrate_idp_v1_to_v2, validate_idp  # noqa: E402
-from cpas.provenance import file_sha256, load_json  # noqa: E402
+from cpas.provenance import (  # noqa: E402
+    CAPABILITY_PROFILE_DIGEST_PROFILE,
+    DKA_SNAPSHOT_DIGEST_PROFILE,
+    IDP_IDENTITY_DIGEST_PROFILE,
+    JCS_CANONICALIZATION,
+    SEED_TOKEN_DIGEST_PROFILE,
+    file_sha256,
+    load_json,
+)
 from cpas.seed_token import validate_token  # noqa: E402
+from tools.verify_canonicalization_vectors import verify_vectors  # noqa: E402
 
 
 SCHEMA_INSTANCE_PAIRS = (
@@ -43,12 +52,14 @@ MARKDOWN_GLOBS = (
     "docs/ci-v2.md",
     "docs/index.md",
     "docs/audits/*.md",
+    "docs/adr/*.md",
     "docs/open-questions-v2.md",
     "docs/research/current-platform-capabilities-*.md",
     "docs/verification/CPAS-v2-*.md",
     "instances/current/*.md",
     "instances/legacy/*.md",
     "migrations/CPAS-v1.1-to-v2.0.md",
+    "migrations/canonicalization-v1-to-jcs-v1.md",
     "schemas/README.md",
     "specs/v1.1/*.md",
     "specs/v2.0/*.md",
@@ -71,6 +82,7 @@ class ValidationReport:
     markdown_files: int
     markdown_links: int
     migrated_idps: int
+    canonicalization_vector_checks: int
 
 
 def _object(root: Path, relative: str) -> dict[str, Any]:
@@ -115,9 +127,15 @@ def validate_semantics_and_integrity(root: Path) -> int:
     exchange = _object(root, "examples/v2/epistemic-exchange-v2.example.json")
 
     validate_idp(declaration)
+    if declaration["provenance"]["canonicalization"] != JCS_CANONICALIZATION:
+        raise ValidationFailure("current IDP does not use the JCS canonicalization profile")
+    if declaration["continuity"].get("identity_digest_profile") != IDP_IDENTITY_DIGEST_PROFILE:
+        raise ValidationFailure("current IDP identity digest profile is not domain-separated")
     validate_record(dka)
     if not verify_record_integrity(dka):
         raise ValidationFailure("DKA-E example integrity digest mismatch")
+    if dka["integrity"].get("digest_profile") != DKA_SNAPSHOT_DIGEST_PROFILE:
+        raise ValidationFailure("DKA-E example digest profile is not domain-separated")
     validate_message(exchange)
 
     token_result = validate_token(
@@ -129,9 +147,15 @@ def validate_semantics_and_integrity(root: Path) -> int:
     )
     if not token_result.valid:
         raise ValidationFailure("SeedToken example invalid: " + "; ".join(token_result.errors))
+    if token["integrity"].get("digest_profile") != SEED_TOKEN_DIGEST_PROFILE:
+        raise ValidationFailure("SeedToken example digest profile is not domain-separated")
+    if token["capability_profile"].get("digest_profile") != CAPABILITY_PROFILE_DIGEST_PROFILE:
+        raise ValidationFailure("capability profile digest is not domain-separated")
 
     checked = 0
     for source in declaration["provenance"]["source_artifacts"]:
+        if source.get("digest_profile") != "raw-sha256":
+            raise ValidationFailure("Clarence-9 source artifact lacks raw-sha256 profile")
         require_file_digest(
             root,
             source["path"],
@@ -142,6 +166,8 @@ def validate_semantics_and_integrity(root: Path) -> int:
 
     for source in dka["provenance"]["sources"]:
         if source["kind"] == "repository" and source.get("digest"):
+            if source.get("digest_profile") != "raw-sha256":
+                raise ValidationFailure("DKA-E repository source lacks raw-sha256 profile")
             require_file_digest(
                 root,
                 source["ref"],
@@ -153,6 +179,8 @@ def validate_semantics_and_integrity(root: Path) -> int:
     dka_ref = f"{dka['dka_id']}/{dka['branch']}/{dka['revision']}"
     for state_ref in token["state_refs"]:
         if state_ref["kind"] == "idp":
+            if state_ref.get("digest_profile") != "raw-sha256":
+                raise ValidationFailure("SeedToken IDP state ref lacks raw-sha256 profile")
             require_file_digest(
                 root,
                 state_ref["ref"],
@@ -161,6 +189,8 @@ def validate_semantics_and_integrity(root: Path) -> int:
             )
             checked += 1
         elif state_ref["kind"] == "dka":
+            if state_ref.get("digest_profile") != DKA_SNAPSHOT_DIGEST_PROFILE:
+                raise ValidationFailure("SeedToken DKA ref has the wrong digest profile")
             if state_ref["ref"] != dka_ref:
                 raise ValidationFailure(
                     f"SeedToken DKA ref {state_ref['ref']} does not identify example {dka_ref}"
@@ -173,10 +203,14 @@ def validate_semantics_and_integrity(root: Path) -> int:
         "identity_digest"
     ]:
         raise ValidationFailure("EEP identity digest does not match Clarence-9 v2")
+    if exchange["instance_profile"].get("identity_digest_profile") != IDP_IDENTITY_DIGEST_PROFILE:
+        raise ValidationFailure("EEP identity digest profile does not match Clarence-9 v2")
     checked += 1
 
     for evidence in exchange["evidence"]:
         if evidence.get("digest"):
+            if evidence.get("digest_profile") != "raw-sha256":
+                raise ValidationFailure("EEP repository evidence lacks raw-sha256 profile")
             require_file_digest(
                 root,
                 evidence["source_ref"],
@@ -186,6 +220,8 @@ def validate_semantics_and_integrity(root: Path) -> int:
             checked += 1
     for reference in exchange["dka_refs"]:
         if reference["dka_id"] == dka["dka_id"]:
+            if reference.get("digest_profile") != DKA_SNAPSHOT_DIGEST_PROFILE:
+                raise ValidationFailure("EEP DKA ref has the wrong digest profile")
             if reference["digest"] != dka["integrity"]["digest"]:
                 raise ValidationFailure("EEP DKA digest does not match DKA-E example")
             checked += 1
@@ -252,6 +288,12 @@ def validate_repository(root: Path = REPOSITORY_ROOT) -> ValidationReport:
     files = markdown_files(root)
     links = validate_local_links(root, files)
     migrations = validate_legacy_migrations(root)
+    vector_checks = verify_vectors(
+        root
+        / "compliance-tests"
+        / "canonicalization"
+        / "cpas-canonicalization-v1.json"
+    )
     return ValidationReport(
         schemas=len(SCHEMA_INSTANCE_PAIRS),
         instances=len(SCHEMA_INSTANCE_PAIRS),
@@ -259,6 +301,7 @@ def validate_repository(root: Path = REPOSITORY_ROOT) -> ValidationReport:
         markdown_files=len(files),
         markdown_links=links,
         migrated_idps=migrations,
+        canonicalization_vector_checks=vector_checks,
     )
 
 
@@ -280,7 +323,8 @@ def main(argv: list[str] | None = None) -> int:
             f"{report.schemas} schemas/examples, "
             f"{report.digest_references} digest references, "
             f"{report.markdown_links} local links in {report.markdown_files} files, "
-            f"{report.migrated_idps} migrated IDP v1 declarations"
+            f"{report.migrated_idps} migrated IDP v1 declarations, "
+            f"{report.canonicalization_vector_checks} canonicalization vector checks"
         )
     return 0
 

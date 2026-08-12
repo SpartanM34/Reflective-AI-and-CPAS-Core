@@ -5,9 +5,9 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any, Callable, Iterable, Mapping
 
-from .dka import evaluate_staleness
+from .dka import dka_digest_spec, evaluate_staleness
 from .dka_store import DKAStoreError, FileDKAStore
-from .provenance import canonical_json
+from .provenance import LEGACY_CANONICALIZATION, canonicalize_json
 
 
 AuthorizationCheck = Callable[[Mapping[str, Any]], bool]
@@ -52,6 +52,12 @@ def rehydrate(
             expected = ref.get("digest")
             if expected and record["integrity"]["digest"] != expected:
                 raise ValueError("requested digest does not match retrieved record")
+            expected_profile = ref.get("digest_profile")
+            actual_profile = dka_digest_spec(record)[1]
+            if expected_profile and expected_profile != actual_profile:
+                raise ValueError(
+                    "requested digest profile does not match retrieved record"
+                )
             if not checker(record):
                 omitted.append({**label, "reason": "access_denied"})
                 continue
@@ -64,7 +70,12 @@ def rehydrate(
                 omitted.append({**label, "reason": "stale_policy_reject", "evaluation": evaluation})
                 continue
 
-            serialized = canonical_json(record)
+            serialized = canonicalize_json(
+                record,
+                profile=record.get("integrity", {}).get(
+                    "canonicalization", LEGACY_CANONICALIZATION
+                ),
+            )
             if len(included) >= max_items:
                 omitted.append({**label, "reason": "item_budget_exceeded"})
                 continue
@@ -79,6 +90,7 @@ def rehydrate(
                     "branch": record["branch"],
                     "revision": record["revision"],
                     "digest": record["integrity"]["digest"],
+                    "digest_profile": actual_profile,
                     "status": status,
                     "warnings": warnings,
                     "bytes": len(serialized),

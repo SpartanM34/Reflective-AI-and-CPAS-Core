@@ -20,6 +20,20 @@ revision, content digest, claim summary, qualified confidence, validity status,
 contested-zone count, and dependency/source references. It accelerates routing
 and context selection but always points back to an exact canonical snapshot.
 
+## Canonicalization and digest profile
+
+New snapshots use `rfc8785-jcs-v1` and
+`cpas-digest-v2:dka-snapshot`. The SHA-256 preimage is the domain frame from
+[ADR-0001](../../docs/adr/0001-canonicalization-and-digest-profiles.md)
+followed by the JCS record with only `integrity.digest` omitted. Evolution and
+external references carry digest-profile metadata so a legacy parent is not
+silently interpreted as a new snapshot.
+
+Legacy v2 draft snapshots with `cpas-canonical-json-v1` and no profile remain
+verifiable as `cpas-sha256-direct-v1`. Merging records with different digest
+profiles requires an explicit migration first. A DKA digest detects content
+change relative to an expected tuple; it does not authenticate an author.
+
 ## Storage model
 
 Every backend implements these logical collections:
@@ -27,7 +41,7 @@ Every backend implements these logical collections:
 | Collection | Property | Purpose |
 |---|---|---|
 | Snapshots | Immutable, content-digested | Exact DKA revisions addressable by `(dka_id, branch, revision)` and digest. |
-| Head references | Mutable through compare-and-swap | Map `(dka_id, branch)` to the accepted current snapshot. |
+| Head references | Mutable through compare-and-swap | Map `(dka_id, branch)` to the accepted current snapshot digest/profile tuple. |
 | Events | Append-only | Record create, revise, branch, merge, stale, invalidate, rehydrate, and access decisions. |
 | Derived indexes | Rebuildable | Search, embeddings, graph projections, and caches linked back to snapshot digests. |
 | Policies | Externally enforced | Principal/role access, retention, legal holds, deletion, and key management. |
@@ -57,8 +71,9 @@ milestone labels; they are never discarded silently.
 ## Lifecycle
 
 1. **Draft:** construct and schema-validate a record; evidence is attributed.
-2. **Seal:** compute the digest over the record with `integrity.digest` omitted.
-3. **Commit:** compare the expected branch head, write an immutable snapshot,
+2. **Seal:** canonicalize and compute the domain-separated digest over the
+   record with `integrity.digest` omitted.
+3. **Commit:** compare the expected branch head digest/profile tuple, write an immutable snapshot,
    update head atomically, and append an event.
 4. **Evaluate:** check explicit expiry, half-life, triggers, dependency state,
    and source freshness. Evaluation produces state; it does not rewrite history.

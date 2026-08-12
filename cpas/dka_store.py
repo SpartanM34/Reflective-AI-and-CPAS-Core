@@ -13,8 +13,8 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 from urllib.parse import quote
 
-from .dka import seal_record, validate_record, verify_record_integrity
-from .provenance import load_json
+from .dka import dka_digest_spec, seal_record, validate_record, verify_record_integrity
+from .provenance import LEGACY_DIGEST_PROFILE, load_json
 
 
 class DKAStoreError(RuntimeError):
@@ -108,6 +108,7 @@ class FileDKAStore:
         record: Mapping[str, Any],
         *,
         expected_head: str | None,
+        expected_head_profile: str | None = None,
         event_type: str = "commit",
         actor: str = "unspecified",
     ) -> dict[str, Any]:
@@ -122,15 +123,52 @@ class FileDKAStore:
         with self._lock(dka_id, branch):
             current = self._read_head(dka_id, branch)
             actual = current["digest"] if current else None
-            if actual != expected_head:
-                raise HeadConflict(f"expected head {expected_head!r}, found {actual!r}")
+            actual_profile = (
+                current.get("digest_profile", LEGACY_DIGEST_PROFILE)
+                if current
+                else None
+            )
+            if actual != expected_head or (
+                expected_head_profile is not None
+                and actual_profile != expected_head_profile
+            ):
+                raise HeadConflict(
+                    "expected head tuple "
+                    f"({expected_head!r}, {expected_head_profile!r}), found "
+                    f"({actual!r}, {actual_profile!r})"
+                )
             if current:
                 evolution = candidate["evolution"]
-                linked = evolution.get("parent_digest") == actual or actual in evolution.get(
-                    "merge_parents", []
-                )
+                current_profile = actual_profile
+                linked = False
+                if evolution.get("parent_digest") == actual:
+                    linked = (
+                        evolution.get("parent_digest_profile", LEGACY_DIGEST_PROFILE)
+                        == current_profile
+                    )
+                else:
+                    merge_parents = evolution.get("merge_parents", [])
+                    if actual in merge_parents:
+                        position = merge_parents.index(actual)
+                        merge_profiles = evolution.get(
+                            "merge_parent_digest_profiles", []
+                        )
+                        if (
+                            not merge_profiles
+                            and dka_digest_spec(candidate)[1]
+                            == LEGACY_DIGEST_PROFILE
+                        ):
+                            merge_profiles = [LEGACY_DIGEST_PROFILE] * len(
+                                merge_parents
+                            )
+                        linked = (
+                            position < len(merge_profiles)
+                            and merge_profiles[position] == current_profile
+                        )
                 if not linked:
-                    raise DKAStoreError("new snapshot lineage does not reference the current head")
+                    raise DKAStoreError(
+                        "new snapshot lineage does not reference the current head tuple"
+                    )
             snapshot = self._snapshot_path(dka_id, branch, revision)
             if snapshot.exists():
                 raise DKAStoreError(f"immutable snapshot already exists: {dka_id}/{branch}/{revision}")
@@ -143,6 +181,7 @@ class FileDKAStore:
                 "branch": branch,
                 "revision": revision,
                 "digest": candidate["integrity"]["digest"],
+                "digest_profile": dka_digest_spec(candidate)[1],
                 "updated_at": candidate["provenance"]["updated_at"],
             }
             self._atomic_json(self._head_path(dka_id, branch), head)
@@ -153,7 +192,13 @@ class FileDKAStore:
                 "branch": branch,
                 "revision": revision,
                 "digest": head["digest"],
+                "digest_profile": head["digest_profile"],
                 "previous_head": actual,
+                "previous_head_digest_profile": (
+                    current.get("digest_profile", LEGACY_DIGEST_PROFILE)
+                    if current
+                    else None
+                ),
                 "recorded_at": datetime.now(timezone.utc).isoformat(),
             }
             event_path = self._event_path(dka_id)
@@ -224,7 +269,9 @@ class FileDKAStore:
         branched["revision"] = 1
         branched["evolution"] = {
             "parent_digest": source["integrity"]["digest"],
+            "parent_digest_profile": dka_digest_spec(source)[1],
             "merge_parents": [],
+            "merge_parent_digest_profiles": [],
             "change_summary": f"branched from {source_branch} by {actor}",
         }
         branched["provenance"]["updated_at"] = updated_at

@@ -9,7 +9,15 @@ from jsonschema.exceptions import ValidationError
 
 from cpas.identity import bind_runtime, identity_digest, same_declared_identity
 from cpas.idp import migrate_idp_v1_to_v2, validate_idp
-from cpas.provenance import DuplicateKeyError, loads_json
+from cpas.provenance import (
+    CAPABILITY_PROFILE_DIGEST_PROFILE,
+    IDP_IDENTITY_DIGEST_PROFILE,
+    JCS_CANONICALIZATION,
+    LEGACY_CANONICALIZATION,
+    LEGACY_DIGEST_PROFILE,
+    DuplicateKeyError,
+    loads_json,
+)
 from cpas.runtime import capability_profile, negotiate_capabilities
 
 
@@ -26,6 +34,11 @@ def test_clarence_v2_validates_and_digest_matches():
     declaration = load(CLARENCE)
     validate_idp(declaration)
     assert declaration["continuity"]["identity_digest"] == identity_digest(declaration)
+    assert declaration["provenance"]["canonicalization"] == JCS_CANONICALIZATION
+    assert (
+        declaration["continuity"]["identity_digest_profile"]
+        == IDP_IDENTITY_DIGEST_PROFILE
+    )
     assert declaration["identity_profile"]["claims"] == {
         "consciousness": False,
         "felt_emotion": False,
@@ -67,6 +80,8 @@ def test_capability_profile_and_negotiation_are_explicit():
     ]
     profile = capability_profile(capabilities)
     assert profile["digest"].startswith("sha256:")
+    assert profile["canonicalization"] == JCS_CANONICALIZATION
+    assert profile["digest_profile"] == CAPABILITY_PROFILE_DIGEST_PROFILE
     negotiation = negotiate_capabilities(
         capabilities,
         required=["web"],
@@ -94,6 +109,11 @@ def test_v1_migration_is_conservative_and_valid():
         maintainer="Spartan-M34",
     )
     validate_idp(migrated)
+    assert migrated["provenance"]["canonicalization"] == JCS_CANONICALIZATION
+    assert (
+        migrated["continuity"]["identity_digest_profile"]
+        == IDP_IDENTITY_DIGEST_PROFILE
+    )
     assert migrated["runtime_binding"]["model"] == "GPT-5 Thinking"
     assert migrated["continuity"]["forms"]["declarative"]["active"] is True
     assert migrated["continuity"]["forms"]["contextual"]["active"] is False
@@ -110,3 +130,20 @@ def test_v1_migration_is_conservative_and_valid():
 def test_duplicate_json_members_are_rejected():
     with pytest.raises(DuplicateKeyError):
         loads_json('{"instance_id":"first","instance_id":"replacement"}')
+
+
+def test_v1_migration_can_emit_an_explicit_legacy_compatibility_draft():
+    migrated = migrate_idp_v1_to_v2(
+        load(LEGACY_CLARENCE),
+        source_path="agents/json/openai-gpt4/Clarence-9.json",
+        source_revision="test-revision",
+        migrated_at="2026-08-11T00:00:00Z",
+        maintainer="Spartan-M34",
+        canonicalization=LEGACY_CANONICALIZATION,
+    )
+    validate_idp(migrated)
+    assert migrated["provenance"]["canonicalization"] == LEGACY_CANONICALIZATION
+    assert (
+        migrated["continuity"]["identity_digest_profile"]
+        == LEGACY_DIGEST_PROFILE
+    )

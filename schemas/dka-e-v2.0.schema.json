@@ -56,7 +56,23 @@
       "required": ["parent_digest", "merge_parents", "change_summary"],
       "properties": {
         "parent_digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" },
+        "parent_digest_profile": {
+          "enum": [
+            "cpas-sha256-direct-v1",
+            "cpas-digest-v2:dka-snapshot"
+          ]
+        },
         "merge_parents": { "type": "array", "items": { "$ref": "#/$defs/digest" }, "maxItems": 2, "uniqueItems": true },
+        "merge_parent_digest_profiles": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "cpas-sha256-direct-v1",
+              "cpas-digest-v2:dka-snapshot"
+            ]
+          },
+          "maxItems": 2
+        },
         "change_summary": { "type": "string", "minLength": 1 }
       }
     },
@@ -94,12 +110,74 @@
       "additionalProperties": false,
       "required": ["canonicalization", "digest"],
       "properties": {
-        "canonicalization": { "const": "cpas-canonical-json-v1" },
+        "canonicalization": {
+          "enum": ["cpas-canonical-json-v1", "rfc8785-jcs-v1"]
+        },
+        "digest_profile": {
+          "enum": [
+            "cpas-sha256-direct-v1",
+            "cpas-digest-v2:dka-snapshot"
+          ]
+        },
         "digest": { "$ref": "#/$defs/digest" }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "canonicalization": { "const": "rfc8785-jcs-v1" }
+            }
+          },
+          "then": {
+            "required": ["digest_profile"],
+            "properties": {
+              "digest_profile": { "const": "cpas-digest-v2:dka-snapshot" }
+            }
+          },
+          "else": {
+            "properties": {
+              "digest_profile": { "const": "cpas-sha256-direct-v1" }
+            }
+          }
+        }
+      ]
     },
     "extensions": { "type": "object", "additionalProperties": true }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "integrity": {
+            "properties": {
+              "canonicalization": { "const": "rfc8785-jcs-v1" }
+            },
+            "required": ["canonicalization"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evolution": {
+            "required": ["merge_parent_digest_profiles"],
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "parent_digest": { "type": "string" }
+                  },
+                  "required": ["parent_digest"]
+                },
+                "then": {
+                  "required": ["parent_digest_profile"]
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
     "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
@@ -173,6 +251,7 @@
         "ref": { "type": "string", "minLength": 1 },
         "kind": { "enum": ["repository", "web", "database", "conversation", "artifact", "human", "model"] },
         "digest": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" },
+        "digest_profile": { "type": "string", "minLength": 1 },
         "observed_at": { "type": ["string", "null"], "format": "date-time" }
       }
     }

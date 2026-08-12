@@ -16,6 +16,7 @@ from cpas.dka import (
     verify_record_integrity,
 )
 from cpas.dka_store import DKAStoreError, FileDKAStore, HeadConflict
+from cpas.provenance import DKA_SNAPSHOT_DIGEST_PROFILE, JCS_CANONICALIZATION
 from cpas.rehydrate import rehydrate
 
 
@@ -30,6 +31,8 @@ def test_example_schema_and_integrity():
     record = example()
     validate_record(record)
     assert verify_record_integrity(record)
+    assert record["integrity"]["canonicalization"] == JCS_CANONICALIZATION
+    assert record["integrity"]["digest_profile"] == DKA_SNAPSHOT_DIGEST_PROFILE
 
 
 def test_staleness_evaluation_does_not_mutate_snapshot():
@@ -62,6 +65,10 @@ def test_revision_has_parent_digest_and_new_integrity():
     )
     assert revised["revision"] == 2
     assert revised["evolution"]["parent_digest"] == record["integrity"]["digest"]
+    assert (
+        revised["evolution"]["parent_digest_profile"]
+        == DKA_SNAPSHOT_DIGEST_PROFILE
+    )
     assert revised["integrity"]["digest"] != record["integrity"]["digest"]
     assert verify_record_integrity(revised)
 
@@ -72,6 +79,7 @@ def test_file_store_round_trip_cas_history_and_events(tmp_path):
     head = store.put(record, expected_head=None, actor="unit-test")
     assert store.get(record["dka_id"]) == record
     assert head["digest"] == record["integrity"]["digest"]
+    assert head["digest_profile"] == DKA_SNAPSHOT_DIGEST_PROFILE
     assert len(store.history(record["dka_id"])) == 1
     assert store.events(record["dka_id"])[0]["event_type"] == "commit"
 
@@ -84,7 +92,18 @@ def test_file_store_round_trip_cas_history_and_events(tmp_path):
     )
     with pytest.raises(HeadConflict):
         store.put(revised, expected_head="sha256:" + "0" * 64)
-    store.put(revised, expected_head=head["digest"], actor="unit-test")
+    with pytest.raises(HeadConflict):
+        store.put(
+            revised,
+            expected_head=head["digest"],
+            expected_head_profile="cpas-sha256-direct-v1",
+        )
+    store.put(
+        revised,
+        expected_head=head["digest"],
+        expected_head_profile=head["digest_profile"],
+        actor="unit-test",
+    )
     assert [item["revision"] for item in store.history(record["dka_id"])] == [1, 2]
 
 
@@ -98,6 +117,23 @@ def test_file_store_detects_snapshot_tampering(tmp_path):
     snapshot.write_text(json.dumps(tampered), encoding="utf-8")
     with pytest.raises(DKAStoreError, match="digest"):
         store.get(record["dka_id"])
+
+
+def test_file_store_rejects_a_lineage_digest_with_the_wrong_profile(tmp_path):
+    store = FileDKAStore(tmp_path / "store")
+    record = example()
+    head = store.put(record, expected_head=None)
+    revised = revise_record(
+        record,
+        {"title": "Profile substitution attempt"},
+        actor="unit-test",
+        updated_at="2026-08-12T00:00:00Z",
+        change_summary="test lineage profile",
+    )
+    revised["evolution"]["parent_digest_profile"] = "cpas-sha256-direct-v1"
+    revised = seal_record(revised)
+    with pytest.raises(DKAStoreError, match="current head tuple"):
+        store.put(revised, expected_head=head["digest"])
 
 
 def test_branch_creates_new_lineage(tmp_path):
@@ -114,6 +150,10 @@ def test_branch_creates_new_lineage(tmp_path):
     branched = store.get(record["dka_id"], "alternative")
     assert head["digest"] == branched["integrity"]["digest"]
     assert branched["evolution"]["parent_digest"] == record["integrity"]["digest"]
+    assert (
+        branched["evolution"]["parent_digest_profile"]
+        == DKA_SNAPSHOT_DIGEST_PROFILE
+    )
 
 
 def _variant(base, branch, claim):
@@ -123,7 +163,9 @@ def _variant(base, branch, claim):
     result["claim"] = claim
     result["evolution"] = {
         "parent_digest": base["integrity"]["digest"],
+        "parent_digest_profile": DKA_SNAPSHOT_DIGEST_PROFILE,
         "merge_parents": [],
+        "merge_parent_digest_profiles": [],
         "change_summary": branch,
     }
     result["provenance"]["updated_at"] = "2026-08-12T00:00:00Z"
@@ -150,6 +192,10 @@ def test_three_way_merge_preserves_conflict_instead_of_averaging():
         if zone["id"].startswith("merge-conflict")
     ]
     assert conflicts and set(conflicts[0]["positions"]) == {"Left claim", "Right claim"}
+    assert merged["evolution"]["merge_parent_digest_profiles"] == [
+        DKA_SNAPSHOT_DIGEST_PROFILE,
+        DKA_SNAPSHOT_DIGEST_PROFILE,
+    ]
     assert verify_record_integrity(merged)
 
 

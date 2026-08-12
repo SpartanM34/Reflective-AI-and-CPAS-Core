@@ -61,7 +61,8 @@ Clarence-9’s reviewed result is
 Keep the legacy token as source evidence. Create a new SeedToken v2 with a new
 `token_id`, an exact IDP identity digest, state digests, capability profile,
 continuity scope, and optional expiry/parent. Recompute v2 integrity using the
-documented canonicalization.
+documented canonicalization and artifact-domain profile. See the explicit
+[draft digest migration](canonicalization-v1-to-jcs-v1.md).
 
 Do not copy a legacy `hash`, `chain_hash`, or SHA-256 “signature” into an
 authenticator. If sender authentication is required, configure a trusted key

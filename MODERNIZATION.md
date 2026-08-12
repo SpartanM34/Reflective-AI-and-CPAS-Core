@@ -30,6 +30,8 @@ The runtime is replaceable infrastructure, not the identity.
 | Platform research | [`docs/research/current-platform-capabilities-2026-08.md`](docs/research/current-platform-capabilities-2026-08.md) |
 | Verification record | [`docs/verification/CPAS-v2-verification-2026-08-11.md`](docs/verification/CPAS-v2-verification-2026-08-11.md) |
 | CI guardrails | [`docs/ci-v2.md`](docs/ci-v2.md), [workflow](.github/workflows/cpas-v2-ci.yml), and [verification](docs/verification/CPAS-v2-CI-foundation-2026-08-11.md) |
+| Canonicalization decision | [`docs/adr/0001-canonicalization-and-digest-profiles.md`](docs/adr/0001-canonicalization-and-digest-profiles.md), [vectors](compliance-tests/canonicalization/cpas-canonicalization-v1.json), and [migration](migrations/canonicalization-v1-to-jcs-v1.md) |
+| Canonicalization verification | [`docs/verification/CPAS-v2-canonicalization-2026-08-12.md`](docs/verification/CPAS-v2-canonicalization-2026-08-12.md) |
 
 ## Status vocabulary
 
