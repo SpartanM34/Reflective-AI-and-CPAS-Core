@@ -138,6 +138,14 @@ Rehydration is a trust boundary. Persisted text is untrusted data unless a
 separate authorized policy elevates it. Access control, encryption, retention,
 erasure, and secrets management are host responsibilities.
 
+The backend-neutral [DKA-E store contract](DKA-Store-Contract-v1.0.md) defines
+atomic CAS, lineage, authorization inputs, audit, lifecycle, and typed failures.
+`cpas-sqlite-rollback-single-host-v1` is the first implementation-tested,
+production-oriented profile. It is intentionally limited to one POSIX host,
+local storage, one database per tenant, and serialized writers. It enforces
+host-supplied permissions but does not authenticate principals, encrypt data,
+or certify the deployment. Multi-host consistency remains a separate profile.
+
 ## 6. Runtime and tool negotiation
 
 Capabilities use `unknown`, `declared`, `probed`, `verified`, and `unavailable`.
@@ -187,6 +195,7 @@ decision authority; agreement alone leaves consensus `not_computed`.
 | IDP | 2.0 | Instance identity/policy and current binding declaration. |
 | IDP transition | 1.0 | Governance policy snapshot, change class, approvals, and assurance result. |
 | DKA-E | 2.0 | External epistemic records and lifecycle. |
+| DKA-E store | 1.0 | Backend interface, failure semantics, and named persistence profiles. |
 | SeedToken | 2.0 | Compact continuity metadata and state references. |
 | EEP | 2.0 | Cross-instance epistemic exchange and explicit consensus records. |
 
@@ -220,6 +229,6 @@ exact artifact bytes. Down-conversion is lossy.
 
 “Must,” “must not,” “required,” “should,” and “may” describe this draft’s
 intended contract. The Python package is a small reference implementation, not
-a production service. Security, distributed storage, provider adapters, public-
-key signatures, calibration research, and deployment certification remain open
+a production service. Multi-host storage, external authentication/encryption,
+provider adapters, public-key signatures, calibration research, and deployment certification remain open
 work documented in [`docs/open-questions-v2.md`](../../docs/open-questions-v2.md).

@@ -7,8 +7,8 @@ confidence in a proposed answer.
 | # | Open question | Why unresolved | Current leaning | Importance confidence |
 |---|---|---|---|---|
 | 3 | Should SeedToken gain a public-key signature profile? | HMAC is implementable but unsuitable for public verification and non-repudiation; algorithm agility introduces complexity. | Draft a separate signed-envelope profile only after threat-model and key-governance review. | **High** |
-| 5 | How are DKA deletions reconciled with immutable Git/event history and privacy law? | Tombstones retain evidence of deletion but Git history may retain the content; rewriting history harms provenance. | Classify sensitive records before storage and use erasable encrypted payloads or non-Git stores where deletion is mandatory. | **High** |
-| 6 | What is the normative distributed DKA-E consistency model? | The file reference demonstrates local CAS only. Databases, Git, and object/event stores have different transaction and conflict guarantees. | Specify a minimal store contract plus backend profiles rather than promise universal transactions. | **High** |
+| 5 | How are DKA deletions reconciled with immutable Git/event history and privacy law? | The SQLite profile can purge its live canonical payload and retain a tombstone, but backups, audit exports, derived indexes, Git history, and legal obligations remain deployment-specific. | Classify before storage; use erasable encrypted payloads/non-Git stores where deletion is mandatory; require every derivative/copy to join the retention decision. | **High** |
+| 6 | What is the normative distributed DKA-E consistency model? | The v1 store contract and SQLite profile resolve single-host atomic/CAS semantics only. Databases, Git, object/event stores, replicas, and multiple writers need a separately tested model. | Add a PostgreSQL client/server profile with real server execution before claiming multi-host consistency; do not generalize SQLite results. | **High** |
 | 7 | How should confidence be calibrated and propagated? | Subjective numbers are easy to serialize but may imply unsupported precision; different domains need different calibration evidence. | Require basis/calibration labels now; develop domain profiles and scoring rules later. | **High** |
 | 8 | How is behavioral continuity evaluated across model replacements? | Identity digest invariance tests declaration continuity, not tone, judgment, safety, or task performance. | Maintain a versioned behavioral evaluation suite with human review and drift thresholds, without treating it as consciousness continuity. | **High** |
 | 9 | How are correlated agent errors measured before consensus aggregation? | Provider/model/prompt/retrieval overlap can make “independent agents” highly dependent, and platforms expose incomplete lineage. | Record known shared dependencies and avoid independence weights unless empirically justified. | **High** |
@@ -25,7 +25,7 @@ confidence in a proposed answer.
 ## Decisions required before a stable 2.0.0
 
 At minimum, maintainers should resolve production trust/reviewer appointments,
-production persistence profiles, privacy/deletion handling,
+multi-host persistence and privacy/deletion handling,
 capability evidence levels, SeedToken authentication direction, and a behavioral
 runtime-replacement evaluation. Other questions can remain profiled extensions
 if the stable core clearly labels them.
@@ -49,3 +49,13 @@ as maintainer/issuer/human override while reviewer, runtime operator, and
 successor remain vacant. Production actor authentication, reviewer appointment,
 and emergency succession are deliberately still unresolved rather than being
 inferred from repository metadata.
+
+[ADR-0003](adr/0003-dka-e-single-host-sqlite-profile.md) resolves the first
+production-oriented persistence profile at implementation-tested level. The
+[store contract](../specs/v2.0/DKA-Store-Contract-v1.0.md) defines atomic CAS,
+failure, authorization-input, audit, and rehydration boundaries; the
+[SQLite profile](../specs/v2.0/DKA-E-SQLite-Profile-v1.0.md) verifies those on a
+single POSIX host with rollback journaling. It deliberately does not resolve
+distributed consistency, engine authentication, encryption/key management,
+backup retention, complete erasure, or deployment certification, so questions
+5 and 6 remain open in those narrower forms.
