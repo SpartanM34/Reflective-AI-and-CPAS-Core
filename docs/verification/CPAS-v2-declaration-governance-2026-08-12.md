@@ -131,8 +131,19 @@ exact artifact bytes were permanent.
   append-only history, or completeness of rejection records.
 - No runtime replacement or behavioral evaluation was performed.
 
-Hosted Python 3.11/3.12/3.13 and repository-invariant checks remain pending
-until the branch is pushed and its draft PR workflow completes.
+## Hosted CI
+
+[CPAS v2 CI run 5](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31557314281)
+completed successfully on draft PR #103 at remote commit
+`41f8f30c47f783a748ba588a8441aec9c04efb1b`:
+
+- Repository invariants: passed;
+- complete tests on Python 3.11: passed;
+- complete tests on Python 3.12: passed; and
+- complete tests on Python 3.13: passed.
+
+The follow-up commit that records this hosted result changes documentation only;
+its own workflow status is reported on the PR.
 
 The governing documents are
 [ADR-0002](../adr/0002-declaration-governance-and-identity-evolution.md),
