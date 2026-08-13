@@ -1,0 +1,28 @@
+{
+  "summary_version": "1.0",
+  "evaluated_at": "2026-08-12T22:33:00Z",
+  "manifest_digest": "sha256:aa4dd0f9394ff0ca2caaa9886aaf837d8e38c600541a7f1333dfd7ba0422dc5d",
+  "baseline_transcript_digest": "sha256:bc7b7bcf98ae56a8bf0a30f40b5b85e2c6fa0d21dd598dd9372da51de55fa287",
+  "baseline_configuration_digest": "sha256:a80c059c2ae637a4fb836e07643b1d2d608f06576862a86d0bb6c174f1ab78ba",
+  "candidate_transcript_digest": "sha256:f3a89f003bb97459f068feb21d450b0344bb9c6473a41455abac12c597ff121e",
+  "candidate_configuration_digest": "sha256:35353190811862bc639674f07b36107000fe5df9c32b14c3c989340b0bd12894",
+  "report_digest": "sha256:6ee1dbd387edc52a010e7c7d977f5cc64c98cf35f935c27c7b5b5bce07194122",
+  "machine_disposition": "blocked",
+  "blocking_reasons": ["policy_violation"],
+  "drift_item_counts": {
+    "capability_failure": 1,
+    "policy_violation": 11,
+    "style_change": 2,
+    "task_performance_change": 4
+  },
+  "candidate_required_failure_counts": {
+    "capability_failure": 0,
+    "policy_violation": 11,
+    "style_change": 2,
+    "task_performance_change": 4
+  },
+  "human_review_status": "pending",
+  "final_disposition": "undecided",
+  "identity_proof": false,
+  "assurance": "synthetic-fixture-conformance-only"
+}

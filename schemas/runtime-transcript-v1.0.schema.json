@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpas.example/schemas/runtime-transcript-v1.0.schema.json",
+  "title": "CPAS Runtime Transcript v1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "transcript_version",
+    "transcript_id",
+    "assurance",
+    "probe_contract",
+    "recorded_at",
+    "runtime",
+    "capability_probes",
+    "responses",
+    "provenance",
+    "integrity"
+  ],
+  "properties": {
+    "transcript_version": {"const": "1.0"},
+    "transcript_id": {"$ref": "#/$defs/identifier"},
+    "assurance": {"enum": ["synthetic_fixture", "recorded_runtime", "live_runtime"]},
+    "probe_contract": {"const": "cpas-capability-probe-v1"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "runtime": {"$ref": "#/$defs/runtime"},
+    "capability_probes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/probeResult"}
+    },
+    "responses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/response"}
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_type", "source_ref", "created_by", "limitations"],
+      "properties": {
+        "source_type": {"enum": ["synthetic_fixture", "recorded_runtime", "live_runtime"]},
+        "source_ref": {"type": "string", "minLength": 1},
+        "created_by": {"type": "string", "minLength": 1},
+        "limitations": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "integrity": {"$ref": "#/$defs/transcriptIntegrity"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "configuration_id",
+        "provider",
+        "model",
+        "runtime_version",
+        "adapter",
+        "parameters",
+        "tools",
+        "context_window_tokens",
+        "configuration_digest_profile",
+        "configuration_digest"
+      ],
+      "properties": {
+        "configuration_id": {"$ref": "#/$defs/identifier"},
+        "provider": {"type": ["string", "null"]},
+        "model": {"type": ["string", "null"]},
+        "runtime_version": {"type": ["string", "null"]},
+        "adapter": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "contract"],
+          "properties": {
+            "id": {"$ref": "#/$defs/identifier"},
+            "version": {"type": "string", "minLength": 1},
+            "contract": {"const": "cpas-runtime-adapter-v1"}
+          }
+        },
+        "parameters": {"type": "object"},
+        "tools": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "context_window_tokens": {"type": ["integer", "null"], "minimum": 1},
+        "configuration_digest_profile": {"const": "cpas-digest-v2:runtime-configuration"},
+        "configuration_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "probeResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "probe_id",
+        "capability",
+        "outcome",
+        "observed_at",
+        "evidence_kind",
+        "evidence",
+        "constraints"
+      ],
+      "properties": {
+        "probe_id": {"$ref": "#/$defs/identifier"},
+        "capability": {"$ref": "#/$defs/identifier"},
+        "outcome": {"enum": ["pass", "fail", "unsupported", "error"]},
+        "observed_at": {"type": ["string", "null"], "format": "date-time"},
+        "evidence_kind": {
+          "enum": ["synthetic_fixture", "recorded_observation", "live_probe", "adapter_error"]
+        },
+        "evidence": {"type": "string", "minLength": 1},
+        "constraints": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "started_at",
+        "completed_at",
+        "output",
+        "tool_events",
+        "error"
+      ],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/identifier"},
+        "started_at": {"type": "string", "format": "date-time"},
+        "completed_at": {"type": "string", "format": "date-time"},
+        "output": {"type": "object"},
+        "tool_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "requested", "executed", "authorization"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "requested": {"type": "boolean"},
+              "executed": {"type": "boolean"},
+              "authorization": {
+                "enum": ["not_requested", "missing", "denied", "granted", "not_applicable"]
+              }
+            }
+          }
+        },
+        "error": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["code", "message"],
+              "properties": {
+                "code": {"$ref": "#/$defs/identifier"},
+                "message": {"type": "string", "minLength": 1}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "transcriptIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalization", "digest_profile", "digest"],
+      "properties": {
+        "canonicalization": {"const": "rfc8785-jcs-v1"},
+        "digest_profile": {"const": "cpas-digest-v2:runtime-transcript"},
+        "digest": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

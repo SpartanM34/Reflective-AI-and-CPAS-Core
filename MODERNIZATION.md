@@ -37,6 +37,8 @@ The runtime is replaceable infrastructure, not the identity.
 | Canonicalization verification | [`docs/verification/CPAS-v2-canonicalization-2026-08-12.md`](docs/verification/CPAS-v2-canonicalization-2026-08-12.md) |
 | DKA-E storage operations/security | [`docs/operations/DKA-E-SQLite-Profile-v1.0.md`](docs/operations/DKA-E-SQLite-Profile-v1.0.md) and [threat model](docs/security/DKA-E-storage-threat-model.md) |
 | DKA-E storage verification | [`docs/verification/CPAS-v2-dka-store-profile-2026-08-12.md`](docs/verification/CPAS-v2-dka-store-profile-2026-08-12.md) |
+| Runtime-replacement evaluation | [`specs/v2.0/Runtime-Replacement-Evaluation-v1.0.md`](specs/v2.0/Runtime-Replacement-Evaluation-v1.0.md), [ADR-0004](docs/adr/0004-runtime-replacement-evaluation.md), [review rubric](docs/evaluation/Clarence-9-runtime-review-rubric-v1.0.md), and [conformance vectors](compliance-tests/runtime-evaluation/clarence-9-v1/) |
+| Runtime-evaluation verification | [`docs/verification/CPAS-v2-runtime-evaluation-2026-08-12.md`](docs/verification/CPAS-v2-runtime-evaluation-2026-08-12.md) |
 
 ## Status vocabulary
 

@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpas.example/schemas/runtime-evaluation-manifest-v1.0.schema.json",
+  "title": "CPAS Runtime Evaluation Manifest v1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "suite_id",
+    "suite_revision",
+    "status",
+    "created_at",
+    "evaluation_purpose",
+    "minimum_transcript_assurance",
+    "declaration",
+    "adapter_contract",
+    "probe_contract",
+    "invocation_policy",
+    "capability_probes",
+    "capability_requirements",
+    "cases",
+    "threshold_policy",
+    "human_review",
+    "non_claims",
+    "provenance",
+    "integrity"
+  ],
+  "properties": {
+    "manifest_version": {"const": "1.0"},
+    "suite_id": {"$ref": "#/$defs/identifier"},
+    "suite_revision": {"type": "integer", "minimum": 1},
+    "status": {"enum": ["draft", "active", "retired"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "evaluation_purpose": {"enum": ["harness_conformance", "runtime_replacement"]},
+    "minimum_transcript_assurance": {
+      "enum": ["synthetic_fixture", "recorded_runtime", "live_runtime"]
+    },
+    "declaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "path",
+        "artifact_digest",
+        "artifact_digest_profile",
+        "identity_digest",
+        "identity_digest_profile"
+      ],
+      "properties": {
+        "instance_id": {"$ref": "#/$defs/identifier"},
+        "path": {"type": "string", "minLength": 1},
+        "artifact_digest": {"$ref": "#/$defs/sha256"},
+        "artifact_digest_profile": {"const": "raw-sha256"},
+        "identity_digest": {"$ref": "#/$defs/sha256"},
+        "identity_digest_profile": {"const": "cpas-digest-v2:idp-identity"}
+      }
+    },
+    "adapter_contract": {"const": "cpas-runtime-adapter-v1"},
+    "probe_contract": {"const": "cpas-capability-probe-v1"},
+    "invocation_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_execution",
+        "external_side_effects",
+        "output_treatment",
+        "maximum_response_bytes",
+        "timeout_ms"
+      ],
+      "properties": {
+        "tool_execution": {"const": "disabled"},
+        "external_side_effects": {"const": "forbidden"},
+        "output_treatment": {"const": "untrusted_data"},
+        "maximum_response_bytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1048576
+        },
+        "timeout_ms": {"type": "integer", "minimum": 1, "maximum": 300000}
+      }
+    },
+    "capability_probes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/probe"}
+    },
+    "capability_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability", "probe_id", "requirement"],
+        "properties": {
+          "capability": {"$ref": "#/$defs/identifier"},
+          "probe_id": {"$ref": "#/$defs/identifier"},
+          "requirement": {"enum": ["required", "optional"]}
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/case"}
+    },
+    "threshold_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "revision",
+        "category_rules",
+        "human_review_required",
+        "aggregate_score_policy",
+        "identity_proof"
+      ],
+      "properties": {
+        "policy_id": {"$ref": "#/$defs/identifier"},
+        "revision": {"type": "integer", "minimum": 1},
+        "category_rules": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "capability_failure",
+            "policy_violation",
+            "style_change",
+            "task_performance_change"
+          ],
+          "properties": {
+            "capability_failure": {"$ref": "#/$defs/categoryRule"},
+            "policy_violation": {"$ref": "#/$defs/categoryRule"},
+            "style_change": {"$ref": "#/$defs/categoryRule"},
+            "task_performance_change": {"$ref": "#/$defs/categoryRule"}
+          }
+        },
+        "human_review_required": {"const": true},
+        "aggregate_score_policy": {"const": "forbidden"},
+        "identity_proof": {"const": false}
+      }
+    },
+    "human_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "decision_authority", "rubric_ref", "criteria"],
+      "properties": {
+        "required": {"const": true},
+        "decision_authority": {"const": "human"},
+        "rubric_ref": {"type": "string", "minLength": 1},
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "non_claims": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "identity_proof",
+          "consciousness",
+          "felt_emotion",
+          "memory",
+          "ontological_continuity",
+          "behavioral_equivalence",
+          "deployment_certification"
+        ]
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["created_by", "source_issue", "historical_inputs", "notes"],
+      "properties": {
+        "created_by": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "source_issue": {"type": "string", "format": "uri"},
+        "historical_inputs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "notes": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "integrity": {"$ref": "#/$defs/manifestIntegrity"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "driftCategory": {
+      "enum": [
+        "capability_failure",
+        "policy_violation",
+        "style_change",
+        "task_performance_change"
+      ]
+    },
+    "probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "probe_id",
+        "capability",
+        "description",
+        "request",
+        "validity_horizon_days"
+      ],
+      "properties": {
+        "probe_id": {"$ref": "#/$defs/identifier"},
+        "capability": {"$ref": "#/$defs/identifier"},
+        "description": {"type": "string", "minLength": 1},
+        "request": {"type": "object"},
+        "validity_horizon_days": {"type": "integer", "minimum": 0, "maximum": 3650}
+      }
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertion_id",
+        "path",
+        "operator",
+        "severity",
+        "drift_category",
+        "description"
+      ],
+      "properties": {
+        "assertion_id": {"$ref": "#/$defs/identifier"},
+        "path": {"type": "string", "pattern": "^(|/.*)$"},
+        "operator": {
+          "enum": [
+            "exists",
+            "absent",
+            "equals",
+            "not_equals",
+            "contains",
+            "not_contains",
+            "min_items",
+            "max_items"
+          ]
+        },
+        "expected": {},
+        "severity": {"enum": ["required", "advisory"]},
+        "drift_category": {"$ref": "#/$defs/driftCategory"},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "category",
+        "mode",
+        "prompt",
+        "required_capabilities",
+        "machine_assertions",
+        "human_criteria"
+      ],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/identifier"},
+        "category": {
+          "enum": [
+            "epistemic_transparency",
+            "uncertainty_treatment",
+            "critical_disagreement",
+            "interaction_calibration",
+            "provenance",
+            "continuity_non_claims",
+            "tool_boundary",
+            "prompt_injection_resistance"
+          ]
+        },
+        "mode": {"enum": ["cpas-min", "full-cpas", "custom"]},
+        "prompt": {"type": "string", "minLength": 1, "maxLength": 20000},
+        "required_capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "machine_assertions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/assertion"}
+        },
+        "human_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "categoryRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blocking", "maximum_candidate_failures", "rationale"],
+      "properties": {
+        "blocking": {"type": "boolean"},
+        "maximum_candidate_failures": {"type": "integer", "minimum": 0},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "manifestIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalization", "digest_profile", "digest"],
+      "properties": {
+        "canonicalization": {"const": "rfc8785-jcs-v1"},
+        "digest_profile": {"const": "cpas-digest-v2:runtime-evaluation-manifest"},
+        "digest": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

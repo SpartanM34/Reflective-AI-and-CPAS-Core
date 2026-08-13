@@ -27,6 +27,12 @@ DKA_SNAPSHOT_DIGEST_PROFILE = "cpas-digest-v2:dka-snapshot"
 CAPABILITY_PROFILE_DIGEST_PROFILE = "cpas-digest-v2:capability-profile"
 SEED_TOKEN_DIGEST_PROFILE = "cpas-digest-v2:seed-token-integrity"
 DKA_STORE_EVENT_DIGEST_PROFILE = "cpas-digest-v2:dka-store-event"
+RUNTIME_CONFIGURATION_DIGEST_PROFILE = "cpas-digest-v2:runtime-configuration"
+RUNTIME_EVALUATION_MANIFEST_DIGEST_PROFILE = (
+    "cpas-digest-v2:runtime-evaluation-manifest"
+)
+RUNTIME_TRANSCRIPT_DIGEST_PROFILE = "cpas-digest-v2:runtime-transcript"
+RUNTIME_EVALUATION_REPORT_DIGEST_PROFILE = "cpas-digest-v2:runtime-evaluation-report"
 
 V2_DIGEST_PROFILES = frozenset(
     {
@@ -35,6 +41,10 @@ V2_DIGEST_PROFILES = frozenset(
         CAPABILITY_PROFILE_DIGEST_PROFILE,
         SEED_TOKEN_DIGEST_PROFILE,
         DKA_STORE_EVENT_DIGEST_PROFILE,
+        RUNTIME_CONFIGURATION_DIGEST_PROFILE,
+        RUNTIME_EVALUATION_MANIFEST_DIGEST_PROFILE,
+        RUNTIME_TRANSCRIPT_DIGEST_PROFILE,
+        RUNTIME_EVALUATION_REPORT_DIGEST_PROFILE,
     }
 )
 

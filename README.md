@@ -166,6 +166,11 @@ The first production-oriented DKA-E backend profile is the deliberately scoped
 Its passing tests establish reference implementation behavior, not deployment
 certification; the [operations runbook](docs/operations/DKA-E-SQLite-Profile-v1.0.md)
 lists the required external controls.
+Clarence-9 runtime replacement is evaluated separately from identity-digest
+continuity by the
+[v1 gate-and-rubric harness](specs/v2.0/Runtime-Replacement-Evaluation-v1.0.md).
+Its checked-in runtime configurations are synthetic conformance fixtures, not
+hosted-model verification; machine results never finalize compatibility.
 
 ### Post-Commit Monitoring Hook
 

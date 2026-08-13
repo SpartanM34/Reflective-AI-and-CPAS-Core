@@ -113,6 +113,21 @@ identity-required policies/capabilities are satisfied. Across an explicit
 encoding migration, implementations compare the stable projection and record
 both digest tuples. Output behavior may still differ and must be validated.
 
+### 3.1 Runtime-replacement evaluation
+
+`cpas-runtime-evaluation-v1` binds an exact declaration artifact, evaluation
+manifest, runtime configurations, capability observations, and transcripts.
+It separates capability failure, policy violation, style change, and task-
+performance change. Required capability and policy gates may block a candidate;
+no machine score can establish identity or finalize compatibility. Raw runtime
+output remains untrusted data and recorded tool events are never executed by
+the reference evaluator. Every final disposition requires human review under
+the [runtime-replacement protocol](Runtime-Replacement-Evaluation-v1.0.md).
+
+The checked-in Clarence-9 configurations are synthetic positive/negative
+conformance fixtures. They establish implementation behavior for the harness,
+not runtime verification for a provider/model.
+
 ## 4. Transparency and reflection
 
 The guiding principle is:
@@ -198,6 +213,7 @@ decision authority; agreement alone leaves consensus `not_computed`.
 | DKA-E store | 1.0 | Backend interface, failure semantics, and named persistence profiles. |
 | SeedToken | 2.0 | Compact continuity metadata and state references. |
 | EEP | 2.0 | Cross-instance epistemic exchange and explicit consensus records. |
+| Runtime evaluation | 1.0 | Versioned adapter/probe observations, behavioral drift categories, machine gates, and mandatory human review. |
 
 JSON Schema Draft 2020-12 validates shapes. Semantics such as evidence truth,
 authorization, independence, and safe tool execution require application logic.
@@ -230,5 +246,5 @@ exact artifact bytes. Down-conversion is lossy.
 “Must,” “must not,” “required,” “should,” and “may” describe this draft’s
 intended contract. The Python package is a small reference implementation, not
 a production service. Multi-host storage, external authentication/encryption,
-provider adapters, public-key signatures, calibration research, and deployment certification remain open
+live provider adapters, public-key signatures, calibration research, and deployment certification remain open
 work documented in [`docs/open-questions-v2.md`](../../docs/open-questions-v2.md).
