@@ -84,7 +84,20 @@ modules compiled and the proposed diff had no whitespace errors.
   compatibility, or deployment certification;
 - consciousness, memory, identity proof, or ontological continuity.
 
-## Remote CI status
+## Remote CI evidence
 
-Pending publication of the branch and draft pull request. Local results are not
-substituted for final-head GitHub Actions evidence.
+[CPAS v2 CI run #14](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31750680523)
+(run ID `31750680523`) completed successfully against audit commit
+`1dfa919617db73e52ba520be753b6b562df8c666` in draft PR #107.
+
+| Job | Job ID | Result |
+|---|---:|---|
+| Repository invariants | [94615481770](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31750680523/job/94615481770) | Success |
+| Tests (Python 3.11) | [94615481801](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31750680523/job/94615481801) | Success |
+| Tests (Python 3.12) | [94615481738](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31750680523/job/94615481738) | Success |
+| Tests (Python 3.13) | [94615481810](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31750680523/job/94615481810) | Success |
+
+The repository-invariants job ran the repository validator, independent Node.js
+canonicalization vectors, Python compilation, and proposed-diff whitespace
+check. Each Python job ran the complete test suite. These statuses verify the
+audit commit; they do not accept its proposed dispositions or authorize an RC.
