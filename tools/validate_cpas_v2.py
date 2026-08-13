@@ -20,6 +20,13 @@ if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from cpas.dka import validate_record, verify_record_integrity  # noqa: E402
+from cpas.evaluation import (  # noqa: E402
+    DRIFT_CATEGORIES,
+    compare_runtime_transcripts,
+    validate_manifest,
+    validate_report,
+    validate_transcript,
+)
 from cpas.exchange import validate_message  # noqa: E402
 from cpas.governance import validate_transition  # noqa: E402
 from cpas.idp import migrate_idp_v1_to_v2, validate_idp  # noqa: E402
@@ -33,6 +40,7 @@ from cpas.provenance import (  # noqa: E402
     load_json,
 )
 from cpas.seed_token import validate_token  # noqa: E402
+from cpas.runtime import TranscriptRuntimeAdapter  # noqa: E402
 from tools.verify_canonicalization_vectors import verify_vectors  # noqa: E402
 
 
@@ -47,6 +55,14 @@ SCHEMA_INSTANCE_PAIRS = (
     (
         "schemas/epistemic-exchange-v2.0.schema.json",
         "examples/v2/epistemic-exchange-v2.example.json",
+    ),
+    (
+        "schemas/runtime-evaluation-manifest-v1.0.schema.json",
+        "compliance-tests/runtime-evaluation/clarence-9-v1/manifest.json",
+    ),
+    (
+        "schemas/runtime-transcript-v1.0.schema.json",
+        "compliance-tests/runtime-evaluation/clarence-9-v1/baseline-transcript.json",
     ),
 )
 
@@ -63,6 +79,8 @@ MARKDOWN_GLOBS = (
     "docs/verification/CPAS-v2-*.md",
     "docs/operations/*.md",
     "docs/security/*.md",
+    "docs/evaluation/*.md",
+    "compliance-tests/runtime-evaluation/**/*.md",
     "instances/current/*.md",
     "instances/legacy/*.md",
     "migrations/CPAS-v1.1-to-v2.0.md",
@@ -92,6 +110,7 @@ class ValidationReport:
     markdown_links: int
     migrated_idps: int
     canonicalization_vector_checks: int
+    runtime_evaluation_checks: int
 
 
 def _object(root: Path, relative: str) -> dict[str, Any]:
@@ -112,6 +131,16 @@ def validate_schema_instances(root: Path) -> None:
             first = errors[0]
             location = "/".join(map(str, first.path)) or "<root>"
             raise ValidationFailure(f"{instance_relative}:{location}: {first.message}")
+
+
+def validate_all_schemas(root: Path) -> int:
+    paths = sorted((root / "schemas").glob("*.schema.json"))
+    if not paths:
+        raise ValidationFailure("no CPAS v2 schemas discovered")
+    for path in paths:
+        schema = load_json(path)
+        Draft202012Validator.check_schema(schema)
+    return len(paths)
 
 
 def require_file_digest(root: Path, ref: str, expected: str, *, owner: str) -> None:
@@ -239,6 +268,100 @@ def validate_semantics_and_integrity(root: Path) -> int:
     return checked
 
 
+def validate_runtime_evaluation(root: Path) -> tuple[int, int]:
+    fixture_root = root / "compliance-tests/runtime-evaluation/clarence-9-v1"
+    manifest = _object(root, str((fixture_root / "manifest.json").relative_to(root)))
+    baseline = _object(
+        root, str((fixture_root / "baseline-transcript.json").relative_to(root))
+    )
+    candidate = _object(
+        root, str((fixture_root / "candidate-transcript.json").relative_to(root))
+    )
+    expected = _object(
+        root, str((fixture_root / "expected-summary.json").relative_to(root))
+    )
+    validate_manifest(manifest)
+    validate_transcript(baseline)
+    validate_transcript(candidate)
+
+    declaration_path = (root / manifest["declaration"]["path"]).resolve()
+    try:
+        declaration_path.relative_to(root.resolve())
+    except ValueError as exc:
+        raise ValidationFailure(
+            "runtime evaluation declaration reference escapes repository"
+        ) from exc
+    declaration = _object(root, str(declaration_path.relative_to(root)))
+    require_file_digest(
+        root,
+        manifest["declaration"]["path"],
+        manifest["declaration"]["artifact_digest"],
+        owner="runtime evaluation manifest",
+    )
+    report = compare_runtime_transcripts(
+        manifest,
+        declaration,
+        baseline,
+        candidate,
+        TranscriptRuntimeAdapter(baseline),
+        TranscriptRuntimeAdapter(candidate),
+        evaluated_at=expected["evaluated_at"],
+        declaration_path=declaration_path,
+    )
+    validate_report(report, manifest=manifest)
+
+    exact_values = {
+        "manifest_digest": report["manifest"]["digest"],
+        "baseline_transcript_digest": report["baseline_runtime"][
+            "transcript_digest"
+        ],
+        "baseline_configuration_digest": report["baseline_runtime"]["runtime"][
+            "configuration_digest"
+        ],
+        "candidate_transcript_digest": report["candidate_runtime"][
+            "transcript_digest"
+        ],
+        "candidate_configuration_digest": report["candidate_runtime"]["runtime"][
+            "configuration_digest"
+        ],
+        "report_digest": report["integrity"]["digest"],
+        "machine_disposition": report["threshold_evaluation"][
+            "machine_disposition"
+        ],
+        "blocking_reasons": report["threshold_evaluation"]["blocking_reasons"],
+        "human_review_status": report["human_review"]["status"],
+        "final_disposition": report["final_disposition"],
+        "identity_proof": report["identity_assessment"]["identity_proof"],
+    }
+    for field, actual in exact_values.items():
+        if expected.get(field) != actual:
+            raise ValidationFailure(
+                f"runtime evaluation expected {field}={expected.get(field)!r}, got {actual!r}"
+            )
+    drift_counts = {name: len(report["drift"][name]) for name in DRIFT_CATEGORIES}
+    if expected["drift_item_counts"] != drift_counts:
+        raise ValidationFailure("runtime evaluation drift item counts changed")
+    failure_counts = {
+        name: report["threshold_evaluation"]["category_results"][name][
+            "candidate_required_failures"
+        ]
+        for name in DRIFT_CATEGORIES
+    }
+    if expected["candidate_required_failure_counts"] != failure_counts:
+        raise ValidationFailure("runtime evaluation required failure counts changed")
+    if expected.get("assurance") != "synthetic-fixture-conformance-only":
+        raise ValidationFailure("runtime evaluation fixture assurance label changed")
+    if baseline["assurance"] != "synthetic_fixture" or candidate[
+        "assurance"
+    ] != "synthetic_fixture":
+        raise ValidationFailure("runtime conformance vectors must remain synthetic")
+
+    checks = 4 + len(manifest["cases"]) + len(manifest["capability_probes"]) + len(
+        DRIFT_CATEGORIES
+    )
+    return checks, 1
+
+
 def markdown_files(root: Path) -> list[Path]:
     files: set[Path] = set()
     for pattern in MARKDOWN_GLOBS:
@@ -294,8 +417,11 @@ def validate_legacy_migrations(root: Path) -> int:
 
 def validate_repository(root: Path = REPOSITORY_ROOT) -> ValidationReport:
     root = root.resolve()
+    schema_count = validate_all_schemas(root)
     validate_schema_instances(root)
     digest_references = validate_semantics_and_integrity(root)
+    runtime_checks, runtime_digest_references = validate_runtime_evaluation(root)
+    digest_references += runtime_digest_references
     files = markdown_files(root)
     links = validate_local_links(root, files)
     migrations = validate_legacy_migrations(root)
@@ -306,13 +432,14 @@ def validate_repository(root: Path = REPOSITORY_ROOT) -> ValidationReport:
         / "cpas-canonicalization-v1.json"
     )
     return ValidationReport(
-        schemas=len(SCHEMA_INSTANCE_PAIRS),
-        instances=len(SCHEMA_INSTANCE_PAIRS),
+        schemas=schema_count,
+        instances=len(SCHEMA_INSTANCE_PAIRS) + 2,
         digest_references=digest_references,
         markdown_files=len(files),
         markdown_links=links,
         migrated_idps=migrations,
         canonicalization_vector_checks=vector_checks,
+        runtime_evaluation_checks=runtime_checks,
     )
 
 
@@ -335,7 +462,8 @@ def main(argv: list[str] | None = None) -> int:
             f"{report.digest_references} digest references, "
             f"{report.markdown_links} local links in {report.markdown_files} files, "
             f"{report.migrated_idps} migrated IDP v1 declarations, "
-            f"{report.canonicalization_vector_checks} canonicalization vector checks"
+            f"{report.canonicalization_vector_checks} canonicalization vector checks, "
+            f"{report.runtime_evaluation_checks} runtime evaluation checks"
         )
     return 0
 

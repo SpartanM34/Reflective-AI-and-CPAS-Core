@@ -7,6 +7,12 @@ distributed persistence, or model-runtime implementation.
 
 from .identity import identity_digest, identity_projection
 from .dka_store import DKAStore, StoreContext
+from .evaluation import (
+    compare_runtime_transcripts,
+    validate_manifest,
+    validate_report,
+    validate_transcript,
+)
 from .governance import (
     classify_declaration_change,
     create_transition_record,
@@ -20,12 +26,17 @@ from .idp import (
     validate_idp,
 )
 from .sqlite_dka_store import SQLiteDKAStore
+from .runtime import RuntimeAdapter, TranscriptRuntimeAdapter
 
 __all__ = [
     "identity_digest",
     "identity_projection",
     "DKAStore",
     "StoreContext",
+    "compare_runtime_transcripts",
+    "validate_manifest",
+    "validate_report",
+    "validate_transcript",
     "classify_declaration_change",
     "create_transition_record",
     "evaluate_approvals",
@@ -35,6 +46,8 @@ __all__ = [
     "validate_idp",
     "validate_transition",
     "SQLiteDKAStore",
+    "RuntimeAdapter",
+    "TranscriptRuntimeAdapter",
 ]
 
 __version__ = "2.0.0.dev1"

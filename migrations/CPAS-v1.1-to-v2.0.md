@@ -143,12 +143,20 @@ For every target provider/model/tool set:
 3. test supported schema dialects, tool calls, context limits, file/web access,
    and state adapters;
 4. record constraints, test evidence, and `last_runtime_validation`;
-5. run representative behavioral evaluations for Clarence-9’s commitments;
-6. confirm identity digest invariance and report behavior drift.
+5. select and review a versioned runtime-evaluation manifest;
+6. capture exact runtime configuration, capability probes, transcript assurance,
+   and raw outputs under a no-side-effect policy;
+7. run `tools/evaluate_runtime_replacement.py` to separate capability, policy,
+   style, and task-performance drift;
+8. review raw outputs with the human rubric and record an attributable decision;
+9. confirm identity digest invariance without labeling it identity proof.
 
 A runtime can be technically compatible while producing materially different
 style or judgment. Identity-digest equality is necessary for declared
 continuity, not sufficient for behavioral equivalence.
+The checked-in Clarence-9 baseline/candidate transcripts are synthetic harness
+vectors and must not be migrated into `last_runtime_validation` as provider
+evidence.
 
 ## 10. Stage and release
 
@@ -182,6 +190,10 @@ later retry.
 - [ ] Stored/retrieved content remains untrusted data.
 - [ ] Agent agreement is not silently labeled consensus.
 - [ ] Runtime/tool capabilities are dated and probed/verified.
+- [ ] Runtime comparison fixes exact manifest/transcript/configuration digests,
+      separates four drift categories, and retains mandatory human review.
+- [ ] Synthetic fixtures are not relabeled as live runtime evidence or identity
+      proof.
 - [ ] Governance roles, vacancies, succession, and approval evidence are
       explicit and are not mislabeled as authentication/authorization.
 - [ ] Runtime rebind, compatible amendment, identity evolution, and new

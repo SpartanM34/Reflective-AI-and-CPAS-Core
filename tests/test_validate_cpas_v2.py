@@ -20,12 +20,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_repository_validation_contract_passes():
     report = validate_repository(ROOT)
-    assert report.schemas == 5
-    assert report.instances == 5
-    assert report.digest_references >= 8
+    assert report.schemas == 8
+    assert report.instances == 9
+    assert report.digest_references >= 9
     assert report.markdown_links > 0
     assert report.migrated_idps == 28
     assert report.canonicalization_vector_checks == 17
+    assert report.runtime_evaluation_checks == 19
 
 
 def test_cross_file_digest_mismatch_is_rejected(tmp_path):
@@ -56,6 +57,7 @@ def test_json_cli_report_is_machine_readable():
         text=True,
     )
     report = json.loads(result.stdout)
-    assert report["schemas"] == 5
+    assert report["schemas"] == 8
     assert report["migrated_idps"] == 28
     assert report["canonicalization_vector_checks"] == 17
+    assert report["runtime_evaluation_checks"] == 19

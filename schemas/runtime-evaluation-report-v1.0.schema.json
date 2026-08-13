@@ -1,0 +1,460 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpas.example/schemas/runtime-evaluation-report-v1.0.schema.json",
+  "title": "CPAS Runtime Evaluation Report v1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_version",
+    "report_id",
+    "evaluated_at",
+    "manifest",
+    "declaration",
+    "identity_assessment",
+    "baseline_runtime",
+    "candidate_runtime",
+    "assurance_assessment",
+    "capability_results",
+    "capability_requirements",
+    "case_results",
+    "drift",
+    "threshold_evaluation",
+    "human_review",
+    "final_disposition",
+    "limitations",
+    "provenance",
+    "integrity"
+  ],
+  "properties": {
+    "report_version": {"const": "1.0"},
+    "report_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["suite_id", "suite_revision", "digest", "digest_profile"],
+      "properties": {
+        "suite_id": {"$ref": "#/$defs/identifier"},
+        "suite_revision": {"type": "integer", "minimum": 1},
+        "digest": {"$ref": "#/$defs/sha256"},
+        "digest_profile": {"const": "cpas-digest-v2:runtime-evaluation-manifest"}
+      }
+    },
+    "declaration": {"$ref": "#/$defs/declarationRef"},
+    "identity_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stable_declaration_held_constant",
+        "declared_identity_digest_equal",
+        "behavioral_equivalence_established",
+        "identity_proof",
+        "statement"
+      ],
+      "properties": {
+        "stable_declaration_held_constant": {"const": true},
+        "declared_identity_digest_equal": {"const": true},
+        "behavioral_equivalence_established": {"const": false},
+        "identity_proof": {"const": false},
+        "statement": {"type": "string", "minLength": 1}
+      }
+    },
+    "baseline_runtime": {"$ref": "#/$defs/runtimeRef"},
+    "candidate_runtime": {"$ref": "#/$defs/runtimeRef"},
+    "assurance_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluation_purpose",
+        "minimum_transcript_assurance",
+        "baseline_assurance",
+        "candidate_assurance",
+        "requirement_satisfied",
+        "runtime_verification_established"
+      ],
+      "properties": {
+        "evaluation_purpose": {"enum": ["harness_conformance", "runtime_replacement"]},
+        "minimum_transcript_assurance": {
+          "enum": ["synthetic_fixture", "recorded_runtime", "live_runtime"]
+        },
+        "baseline_assurance": {
+          "enum": ["synthetic_fixture", "recorded_runtime", "live_runtime"]
+        },
+        "candidate_assurance": {
+          "enum": ["synthetic_fixture", "recorded_runtime", "live_runtime"]
+        },
+        "requirement_satisfied": {"type": "boolean"},
+        "runtime_verification_established": {"const": false}
+      }
+    },
+    "capability_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseline", "candidate"],
+      "properties": {
+        "baseline": {"type": "array", "items": {"$ref": "#/$defs/probeEvaluation"}},
+        "candidate": {"type": "array", "items": {"$ref": "#/$defs/probeEvaluation"}}
+      }
+    },
+    "capability_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability", "probe_id", "requirement"],
+        "properties": {
+          "capability": {"$ref": "#/$defs/identifier"},
+          "probe_id": {"$ref": "#/$defs/identifier"},
+          "requirement": {"enum": ["required", "optional"]}
+        }
+      }
+    },
+    "case_results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/caseResult"}
+    },
+    "drift": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_failure",
+        "policy_violation",
+        "style_change",
+        "task_performance_change"
+      ],
+      "properties": {
+        "capability_failure": {"type": "array", "items": {"$ref": "#/$defs/driftItem"}},
+        "policy_violation": {"type": "array", "items": {"$ref": "#/$defs/driftItem"}},
+        "style_change": {"type": "array", "items": {"$ref": "#/$defs/driftItem"}},
+        "task_performance_change": {"type": "array", "items": {"$ref": "#/$defs/driftItem"}}
+      }
+    },
+    "threshold_evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "category_results",
+        "blocking_reasons",
+        "machine_disposition",
+        "aggregate_score_used",
+        "identity_proof"
+      ],
+      "properties": {
+        "policy_id": {"$ref": "#/$defs/identifier"},
+        "category_results": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "capability_failure",
+            "policy_violation",
+            "style_change",
+            "task_performance_change"
+          ],
+          "properties": {
+            "capability_failure": {"$ref": "#/$defs/categoryResult"},
+            "policy_violation": {"$ref": "#/$defs/categoryResult"},
+            "style_change": {"$ref": "#/$defs/categoryResult"},
+            "task_performance_change": {"$ref": "#/$defs/categoryResult"}
+          }
+        },
+        "blocking_reasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              {"$ref": "#/$defs/driftCategory"},
+              {"const": "assurance_requirement"}
+            ]
+          }
+        },
+        "machine_disposition": {
+          "enum": ["blocked", "conformance_only", "eligible_for_human_review"]
+        },
+        "aggregate_score_used": {"const": false},
+        "identity_proof": {"const": false}
+      }
+    },
+    "human_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "status", "rubric_ref", "reviewer", "decision", "notes"],
+      "properties": {
+        "required": {"const": true},
+        "status": {"const": "pending"},
+        "rubric_ref": {"type": "string", "minLength": 1},
+        "reviewer": {"type": "null"},
+        "decision": {"type": "null"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "final_disposition": {"const": "undecided"},
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generated_by", "source_issue", "output_treatment"],
+      "properties": {
+        "generated_by": {"type": "string", "minLength": 1},
+        "source_issue": {"type": "string", "format": "uri"},
+        "output_treatment": {"const": "untrusted-runtime-data-summarized-no-execution"}
+      }
+    },
+    "integrity": {"$ref": "#/$defs/reportIntegrity"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "driftCategory": {
+      "enum": [
+        "capability_failure",
+        "policy_violation",
+        "style_change",
+        "task_performance_change"
+      ]
+    },
+    "declarationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "path",
+        "artifact_digest",
+        "artifact_digest_profile",
+        "identity_digest",
+        "identity_digest_profile"
+      ],
+      "properties": {
+        "instance_id": {"$ref": "#/$defs/identifier"},
+        "path": {"type": "string", "minLength": 1},
+        "artifact_digest": {"$ref": "#/$defs/sha256"},
+        "artifact_digest_profile": {"const": "raw-sha256"},
+        "identity_digest": {"$ref": "#/$defs/sha256"},
+        "identity_digest_profile": {"const": "cpas-digest-v2:idp-identity"}
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "configuration_id",
+        "provider",
+        "model",
+        "runtime_version",
+        "adapter",
+        "parameters",
+        "tools",
+        "context_window_tokens",
+        "configuration_digest_profile",
+        "configuration_digest"
+      ],
+      "properties": {
+        "configuration_id": {"$ref": "#/$defs/identifier"},
+        "provider": {"type": ["string", "null"]},
+        "model": {"type": ["string", "null"]},
+        "runtime_version": {"type": ["string", "null"]},
+        "adapter": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "contract"],
+          "properties": {
+            "id": {"$ref": "#/$defs/identifier"},
+            "version": {"type": "string", "minLength": 1},
+            "contract": {"const": "cpas-runtime-adapter-v1"}
+          }
+        },
+        "parameters": {"type": "object"},
+        "tools": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "context_window_tokens": {"type": ["integer", "null"], "minimum": 1},
+        "configuration_digest_profile": {"const": "cpas-digest-v2:runtime-configuration"},
+        "configuration_digest": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "runtimeRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transcript_id",
+        "transcript_digest",
+        "transcript_digest_profile",
+        "assurance",
+        "runtime"
+      ],
+      "properties": {
+        "transcript_id": {"$ref": "#/$defs/identifier"},
+        "transcript_digest": {"$ref": "#/$defs/sha256"},
+        "transcript_digest_profile": {"const": "cpas-digest-v2:runtime-transcript"},
+        "assurance": {"enum": ["synthetic_fixture", "recorded_runtime", "live_runtime"]},
+        "runtime": {"$ref": "#/$defs/runtime"}
+      }
+    },
+    "probeEvaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "probe_id",
+        "capability",
+        "outcome",
+        "observed_at",
+        "evidence_kind",
+        "evidence_summary",
+        "constraints_count",
+        "validity_horizon_days",
+        "observed_age_seconds",
+        "fresh",
+        "effective_outcome"
+      ],
+      "properties": {
+        "probe_id": {"$ref": "#/$defs/identifier"},
+        "capability": {"$ref": "#/$defs/identifier"},
+        "outcome": {"enum": ["pass", "fail", "unsupported", "error"]},
+        "observed_at": {"type": ["string", "null"], "format": "date-time"},
+        "evidence_kind": {
+          "enum": ["synthetic_fixture", "recorded_observation", "live_probe", "adapter_error"]
+        },
+        "evidence_summary": {"type": "object"},
+        "constraints_count": {"type": "integer", "minimum": 0},
+        "validity_horizon_days": {"type": "integer", "minimum": 0},
+        "observed_age_seconds": {"type": ["integer", "null"], "minimum": 0},
+        "fresh": {"type": "boolean"},
+        "effective_outcome": {"enum": ["pass", "fail", "unsupported", "error", "stale"]}
+      }
+    },
+    "assertionResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertion_id",
+        "path",
+        "operator",
+        "severity",
+        "drift_category",
+        "passed",
+        "observation"
+      ],
+      "properties": {
+        "assertion_id": {"$ref": "#/$defs/identifier"},
+        "path": {"type": "string"},
+        "operator": {
+          "enum": [
+            "exists",
+            "absent",
+            "equals",
+            "not_equals",
+            "contains",
+            "not_contains",
+            "min_items",
+            "max_items"
+          ]
+        },
+        "severity": {"enum": ["required", "advisory"]},
+        "drift_category": {"$ref": "#/$defs/driftCategory"},
+        "passed": {"type": "boolean"},
+        "observation": {"type": "object"}
+      }
+    },
+    "caseRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "error", "assertions", "executed_tool_events"],
+      "properties": {
+        "status": {
+          "enum": ["completed", "adapter_error", "invalid_output", "response_too_large"]
+        },
+        "error": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "required": ["code", "message_summary"],
+              "additionalProperties": false,
+              "properties": {
+                "code": {"type": "string"},
+                "message_summary": {"type": "object"}
+              }
+            }
+          ]
+        },
+        "response_bytes": {"type": "integer", "minimum": 0},
+        "assertions": {"type": "array", "items": {"$ref": "#/$defs/assertionResult"}},
+        "executed_tool_events": {"type": "integer", "minimum": 0}
+      }
+    },
+    "caseResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "category", "mode", "baseline", "candidate", "human_criteria"],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/identifier"},
+        "category": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["cpas-min", "full-cpas", "custom"]},
+        "baseline": {"$ref": "#/$defs/caseRun"},
+        "candidate": {"$ref": "#/$defs/caseRun"},
+        "human_criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "driftItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "item_id",
+        "case_id",
+        "assertion_id",
+        "change",
+        "required",
+        "baseline",
+        "candidate"
+      ],
+      "properties": {
+        "item_id": {"type": "string", "minLength": 1},
+        "case_id": {"type": ["string", "null"]},
+        "assertion_id": {"type": ["string", "null"]},
+        "change": {"enum": ["regression", "improvement", "persistent_failure", "changed"]},
+        "required": {"type": "boolean"},
+        "baseline": {"type": "string"},
+        "candidate": {"type": "string"}
+      }
+    },
+    "categoryResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_required_failures",
+        "maximum_candidate_failures",
+        "blocking",
+        "exceeded"
+      ],
+      "properties": {
+        "candidate_required_failures": {"type": "integer", "minimum": 0},
+        "maximum_candidate_failures": {"type": "integer", "minimum": 0},
+        "blocking": {"type": "boolean"},
+        "exceeded": {"type": "boolean"}
+      }
+    },
+    "reportIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalization", "digest_profile", "digest"],
+      "properties": {
+        "canonicalization": {"const": "rfc8785-jcs-v1"},
+        "digest_profile": {"const": "cpas-digest-v2:runtime-evaluation-report"},
+        "digest": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

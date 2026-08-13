@@ -10,7 +10,7 @@ confidence in a proposed answer.
 | 5 | How are DKA deletions reconciled with immutable Git/event history and privacy law? | The SQLite profile can purge its live canonical payload and retain a tombstone, but backups, audit exports, derived indexes, Git history, and legal obligations remain deployment-specific. | Classify before storage; use erasable encrypted payloads/non-Git stores where deletion is mandatory; require every derivative/copy to join the retention decision. | **High** |
 | 6 | What is the normative distributed DKA-E consistency model? | The v1 store contract and SQLite profile resolve single-host atomic/CAS semantics only. Databases, Git, object/event stores, replicas, and multiple writers need a separately tested model. | Add a PostgreSQL client/server profile with real server execution before claiming multi-host consistency; do not generalize SQLite results. | **High** |
 | 7 | How should confidence be calibrated and propagated? | Subjective numbers are easy to serialize but may imply unsupported precision; different domains need different calibration evidence. | Require basis/calibration labels now; develop domain profiles and scoring rules later. | **High** |
-| 8 | How is behavioral continuity evaluated across model replacements? | Identity digest invariance tests declaration continuity, not tone, judgment, safety, or task performance. | Maintain a versioned behavioral evaluation suite with human review and drift thresholds, without treating it as consciousness continuity. | **High** |
+| 8 | What empirical evidence is sufficient for behavioral compatibility across real model replacements? | The v1 gate-and-rubric harness now defines artifacts, drift categories, synthetic conformance vectors, and mandatory review, but no two hosted runtimes have been captured and reviewed. | Run the frozen suite against attributable real configurations, add task/domain samples, and calibrate reviewer agreement without treating the result as identity proof. | **High** |
 | 9 | How are correlated agent errors measured before consensus aggregation? | Provider/model/prompt/retrieval overlap can make “independent agents” highly dependent, and platforms expose incomplete lineage. | Record known shared dependencies and avoid independence weights unless empirically justified. | **High** |
 | 10 | Which EEP transport/replay/authentication profile is normative? | The core message is transport-neutral; interoperable deployments still need delivery IDs, ordering, replay windows, identities, and trust roots. | Publish optional HTTP/queue/MCP profiles after core schema review. | **Medium–High** |
 | 11 | How should invalidation conditions become executable without arbitrary code? | Natural-language triggers are portable but not automatically testable; executable predicates can be unsafe or backend-specific. | Use named, typed evaluator profiles and retain the human-readable condition. | **High** |
@@ -19,15 +19,15 @@ confidence in a proposed answer.
 | 14 | How are platform memory and project state discovered accurately? | Hosted products may not expose full retention, scope, or per-item provenance through APIs. | Report `unknown` when unavailable; never infer from product branding. | **High** |
 | 15 | What does CPAS-Min conformance minimally require? | Reducing ritual/metaphor is clear, but an overly thin mode can omit provenance or uncertainty and still use the label. | Require identity/limitations, task-relevant uncertainty, provenance, and safety; make richer fields conditional. | **Medium–High** |
 | 16 | Should metaphor mappings be standardized across languages/cultures? | Metaphors compress stance but can mislead or translate poorly. | Keep them non-normative, locally calibrated, and always backed by explicit state. | **Medium** |
-| 17 | What evidence qualifies `probed` versus `verified` and when does it expire? | A successful health check differs from task-relevant behavior; freshness varies by capability. | Define capability-specific test profiles and validation horizons. | **High** |
+| 17 | What evidence qualifies `probed` versus `verified` across all capabilities? | Runtime-evaluation v1 now enforces evidence kind, transcript assurance, and per-probe validity horizons, but verification criteria remain capability/domain-specific. | Reuse the v1 evidence boundary, then define named profiles and revalidation schedules per capability; never promote model-name or fixture evidence. | **High** |
 | 18 | What migration commitments exist for external consumers not visible in this repository? | No deployment/consumer inventory was supplied. Breaking changes may affect private integrations. | Do not release stable v2 until maintainers solicit and record consumer impact. | **High** |
 
 ## Decisions required before a stable 2.0.0
 
 At minimum, maintainers should resolve production trust/reviewer appointments,
 multi-host persistence and privacy/deletion handling,
-capability evidence levels, SeedToken authentication direction, and a behavioral
-runtime-replacement evaluation. Other questions can remain profiled extensions
+capability evidence levels, SeedToken authentication direction, and empirical
+live-runtime replacement evidence. Other questions can remain profiled extensions
 if the stable core clearly labels them.
 
 ## Resolved during draft hardening
@@ -59,3 +59,12 @@ single POSIX host with rollback journaling. It deliberately does not resolve
 distributed consistency, engine authentication, encryption/key management,
 backup retention, complete erasure, or deployment certification, so questions
 5 and 6 remain open in those narrower forms.
+
+[ADR-0004](adr/0004-runtime-replacement-evaluation.md) resolves the protocol
+shape of question 8 with exact manifests/configurations/transcripts, four
+separate drift categories, zero-tolerance required capability/policy gates, no
+aggregate identity score, and mandatory human review. The
+[reference vectors](../compliance-tests/runtime-evaluation/clarence-9-v1/) are
+synthetic; they verify harness behavior only. Provider adapters, two attributable
+live-runtime captures, reviewer/runtime-operator appointments, semantic
+calibration, and recurring drift baselines remain open.

@@ -7,6 +7,9 @@ The canonical v2 JSON Schemas use JSON Schema Draft 2020-12:
 - [`dka-e-v2.0.schema.json`](dka-e-v2.0.schema.json)
 - [`seed-token-v2.0.schema.json`](seed-token-v2.0.schema.json)
 - [`epistemic-exchange-v2.0.schema.json`](epistemic-exchange-v2.0.schema.json)
+- [`runtime-evaluation-manifest-v1.0.schema.json`](runtime-evaluation-manifest-v1.0.schema.json)
+- [`runtime-transcript-v1.0.schema.json`](runtime-transcript-v1.0.schema.json)
+- [`runtime-evaluation-report-v1.0.schema.json`](runtime-evaluation-report-v1.0.schema.json)
 
 The historical IDP schema remains at
 [`instances/schema/current/idp-v1.0-schema.json`](../instances/schema/current/idp-v1.0-schema.json).
@@ -24,3 +27,9 @@ IDP declaration governance is required by the current v2 draft. Transition
 records separate deterministic change classification and attributed approvals
 from authentication/authorization performed by an external trust system. See
 [ADR-0002](../docs/adr/0002-declaration-governance-and-identity-evolution.md).
+
+Runtime evaluation uses separate manifest, transcript, and report schemas so a
+stable declaration digest is not mistaken for behavioral equivalence. See
+[ADR-0004](../docs/adr/0004-runtime-replacement-evaluation.md). Transcript and
+report digests provide reproducible integrity only; they do not authenticate a
+runtime or reviewer.
