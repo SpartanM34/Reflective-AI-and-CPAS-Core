@@ -166,8 +166,21 @@ The [protocol](../../specs/v2.0/Runtime-Replacement-Evaluation-v1.0.md),
 and [threat model](../security/runtime-evaluation-threat-model.md) define the
 remaining boundary.
 
-## Remote CI status
+## Remote CI evidence
 
-Pending publication of the branch and draft pull request. This record must be
-updated with the exact GitHub Actions run and per-job results; local success is
-not substituted for remote evidence.
+[CPAS v2 CI run #11](https://github.com/SpartanM34/Reflective-AI-and-CPAS-Core/actions/runs/31745312725)
+(run ID `31745312725`) completed successfully against implementation commit
+`1012c73c53a82097a3f5c279dc3c6ae52c321c17` in draft PR #105.
+
+| Job | Job ID | Result |
+|---|---:|---|
+| Repository invariants | `94598341999` | Success |
+| Tests (Python 3.11) | `94598342117` | Success |
+| Tests (Python 3.12) | `94598342062` | Success |
+| Tests (Python 3.13) | `94598342037` | Success |
+
+The repository-invariants job ran the validator, independent Node.js
+canonicalization check, Python compilation, and proposed-diff whitespace
+check. Each Python job ran the complete test suite. These are GitHub Actions
+status results; they do not expand the capability or identity claims listed
+above.
