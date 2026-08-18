@@ -2,6 +2,8 @@
 
 - **Modernization overview**: [MODERNIZATION.md](../MODERNIZATION.md)
 - **Architecture audit**: [audits/CPAS-Core-v1.1-architecture-audit.md](audits/CPAS-Core-v1.1-architecture-audit.md)
+- **CPAS v2 RC-readiness audit**: [audits/CPAS-Core-v2-RC-readiness-audit.md](audits/CPAS-Core-v2-RC-readiness-audit.md)
+- **RC-readiness audit verification**: [verification/CPAS-v2-RC-readiness-audit-2026-08-13.md](verification/CPAS-v2-RC-readiness-audit-2026-08-13.md)
 - **CPAS-Core v2.0 draft**: [specs/v2.0/CPAS-Core-v2.0-draft.md](../specs/v2.0/CPAS-Core-v2.0-draft.md)
 - **Clarence-9 v2**: [instances/current/Clarence-9-v2.0.json](../instances/current/Clarence-9-v2.0.json)
 - **Current platform capability ledger**: [research/current-platform-capabilities-2026-08.md](research/current-platform-capabilities-2026-08.md)

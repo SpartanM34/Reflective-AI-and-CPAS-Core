@@ -17,6 +17,7 @@ The runtime is replaceable infrastructure, not the identity.
 | Deliverable | Location |
 |---|---|
 | Architecture audit | [`docs/audits/CPAS-Core-v1.1-architecture-audit.md`](docs/audits/CPAS-Core-v1.1-architecture-audit.md) |
+| Release-candidate readiness audit | [`docs/audits/CPAS-Core-v2-RC-readiness-audit.md`](docs/audits/CPAS-Core-v2-RC-readiness-audit.md) |
 | Modernization principles | [`specs/v2.0/modernization-principles.md`](specs/v2.0/modernization-principles.md) |
 | Clarence-9 v2 declaration | [`instances/current/Clarence-9-v2.0.json`](instances/current/Clarence-9-v2.0.json) and [commentary](instances/current/Clarence-9-v2.0.md) |
 | IDP v2 | [`specs/v2.0/IDP-v2.0.md`](specs/v2.0/IDP-v2.0.md) and [JSON Schema](schemas/idp-v2.0.schema.json) |
